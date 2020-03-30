@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sibz.WorldSystemHelpers;
@@ -21,24 +21,6 @@ namespace Sibz.NetCode.Internal.Util
             foreach (GameObject prefab in prefabs)
             {
                 Object.Instantiate(prefab);
-            }
-        }
-
-        public void ImportSystemsWithAttributes(World world, IEnumerable<Type> attributes, bool isClient)
-        {
-            if (world is null)
-            {
-                throw new ArgumentNullException(nameof(world));
-            }
-
-            if (attributes is null)
-            {
-                throw new ArgumentNullException(nameof(attributes));
-            }
-
-            foreach (Type attribute in attributes)
-            {
-                world.ImportSystemsWithAttribute(attribute, GetDefaultGroupType(isClient) );
             }
         }
 

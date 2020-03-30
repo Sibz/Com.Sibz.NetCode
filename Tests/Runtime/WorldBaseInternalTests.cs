@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Reflection;
 using NUnit.Framework;
 using Sibz.NetCode.Internal;
 using Sibz.NetCode.Tests.Util;

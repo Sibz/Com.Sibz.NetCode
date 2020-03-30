@@ -1,0 +1,22 @@
+{
+    "name": "Com.Sibz.Netcode.Tests",
+    "references": [
+        "GUID:03c02469716408b4fb0c91851bbc2298",
+        "GUID:734d92eba21c94caba915361bd5ac177",
+        "GUID:953adc2a6b8b4e3c8df5b728bcd546e9",
+        "GUID:8819f35a0fc84499b990e90a4ca1911f"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

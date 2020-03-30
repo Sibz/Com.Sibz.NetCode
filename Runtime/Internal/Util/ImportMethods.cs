@@ -36,11 +36,9 @@ namespace Sibz.NetCode.Internal.Util
                 throw new ArgumentNullException(nameof(attributes));
             }
 
-            Type defaultGroupType =
-                isClient ? typeof(ClientSimulationSystemGroup) : typeof(ServerSimulationSystemGroup);
             foreach (Type attribute in attributes)
             {
-                world.ImportSystemsWithAttribute(attribute, defaultGroupType);
+                world.ImportSystemsWithAttribute(attribute, GetDefaultGroupType(isClient) );
             }
         }
 
@@ -49,7 +47,7 @@ namespace Sibz.NetCode.Internal.Util
             world.ImportSystemsFromList(systems, GetDefaultGroupType(isClient));
         }
 
-        private static Type GetDefaultGroupType(bool isClient) =>
+        public static Type GetDefaultGroupType(bool isClient) =>
             isClient ? typeof(ClientSimulationSystemGroup) : typeof(ServerSimulationSystemGroup);
     }
 }

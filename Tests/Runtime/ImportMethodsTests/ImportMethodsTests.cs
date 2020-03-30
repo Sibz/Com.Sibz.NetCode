@@ -18,6 +18,20 @@ namespace Sibz.NetCode.Tests
     {
         private static ImportMethods importMethods = new ImportMethods();
 
+        public class GetDefaultGroupType
+        {
+            [Test]
+            public void ShouldGetClientGroup()
+            {
+                Assert.AreEqual(typeof(ClientSimulationSystemGroup), ImportMethods.GetDefaultGroupType(true));
+            }
+            [Test]
+            public void ShouldGetServerGroup()
+            {
+                Assert.AreEqual(typeof(ServerSimulationSystemGroup), ImportMethods.GetDefaultGroupType(false));
+            }
+        }
+
         public class ImportSharedDataPrefabs
         {
             [Test]

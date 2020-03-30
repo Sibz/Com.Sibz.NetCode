@@ -10,15 +10,5 @@ namespace Sibz.NetCode
         {
 
         }
-
-        protected override List<Type> SystemAttributeTypes
-        {
-            get
-            {
-                var l = base.SystemAttributeTypes;
-                l.Add(typeof(ClientConnectSystem));
-                return l;
-            }
-        }
     }
 }

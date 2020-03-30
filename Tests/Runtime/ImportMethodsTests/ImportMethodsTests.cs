@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using Sibz.NetCode.Internal.Util;
+using Sibz.NetCode.Tests.Util;
 using Unity.Entities;
 using Unity.NetCode;
 using UnityEngine;
@@ -49,7 +50,7 @@ namespace Sibz.NetCode.Tests
             }
         }
 
-        public class ImportSystemsWithAttribute : WorldBaseInternalTests.TestBase
+        public class ImportSystemsWithAttribute : TestBase
         {
             public void CallClientSimUpdate() => World.GetExistingSystem<ClientSimulationSystemGroup>().Update();
             public void CallServerSimUpdate() => World.GetExistingSystem<ServerSimulationSystemGroup>().Update();

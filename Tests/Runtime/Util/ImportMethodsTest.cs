@@ -11,12 +11,24 @@ namespace Sibz.NetCode.Tests.Util
         public CalledMethod Called;
         public enum CalledMethod
         {
-            ImportSystemsFromList
+            ImportSystemsFromList,
+            ImportSharedDataPrefabs
         }
+
+        public void ImportSharedDataPrefabs(IEnumerable<GameObject> sharedDataPrefabs)
+        {
+            Called = CalledMethod.ImportSharedDataPrefabs;
+        }
+
 
         public void ImportSystemsFromList(World world, IEnumerable<Type> systems, bool isClient)
         {
             Called = CalledMethod.ImportSystemsFromList;
+        }
+
+        public Type GetDefaultGroupType(bool isClient)
+        {
+            throw new NotImplementedException();
         }
     }
 }

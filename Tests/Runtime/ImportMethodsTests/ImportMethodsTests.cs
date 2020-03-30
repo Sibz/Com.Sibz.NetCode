@@ -49,5 +49,31 @@ namespace Sibz.NetCode.Tests
                 Assert.AreEqual(2, Object.FindObjectsOfType<GameObject>().Count(x => x.name == name));
             }
         }
+
+        public class ImportSystems : TestBase
+        {
+            private ImportMethodsTest imTest = new ImportMethodsTest();
+
+            [Test]
+            public void WhenWorldIsNull_ShouldThrowArgumentNullException()
+            {
+                Assert.Catch<ArgumentNullException>(()=>
+                    importMethods.ImportSystems(null, new Type[0], true));
+            }
+
+            [Test]
+            public void WhenSystemsIsNull_ShouldThrowArgumentNullException()
+            {
+                Assert.Catch<ArgumentException>(() =>
+                    importMethods.ImportSystems(World, null, true));
+            }
+
+            [Test]
+            public void ShouldCallImportSystemsFromList()
+            {
+                importMethods.ImportSystems(World, new Type[0], true, imTest);
+                Assert.AreEqual(ImportMethodsTest.CalledMethod.ImportSystemsFromList, imTest.Called);
+            }
+        }
     }
 }

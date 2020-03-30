@@ -11,6 +11,17 @@ namespace Sibz.NetCode.Internal.Util
 {
     internal class ImportMethods : IImportMethods
     {
+        public void ImportSystems(World world, IEnumerable<Type> systems,
+            bool isClient, IImportMethods im = null)
+        {
+            if (world is null || systems  is null)
+            {
+                throw new ArgumentNullException(world is null?nameof(world):nameof(systems));
+            }
+
+            (im ?? this).ImportSystemsFromList(world, systems, isClient);
+        }
+
         public void ImportSharedDataPrefabs(IEnumerable<GameObject> sharedDataPrefabs)
         {
             if (sharedDataPrefabs is null)

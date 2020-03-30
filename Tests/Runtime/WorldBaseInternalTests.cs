@@ -55,27 +55,20 @@ namespace Sibz.NetCode.Tests
             public void WhenWorldIsNull_ShouldThrowArgumentNullException()
             {
                 Assert.Catch<ArgumentNullException>(
-                    () => WorldBaseInternal.ImportSystems(null, new Type[0], null, true));
+                    () => WorldBaseInternal.ImportSystems(null, new Type[0], true));
             }
 
             [Test]
-            public void WhenBothEnumerableParamsAreNull_ShouldThrowArgumentException()
+            public void WhenSystemsIsNull_ShouldThrowArgumentNullException()
             {
                 Assert.Catch<ArgumentException>(() =>
-                    WorldBaseInternal.ImportSystems(World, null, null, true));
+                    WorldBaseInternal.ImportSystems(World, null, true));
             }
 
             [Test]
-            public void WhenSystemsNull_ShouldImportWithAttributes()
+            public void ShouldCallImportSystemsFromList()
             {
-                WorldBaseInternal.ImportSystems(World, new Type[0], null, true, importMethods);
-                Assert.AreEqual(ImportMethodsTest.CalledMethod.ImportSystemsWithAttributes, importMethods.Called);
-            }
-
-            [Test]
-            public void WhenSystemsNull_ShouldImportSystemsFromList()
-            {
-                WorldBaseInternal.ImportSystems(World, null, new Type[0], true, importMethods);
+                WorldBaseInternal.ImportSystems(World, new Type[0], true, importMethods);
                 Assert.AreEqual(ImportMethodsTest.CalledMethod.ImportSystemsFromList, importMethods.Called);
             }
         }

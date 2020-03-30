@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
+using Sibz.CommandBufferHelpers;
 using Sibz.NetCode.Tests.Util;
 using Unity.Entities;
+using Unity.NetCode;
 using Unity.Networking.Transport;
 using UnityEngine;
 
@@ -13,26 +17,64 @@ namespace Sibz.NetCode.Tests
     {
         public class Constructor :  TestBase
         {
-            private MyWorldBaseImpl myWorldBase;
+            private MyWorldBaseImpl myServerWorld;
+            private MyWorldBaseImpl myClientWorld;
 
             [SetUp]
             public void SetUp_Constructor()
             {
-                myWorldBase = new MyWorldBaseImpl(new MyOptionsImpl(), true);
+                myServerWorld = new MyWorldBaseImpl(new MyOptionsImpl(), false);
+                myClientWorld = new MyWorldBaseImpl(new MyOptionsImpl(), true);
             }
 
             [Test]
-            public void ShouldCreateWorld()
+            public void ShouldCreateServerWorld()
             {
-                Assert.IsNotNull(myWorldBase.World);
-                Assert.IsTrue(World.All.Contains(myWorldBase.World));
+                Assert.IsNotNull(myServerWorld.World);
+                Assert.IsTrue(World.All.Contains(myServerWorld.World));
+                Assert.IsNotNull(myServerWorld.World.GetExistingSystem<ServerSimulationSystemGroup>());
             }
+            [Test]
+            public void ShouldCreateClientWorld()
+            {
+                Assert.IsNotNull(myClientWorld.World);
+                Assert.IsTrue(World.All.Contains(myClientWorld.World));
+                Assert.IsNotNull(myClientWorld.World.GetExistingSystem<ClientSimulationSystemGroup>());
+            }
+
+            [Test]
+            public void ShouldCreateBuffer()
+            {
+                Assert.IsNotNull(myServerWorld.Buffer);
+            }
+
+            [Test]
+            public void ShouldCreateBufferThatIsCreated()
+            {
+                Assert.IsNotNull(myServerWorld.Buffer.Buffer.IsCreated);
+            }
+
+            [Test]
+            public void ShouldImportWorldBaseSystems([ValueSource(nameof(WorldBaseSystemTypes))] Type systemType)
+            {
+                Assert.IsNotNull(myServerWorld.World.GetExistingSystem(systemType));
+            }
+
+            [Test]
+            public void ShouldImportSharedDataPrefabs()
+            {
+                Assert.IsNotNull(GameObject.Find("Test"));
+            }
+
+            public static IEnumerable<Type> WorldBaseSystemTypes = Assembly
+                .GetAssembly(typeof(WorldBaseSystemAttribute)).GetTypes()
+                .Where(x => !(x.GetCustomAttribute<WorldBaseSystemAttribute>() is null));
         }
     }
 
     public class MyWorldBaseImpl : WorldBase
     {
-        public EntityCommandBuffer Buffer => CommandBuffer.Buffer;
+        public BeginInitCommandBuffer Buffer => CommandBuffer;
         public MyWorldBaseImpl(IWorldOptionsBase options, bool isClient) : base(options, isClient)
         {
 
@@ -42,7 +84,7 @@ namespace Sibz.NetCode.Tests
     public class MyOptionsImpl : IWorldOptionsBase
     {
         public string WorldName { get; set; } = "Test";
-        public List<GameObject> SharedDataPrefabs { get; } = new List<GameObject>();
+        public List<GameObject> SharedDataPrefabs { get; } = new List<GameObject> { new GameObject("Test") };
         public List<Type> SystemImportAttributes { get; } = new List<Type>();
         public bool ConnectOnSpawn { get; set; }
         public int ConnectTimeout { get; set; } = 2;

@@ -41,29 +41,15 @@ namespace Sibz.NetCode.Internal
                 : ClientServerBootstrap.CreateServerWorld(World.DefaultGameObjectInjectionWorld, name);
         }
 
-        public static void ImportSystems(World world, IEnumerable<Type> attributes, IEnumerable<Type> systems,
+        public static void ImportSystems(World world, IEnumerable<Type> systems,
             bool isClient, IImportMethods im = null)
         {
-            if (world is null)
+            if (world is null || systems  is null)
             {
-                throw new ArgumentNullException(nameof(world));
+                throw new ArgumentNullException(world is null?nameof(world):nameof(systems));
             }
 
-            if (attributes is null && systems is null)
-            {
-                throw new ArgumentException("One of 'attribute' or 'systems' must not be null");
-            }
-
-            im = im ?? ImportMethods;
-
-            if (systems is null)
-            {
-                im.ImportSystemsWithAttributes(world, attributes, isClient);
-            }
-            else
-            {
-                im.ImportSystemsFromList(world, systems, isClient);
-            }
+            (im ?? ImportMethods).ImportSystemsFromList(world, systems, isClient);
         }
     }
 }

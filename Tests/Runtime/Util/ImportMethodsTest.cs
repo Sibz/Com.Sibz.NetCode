@@ -11,18 +11,7 @@ namespace Sibz.NetCode.Tests.Util
         public CalledMethod Called;
         public enum CalledMethod
         {
-            ImportSharedDataPrefabs,
-            ImportSystemsWithAttributes,
             ImportSystemsFromList
-        }
-        public void ImportSharedDataPrefabs(IEnumerable<GameObject> sharedDataPrefabs)
-        {
-            Called = CalledMethod.ImportSharedDataPrefabs;
-        }
-
-        public void ImportSystemsWithAttributes(World world, IEnumerable<Type> attributes, bool isClient)
-        {
-            Called = CalledMethod.ImportSystemsWithAttributes;
         }
 
         public void ImportSystemsFromList(World world, IEnumerable<Type> systems, bool isClient)

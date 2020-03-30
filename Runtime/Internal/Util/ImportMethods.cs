@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sibz.WorldSystemHelpers;
@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 
 namespace Sibz.NetCode.Internal.Util
 {
-    public class ImportMethods : IImportMethods
+    internal class ImportMethods : IImportMethods
     {
         public void ImportSharedDataPrefabs(IEnumerable<GameObject> sharedDataPrefabs)
         {
@@ -29,7 +29,7 @@ namespace Sibz.NetCode.Internal.Util
             world.ImportSystemsFromList(systems, GetDefaultGroupType(isClient));
         }
 
-        public static Type GetDefaultGroupType(bool isClient) =>
+        public Type GetDefaultGroupType(bool isClient) =>
             isClient ? typeof(ClientSimulationSystemGroup) : typeof(ServerSimulationSystemGroup);
     }
 }

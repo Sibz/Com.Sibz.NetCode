@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -17,19 +17,19 @@ namespace Sibz.NetCode.Tests
     [TestFixture]
     public class ImportMethodsTests
     {
-        private static ImportMethods importMethods = new ImportMethods();
+        private static IImportMethods importMethods = TestHelpers.GetInstanceOf<IImportMethods>("ImportMethods", "Sibz.NetCode.Internal.Util");
 
         public class GetDefaultGroupType
         {
             [Test]
             public void ShouldGetClientGroup()
             {
-                Assert.AreEqual(typeof(ClientSimulationSystemGroup), ImportMethods.GetDefaultGroupType(true));
+                Assert.AreEqual(typeof(ClientSimulationSystemGroup), importMethods.GetDefaultGroupType(true));
             }
             [Test]
             public void ShouldGetServerGroup()
             {
-                Assert.AreEqual(typeof(ServerSimulationSystemGroup), ImportMethods.GetDefaultGroupType(false));
+                Assert.AreEqual(typeof(ServerSimulationSystemGroup), importMethods.GetDefaultGroupType(false));
             }
         }
 

@@ -12,7 +12,7 @@ using Unity.NetCode;
 
 namespace Sibz.NetCode
 {
-    public abstract class WorldBase
+    public abstract class WorldBase : IDisposable
     {
         public readonly World World;
 
@@ -32,7 +32,8 @@ namespace Sibz.NetCode
             importer.ImportSystems(World, GetSystemTypes(), isClient);
 
             importer.ImportSharedDataPrefabs(options.SharedDataPrefabs);
-            //CreateEventEntity<WorldCreated>();
+
+            CreateEventEntity<WorldCreated>();
         }
 
         private static void CreateWorld(out World world, string name, bool isClient)
@@ -72,6 +73,11 @@ namespace Sibz.NetCode
         protected Entity CreateEventEntity<T>(T data)
             where T : struct, IComponentData =>
             CommandBuffer.Buffer.CreateSingleton(data);
+
+        public void Dispose()
+        {
+            World.Dispose();
+        }
 
 
 #if DEBUG

@@ -9,12 +9,10 @@ namespace Sibz.NetCode.Tests
     {
         protected World World;
 
-        [UnitySetUp]
-        public virtual IEnumerator SetUp()
+        [SetUp]
+        public void SetUp()
         {
             World = new World("Test");
-
-            yield return null;
         }
 
         [TearDown]

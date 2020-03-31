@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using NUnit.Framework;
 using Sibz.CommandBufferHelpers;
 using Unity.Entities;
@@ -86,9 +84,8 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
                 myServerWorld.World.EntityManager.CreateEntityQuery(typeof(WorldCreated)).CalculateEntityCount());
         }
 
-        public static IEnumerable<Type> WorldBaseSystemTypes = Assembly
-            .GetAssembly(typeof(WorldBaseSystemAttribute)).GetTypes()
-            .Where(x => !(x.GetCustomAttribute<WorldBaseSystemAttribute>() is null));
+        public static IEnumerable<Type> WorldBaseSystemTypes =
+            new List<Type>().AppendTypesWithAttribute<WorldBaseSystemAttribute>();
     }
 
 
@@ -128,5 +125,14 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
         public string Address { get; set; } = "0.0.0.0";
         public ushort Port { get; set; } = 1000;
         public NetworkFamily NetworkFamily { get; set; } = NetworkFamily.Ipv4;
+    }
+
+    [WorldBaseSystem]
+    public class MySystem : ComponentSystem
+    {
+        protected override void OnUpdate()
+        {
+
+        }
     }
 }

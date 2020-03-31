@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Sibz.WorldSystemHelpers;
-using Unity.NetCode;
+﻿using Unity.NetCode;
 
 namespace Sibz.NetCode
 {
@@ -9,7 +6,6 @@ namespace Sibz.NetCode
     {
         protected ClientWorldBase(IWorldOptionsBase options) : base(options, ClientServerBootstrap.CreateClientWorld)
         {
-
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using Unity.Entities;
 using Unity.NetCode;
-using UnityEngine;
 
 namespace Sibz.NetCode
 {
@@ -22,7 +21,7 @@ namespace Sibz.NetCode
             {
                 All = new[]
                 {
-                    ComponentType.ReadOnly<ClientConnect>(),
+                    ComponentType.ReadOnly<ClientConnect>()
                 }
             });
             RequireForUpdate(connectQuery);
@@ -33,7 +32,7 @@ namespace Sibz.NetCode
                 All = new[]
                 {
                     ComponentType.ReadOnly<ConfirmConnectionRequest>(),
-                    ComponentType.ReadOnly<ReceiveRpcCommandRequestComponent>(),
+                    ComponentType.ReadOnly<ReceiveRpcCommandRequestComponent>()
                 }
             });
 
@@ -78,7 +77,8 @@ namespace Sibz.NetCode
             PostUpdateCommands.DestroyEntity(connectEntity);
         }
 
-        private void ProcessGoingInGameState(ref ClientConnect clientConnect, Entity connectEntity, EntityCommandBuffer buffer)
+        private void ProcessGoingInGameState(ref ClientConnect clientConnect, Entity connectEntity,
+            EntityCommandBuffer buffer)
         {
             if (clientConnect.State != ClientConnectionState.GoingInGame ||
                 incomingConfirmRequestQuery.CalculateEntityCount() <= 0)

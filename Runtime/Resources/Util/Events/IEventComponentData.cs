@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Sibz.CommandBufferHelpers;
-using Unity.Collections;
-using Unity.Entities;
-using Unity.Jobs;
+﻿using Unity.Entities;
 
 namespace Sibz.EntityEvents
 {

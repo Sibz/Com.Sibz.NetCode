@@ -1,4 +1,5 @@
-﻿using Unity.Entities;
+﻿using System;
+using Unity.Entities;
 
 namespace Sibz.NetCode
 {
@@ -6,7 +7,7 @@ namespace Sibz.NetCode
     {
         protected override void OnUpdate()
         {
-            throw new System.NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }

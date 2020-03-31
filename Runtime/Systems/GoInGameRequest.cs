@@ -15,7 +15,7 @@ namespace Sibz.NetCode
         {
         }
 
-        static PortableFunctionPointer<RpcExecutor.ExecuteDelegate> InvokeExecuteFunctionPointer =
+        private static readonly PortableFunctionPointer<RpcExecutor.ExecuteDelegate> InvokeExecuteFunctionPointer =
             new PortableFunctionPointer<RpcExecutor.ExecuteDelegate>(InvokeExecute);
 
         public PortableFunctionPointer<RpcExecutor.ExecuteDelegate> CompileExecute()

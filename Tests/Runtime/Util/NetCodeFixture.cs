@@ -24,7 +24,9 @@ namespace Sibz.NetCode.Tests
                 if (World.All[i].Name == "Test" || World.All[i].Name == "DefaultWorldSomething"
                                                 || World.All[i].Name.StartsWith("Client")
                                                 || World.All[i].Name.StartsWith("Server"))
+                {
                     World.All[i].Dispose();
+                }
             }
         }
     }

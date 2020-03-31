@@ -8,7 +8,7 @@ namespace Sibz
     public static partial class Util
     {
         public static List<Type> AppendTypesWithAttribute<T>(this List<Type> types)
-        where T: Attribute
+            where T : Attribute
         {
             foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
             {

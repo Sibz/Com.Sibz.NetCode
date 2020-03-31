@@ -16,12 +16,15 @@ namespace Sibz.EntityEvents
 
         // ReSharper disable once MemberCanBePrivate.Global
         public static readonly ComponentType[] EventTypes = GetEventTypes();
+
         private static ComponentType[] GetEventTypes()
         {
-            List<ComponentType> types = new List<ComponentType>();
+            var types = new List<ComponentType>();
             foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
             {
-                types.AddRange(a.GetTypes().Where(x=>x.IsValueType && x.GetInterfaces().Contains(typeof(IEventComponentData))).Select(t=>(ComponentType)t));
+                types.AddRange(a.GetTypes()
+                    .Where(x => x.IsValueType && x.GetInterfaces().Contains(typeof(IEventComponentData)))
+                    .Select(t => (ComponentType) t));
             }
 
             return types.ToArray();
@@ -46,6 +49,7 @@ namespace Sibz.EntityEvents
             {
                 CreateSingletonFromObject(eventComponentData);
             }
+
             return inputDeps;
         }
 
@@ -57,7 +61,7 @@ namespace Sibz.EntityEvents
 
         // ReSharper disable once UnusedMember.Local
         private void CreateSingleton<T>(T obj)
-            where T: struct, IComponentData
+            where T : struct, IComponentData
         {
             commandBuffer.Buffer.CreateSingleton(obj);
         }

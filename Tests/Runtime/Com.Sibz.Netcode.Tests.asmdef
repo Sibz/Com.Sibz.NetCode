@@ -19,12 +19,6 @@
     ],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [
-        {
-            "name": "com.unity.entities",
-            "expression": "",
-            "define": "UNITY_DISABLE_AUTOMATIC_SYSTEM_BOOTSTRAP"
-        }
-    ],
+    "versionDefines": [],
     "noEngineReferences": false
 }

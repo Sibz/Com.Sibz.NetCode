@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Sibz.CommandBufferHelpers;
 using Sibz.NetCode.Internal;
-using Sibz.NetCode.Internal.Util;
+using Sibz.WorldSystemHelpers;
 using Unity.Entities;
 using Unity.NetCode;
 
@@ -12,56 +12,28 @@ using Unity.NetCode;
 
 namespace Sibz.NetCode
 {
-    public abstract class WorldBase : IDisposable
+    public abstract class WorldBase<T> : IDisposable
+    where T: ComponentSystemGroup
     {
         public readonly World World;
 
         protected readonly BeginInitCommandBuffer CommandBuffer;
 
-        protected virtual List<Type> IncludeAttributeTypes(List<Type> attributeTypes) => attributeTypes;
-        protected virtual List<Type> IncludeAdditionalSystems(List<Type> systemTypes) => systemTypes;
-
-        private readonly IImportMethods importer = new ImportMethods();
-
-        protected WorldBase(IWorldOptionsBase options, bool isClient)
+        protected WorldBase(IWorldOptionsBase options, Func<World, string, World> creationMethod, List<Type> systems = null)
         {
-            CreateWorld(out World, options.WorldName, isClient);
+            if (creationMethod is null)
+            {
+                throw new ArgumentNullException(nameof(creationMethod));
+            }
+            World = creationMethod.Invoke(World.DefaultGameObjectInjectionWorld, options.WorldName);
 
             CommandBuffer = new BeginInitCommandBuffer(World);
 
-            importer.ImportSystems(World, GetSystemTypes(), isClient);
+            World.ImportSystemsFromList<T>(Util.GetSystemsWithAttribute<WorldBaseSystemAttribute>(systems));
 
-            importer.ImportSharedDataPrefabs(options.SharedDataPrefabs);
+            Util.InstantiateFromList(options.SharedDataPrefabs);
 
             CreateEventEntity<WorldCreated>();
-        }
-
-        private static void CreateWorld(out World world, string name, bool isClient)
-        {
-            world = isClient
-                ? ClientServerBootstrap.CreateClientWorld(World.DefaultGameObjectInjectionWorld, name)
-                : ClientServerBootstrap.CreateServerWorld(World.DefaultGameObjectInjectionWorld, name);
-        }
-
-        private List<Type> GetAttributeTypes()
-        {
-            var attrTypes = new List<Type>();
-            attrTypes.AddRange(IncludeAttributeTypes(attrTypes));
-            attrTypes.Add(typeof(WorldBaseSystemAttribute));
-            return attrTypes;
-        }
-
-        private IEnumerable<Type> GetSystemTypes()
-        {
-            var systemTypes = new List<Type>();
-            systemTypes.AddRange(IncludeAdditionalSystems(systemTypes));
-            var attrArray = GetAttributeTypes().ToArray();
-            foreach (Type attrType in attrArray)
-            {
-                systemTypes.AddRange(Assembly.GetAssembly(attrType).GetTypes()
-                    .Where(x => !(x.GetCustomAttribute(attrType) is null)));
-            }
-            return systemTypes;
         }
 
         protected void CreateRpcRequest<T>(T rpcCommand)
@@ -80,7 +52,7 @@ namespace Sibz.NetCode
         }
 
 
-#if DEBUG
+/*#if DEBUG
         public static int DebugLevel = 1;
 
         public static void Debug(string message, int level = 1)
@@ -90,6 +62,6 @@ namespace Sibz.NetCode
                 UnityEngine.Debug.Log(message);
             }
         }
-#endif
+#endif*/
     }
 }

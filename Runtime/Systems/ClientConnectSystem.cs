@@ -114,9 +114,9 @@ namespace Sibz.NetCode
             }
 
             network.Connect(clientConnect.EndPoint);
-#if DEBUG
+/*#if DEBUG
             WorldBase.Debug($"{World.Name}:{clientConnect.EndPoint.Port} Connecting...");
-#endif
+#endif*/
             clientConnect.State = ClientConnectionState.ConnectingToServer;
         }
     }

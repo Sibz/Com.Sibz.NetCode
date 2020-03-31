@@ -19,14 +19,14 @@ namespace Sibz.NetCode.Tests
     {
         public class Constructor : TestBase
         {
-            private MyWorldBaseImpl myServerWorld;
-            private MyWorldBaseImpl myClientWorld;
+            private MyServerWorld myServerWorld;
+            private MyClientWorld myClientWorld;
 
             [SetUp]
             public void SetUp_Constructor()
             {
-                myServerWorld = new MyWorldBaseImpl(new MyOptionsImpl(), false);
-                myClientWorld = new MyWorldBaseImpl(new MyOptionsImpl(), true);
+                myServerWorld = new MyServerWorld();
+                myClientWorld = new MyClientWorld();
             }
 
             [TearDown]
@@ -90,12 +90,12 @@ namespace Sibz.NetCode.Tests
 
         public class ConstructorBootstrapped : TestBase
         {
-            private MyWorldBaseImpl myServerWorld;
+            private MyServerWorld myServerWorld;
 
             [SetUp]
             public void SetUp_Constructor()
             {
-                myServerWorld = new MyWorldBaseImpl(new MyOptionsImpl(), false);
+                myServerWorld = new MyServerWorld();
             }
 
             [TearDown]
@@ -115,11 +115,27 @@ namespace Sibz.NetCode.Tests
         }
     }
 
-    public class MyWorldBaseImpl : WorldBase
+    public class MyWorldBaseImpl<T> : WorldBase<T>
+    where T:ComponentSystemGroup
     {
         public BeginInitCommandBuffer Buffer => CommandBuffer;
 
-        public MyWorldBaseImpl(IWorldOptionsBase options, bool isClient) : base(options, isClient)
+
+        public MyWorldBaseImpl(IWorldOptionsBase options, Func<World, string, World> creationMethod, List<Type> systems = null) : base(options, creationMethod, systems)
+        {
+        }
+    }
+
+    public class MyClientWorld : MyWorldBaseImpl<ClientSimulationSystemGroup>
+    {
+        public MyClientWorld() : base(new MyOptionsImpl(), ClientServerBootstrap.CreateClientWorld)
+        {
+        }
+    }
+
+    public class MyServerWorld : MyWorldBaseImpl<ServerSimulationSystemGroup>
+    {
+        public MyServerWorld() : base(new MyOptionsImpl(), ClientServerBootstrap.CreateServerWorld)
         {
         }
     }

@@ -1,13 +1,14 @@
-﻿using Unity.Networking.Transport;
+﻿using Unity.NetCode;
+using Unity.Networking.Transport;
 using UnityEngine;
 
 namespace Sibz.NetCode
 {
-    public class ServerWorldBase : WorldBase
+    public class ServerWorldBase : WorldBase<ServerSimulationSystemGroup>
     {
         protected virtual IServerOptionsBase Options { get; set; }
 
-        protected ServerWorldBase(IServerOptionsBase options) : base(options, false)
+        protected ServerWorldBase(IServerOptionsBase options) : base(options, ClientServerBootstrap.CreateServerWorld)
         {
             Options = options;
             if (options.ConnectOnSpawn)

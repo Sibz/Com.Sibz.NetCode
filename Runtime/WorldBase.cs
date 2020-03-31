@@ -8,7 +8,7 @@ using Unity.Entities;
 
 namespace Sibz.NetCode
 {
-    public abstract class WorldBase<TDefaultSystemGroup> : IDisposable
+    public abstract class WorldBase<TDefaultSystemGroup> : IWorldBase
         where TDefaultSystemGroup : ComponentSystemGroup
     {
         public World World { get; }

@@ -6,13 +6,13 @@ using Unity.Entities;
 using Unity.NetCode;
 using UnityEngine.TestTools;
 
-namespace Sibz.NetCode.Tests.Util
+namespace Sibz.NetCode.Tests
 {
     public class TestBase
     {
         protected World World;
 
-        [OneTimeSetUp]
+        /*[OneTimeSetUp]
         public void OneTimeSetup()
         {
             //DefaultWorldInitialization.Initialize("DefaultWorldSomething", true);
@@ -22,7 +22,7 @@ namespace Sibz.NetCode.Tests.Util
             DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(World.DefaultGameObjectInjectionWorld,
                 DefaultWorldInitialization.GetAllSystems(WorldSystemFilterFlags.Default));
             new ClientServerBootstrap().Initialize("DefaultWorld");
-        }
+        }*/
 
         [UnitySetUp]
         public virtual IEnumerator SetUp()
@@ -38,7 +38,7 @@ namespace Sibz.NetCode.Tests.Util
             World.Dispose();
         }
 
-        [OneTimeTearDown]
+        /*[OneTimeTearDown]
         public void TD()
         {
             for (int i = World.All.Count - 1; i >= 0; i--)
@@ -48,14 +48,9 @@ namespace Sibz.NetCode.Tests.Util
                                                 || World.All[i].Name.StartsWith("Server"))
                     World.All[i].Dispose();
             }
-        }
+        }*/
 
-        protected static string MakeTestWorldName()
-        {
-            StackTrace stackTrace = new StackTrace();
-            MethodBase methodBase = stackTrace.GetFrame(1).GetMethod();
-            return $"Test_{methodBase.Name}";
-        }
+
     }
 
     /*public class TestBase

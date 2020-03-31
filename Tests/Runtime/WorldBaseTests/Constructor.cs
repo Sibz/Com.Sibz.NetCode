@@ -11,29 +11,32 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
 {
     public class Constructor : TestBase
     {
-        private MyServerWorld myServerWorld;
         private MyClientWorld myClientWorld;
 
-        [SetUp]
-        public void SetUp_Constructor()
+        [OneTimeSetUp]
+        public void OneTimeSetUp_Constructor()
         {
-            myServerWorld = new MyServerWorld();
+            Debug.Log("OneTimeSetUp_Constructor");
+
             myClientWorld = new MyClientWorld();
         }
 
-        [TearDown]
-        public void TearDown_Constructor()
+        [OneTimeTearDown]
+        public void OneTimeTearDown_Constructor()
         {
-            myServerWorld.Dispose();
             myClientWorld.Dispose();
         }
 
         [Test]
         public void ShouldCreateServerWorld()
         {
-            Assert.IsNotNull(myServerWorld.World);
-            Assert.IsTrue(World.All.Contains(myServerWorld.World));
-            Assert.IsNotNull(myServerWorld.World.GetExistingSystem<ServerSimulationSystemGroup>());
+            using (MyServerWorld myServerWorld = new MyServerWorld())
+            {
+                Assert.IsNotNull(myServerWorld.World);
+                Assert.IsTrue(World.All.Contains(myServerWorld.World));
+                Assert.IsNotNull(myServerWorld.World.GetExistingSystem<ServerSimulationSystemGroup>());
+                myServerWorld.Dispose();
+            }
         }
 
         [Test]
@@ -47,26 +50,27 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
         [Test]
         public void ShouldCreateBuffer()
         {
-            Assert.IsNotNull(myServerWorld.Buffer);
+            Assert.IsNotNull(myClientWorld.Buffer);
         }
 
         [Test]
         public void ShouldCreateBufferThatIsCreated()
         {
-            Assert.IsTrue(myServerWorld.Buffer.Buffer.IsCreated);
+            Assert.IsTrue(myClientWorld.Buffer.Buffer.IsCreated);
         }
 
         [Test]
         public void ShouldBeAbleToUseBuffer()
         {
-            myServerWorld.Buffer.Buffer.CreateEntity();
+            myClientWorld.Buffer.Buffer.CreateEntity();
         }
 
         [Test]
-        public void ShouldImportWorldBaseSystems([ValueSource(nameof(WorldBaseSystemTypes))]
+        public void ShouldImportWorldBaseSystems(
+            [ValueSource(nameof(WorldBaseSystemTypes))]
             Type systemType)
         {
-            Assert.IsNotNull(myServerWorld.World.GetExistingSystem(systemType));
+            Assert.IsNotNull(myClientWorld.World.GetExistingSystem(systemType));
         }
 
         [Test]
@@ -78,16 +82,15 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
         [Test]
         public void ShouldCreateWorldCreatedEventEntity()
         {
-            myServerWorld.World.Update();
+            myClientWorld.World.Update();
             //myServerWorld.World.GetExistingSystem<InitializationSystemGroup>().Update();
             Assert.AreEqual(1,
-                myServerWorld.World.EntityManager.CreateEntityQuery(typeof(WorldCreated)).CalculateEntityCount());
+                myClientWorld.World.EntityManager.CreateEntityQuery(typeof(WorldCreated)).CalculateEntityCount());
         }
 
         public static IEnumerable<Type> WorldBaseSystemTypes =
             new List<Type>().AppendTypesWithAttribute<WorldBaseSystemAttribute>();
     }
-
 
     public class MyWorldBaseImpl<T> : WorldBase<T>
         where T : ComponentSystemGroup
@@ -132,7 +135,6 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
     {
         protected override void OnUpdate()
         {
-
         }
     }
 }

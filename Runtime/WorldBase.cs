@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Sibz.CommandBufferHelpers;
 using Sibz.WorldSystemHelpers;
@@ -25,11 +25,11 @@ namespace Sibz.NetCode
 
             World = creationMethod.Invoke(World.DefaultGameObjectInjectionWorld, options.WorldName);
 
+            World.ImportSystemsFromList<TDefaultSystemGroup>(systems.AppendTypesWithAttribute<WorldBaseSystemAttribute>());
+
             CommandBuffer = new BeginInitCommandBuffer(World);
 
-            World.ImportSystemsFromList<TDefaultSystemGroup>(Util.GetSystemsWithAttribute<WorldBaseSystemAttribute>(systems));
-
-            Util.InstantiateFromList(options.SharedDataPrefabs);
+            options.SharedDataPrefabs.Instantiate();
 
             World.EnqueueEvent<WorldCreated>();
         }

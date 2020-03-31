@@ -8,7 +8,7 @@ namespace Sibz
 {
     public static partial class Util
     {
-        public static void InstantiateFromList(IEnumerable<GameObject> list)
+        public static void Instantiate(this IEnumerable<GameObject> list)
         {
             if (list is null)
             {

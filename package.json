@@ -1,7 +1,7 @@
 {
   "author": "Steven Turner",
   "dependencies": {
-    "com.sibz.command-buffer-helpers":"0.1.3",
+    "com.sibz.command-buffer-helpers":"0.1.4",
     "com.sibz.world-system-helpers":"1.0.3",
     "com.unity.netcode":"0.1.0-preview.6"
   },

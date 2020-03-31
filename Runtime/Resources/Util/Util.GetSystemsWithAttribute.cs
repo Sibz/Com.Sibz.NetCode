@@ -11,8 +11,11 @@ namespace Sibz
             where T:Attribute
         {
             systemTypes = systemTypes ?? new List<Type>();
-            systemTypes.AddRange(Assembly.GetAssembly(typeof(T)).GetTypes()
-                .Where(x => !(x.GetCustomAttribute<T>() is null)));
+
+            foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                systemTypes.AddRange(a.GetTypes().Where(x => !(x.GetCustomAttribute<T>() is null)));
+            }
             return systemTypes;
         }
     }

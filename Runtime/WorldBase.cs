@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Sibz.CommandBufferHelpers;
-using Sibz.NetCode.Internal;
 using Sibz.WorldSystemHelpers;
 using Unity.Entities;
 using Unity.NetCode;
@@ -10,8 +9,8 @@ using Unity.NetCode;
 
 namespace Sibz.NetCode
 {
-    public abstract class WorldBase<T> : IDisposable
-        where T : ComponentSystemGroup
+    public abstract class WorldBase<TDefaultSystemGroup> : IDisposable
+        where TDefaultSystemGroup : ComponentSystemGroup
     {
         public readonly World World;
 
@@ -29,7 +28,7 @@ namespace Sibz.NetCode
 
             CommandBuffer = new BeginInitCommandBuffer(World);
 
-            World.ImportSystemsFromList<T>(Util.GetSystemsWithAttribute<WorldBaseSystemAttribute>(systems));
+            World.ImportSystemsFromList<TDefaultSystemGroup>(Util.GetSystemsWithAttribute<WorldBaseSystemAttribute>(systems));
 
             Util.InstantiateFromList(options.SharedDataPrefabs);
 

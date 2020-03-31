@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using Object = UnityEngine.Object;
+
+namespace Sibz
+{
+    public static partial class Util
+    {
+        public static void InstantiateFromList(IEnumerable<GameObject> list)
+        {
+            if (list is null)
+            {
+                throw new ArgumentNullException(nameof(list));
+            }
+            var prefabs = list.ToArray();
+            foreach (GameObject prefab in prefabs)
+            {
+                Object.Instantiate(prefab);
+            }
+        }
+    }
+}

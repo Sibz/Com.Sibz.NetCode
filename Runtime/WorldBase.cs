@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Sibz.CommandBufferHelpers;
 using Sibz.WorldSystemHelpers;
@@ -34,9 +34,6 @@ namespace Sibz.NetCode
 
             CreateEventEntity<WorldCreated>();
         }
-
-        protected void CreateRpcRequest<T>(T rpcCommand)
-            where T : struct, IRpcCommand => ConvertToRpcRequestSystem.CreateRpcRequest(World, rpcCommand);
 
         protected Entity CreateEventEntity<T>()
             where T : struct, IComponentData =>

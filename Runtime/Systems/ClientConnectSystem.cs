@@ -101,7 +101,7 @@ namespace Sibz.NetCode
 
             EntityManager.AddComponent<NetworkStreamInGame>(GetSingletonEntity<NetworkStreamConnection>());
 
-            ConvertToRpcRequestSystem.CreateRpcRequest<GoInGameRequest>(World, default);
+            CreateRpcRequestSystem.CreateRpcRequest<GoInGameRequest>(World, default);
 
             clientConnect.State = ClientConnectionState.GoingInGame;
         }

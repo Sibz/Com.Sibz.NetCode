@@ -11,7 +11,7 @@ namespace Sibz.NetCode
     public abstract class WorldBase<TDefaultSystemGroup> : IDisposable
         where TDefaultSystemGroup : ComponentSystemGroup
     {
-        public readonly World World;
+        public World World { get; }
 
         protected readonly BeginInitCommandBuffer CommandBuffer;
 

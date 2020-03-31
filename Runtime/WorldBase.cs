@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Sibz.CommandBufferHelpers;
 using Sibz.NetCode.Internal;
 using Sibz.WorldSystemHelpers;
@@ -53,18 +51,5 @@ namespace Sibz.NetCode
         {
             World.Dispose();
         }
-
-
-/*#if DEBUG
-        public static int DebugLevel = 1;
-
-        public static void Debug(string message, int level = 1)
-        {
-            if (level <= DebugLevel)
-            {
-                UnityEngine.Debug.Log(message);
-            }
-        }
-#endif*/
     }
 }

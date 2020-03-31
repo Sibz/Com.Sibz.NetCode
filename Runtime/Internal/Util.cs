@@ -30,5 +30,18 @@ namespace Sibz.NetCode.Internal
                 .Where(x => !(x.GetCustomAttribute<T>() is null)));
             return systemTypes;
         }
+
+
+#if DEBUG
+        public static int DebugLevel = 1;
+
+        public static void Debug(string message, int level = 1)
+        {
+            if (level <= DebugLevel)
+            {
+                UnityEngine.Debug.Log(message);
+            }
+        }
+#endif
     }
 }

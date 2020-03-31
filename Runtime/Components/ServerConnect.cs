@@ -1,9 +1,9 @@
-﻿using Unity.Entities;
+﻿using Sibz.EntityEvents;
 using Unity.Networking.Transport;
 
 namespace Sibz.NetCode
 {
-    public struct ServerConnect: IComponentData
+    public struct ServerConnect: IEventComponentData
     {
         public NetworkEndPoint EndPoint;
         public int Timeout;

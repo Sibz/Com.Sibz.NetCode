@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Sibz.CommandBufferHelpers;
 using Sibz.WorldSystemHelpers;
 using Unity.Entities;
-using Unity.NetCode;
 
 [assembly: DisableAutoCreation]
 
@@ -32,16 +31,8 @@ namespace Sibz.NetCode
 
             Util.InstantiateFromList(options.SharedDataPrefabs);
 
-            CreateEventEntity<WorldCreated>();
+            World.EnqueueEvent<WorldCreated>();
         }
-
-        protected Entity CreateEventEntity<T>()
-            where T : struct, IComponentData =>
-            CommandBuffer.Buffer.CreateSingleton<T>();
-
-        protected Entity CreateEventEntity<T>(T data)
-            where T : struct, IComponentData =>
-            CommandBuffer.Buffer.CreateSingleton(data);
 
         public void Dispose()
         {

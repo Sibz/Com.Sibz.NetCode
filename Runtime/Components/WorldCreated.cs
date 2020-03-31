@@ -1,8 +1,8 @@
-﻿using Unity.Entities;
+﻿using Sibz.EntityEvents;
 
 namespace Sibz.NetCode
 {
-    public struct WorldCreated : IComponentData
+    public struct WorldCreated : IEventComponentData
     {
 
     }

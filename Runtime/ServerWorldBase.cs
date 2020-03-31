@@ -18,7 +18,7 @@ namespace Sibz.NetCode
 
         public void Listen()
         {
-            CreateEventEntity(new ServerConnect
+            World.EnqueueEvent(new ServerConnect
             {
                 EndPoint = NetworkEndPoint.Parse(Options.Address, Options.Port, Options.NetworkFamily),
                 Timeout = Options.ConnectTimeout,

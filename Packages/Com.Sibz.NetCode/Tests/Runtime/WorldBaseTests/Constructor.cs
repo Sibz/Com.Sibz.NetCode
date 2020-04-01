@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using Sibz.CommandBufferHelpers;
+using Sibz.EntityEvents;
 using Unity.Entities;
 using Unity.NetCode;
 using Unity.Networking.Transport;
@@ -35,7 +36,6 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
                 Assert.IsNotNull(myServerWorld.World);
                 Assert.IsTrue(World.All.Contains(myServerWorld.World));
                 Assert.IsNotNull(myServerWorld.World.GetExistingSystem<ServerSimulationSystemGroup>());
-                myServerWorld.Dispose();
             }
         }
 
@@ -45,6 +45,12 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
             Assert.IsNotNull(myClientWorld.World);
             Assert.IsTrue(World.All.Contains(myClientWorld.World));
             Assert.IsNotNull(myClientWorld.World.GetExistingSystem<ClientSimulationSystemGroup>());
+        }
+
+        [Test]
+        public void ShouldAddEventComponentSystem()
+        {
+            Assert.IsNotNull(myClientWorld.World.GetExistingSystem<EventComponentSystem>());
         }
 
         [Test]
@@ -82,10 +88,13 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
         [Test]
         public void ShouldCreateWorldCreatedEventEntity()
         {
-            myClientWorld.World.Update();
-            //myServerWorld.World.GetExistingSystem<InitializationSystemGroup>().Update();
-            Assert.AreEqual(1,
-                myClientWorld.World.EntityManager.CreateEntityQuery(typeof(WorldCreated)).CalculateEntityCount());
+            MyClientWorld test = new MyClientWorld("ClientTestTEST");
+            test.World.GetExistingSystem<ClientSimulationSystemGroup>().Update();
+            test.World.GetExistingSystem<ClientInitializationSystemGroup>().Update();
+            World.Update();
+            EntityQuery q = test.World.EntityManager.CreateEntityQuery(typeof(WorldCreated));
+            Assert.AreEqual(1, q.CalculateEntityCount());
+            test.Dispose();
         }
 
         public static IEnumerable<Type> WorldBaseSystemTypes =
@@ -106,7 +115,7 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
 
     public class MyClientWorld : MyWorldBaseImpl<ClientSimulationSystemGroup>
     {
-        public MyClientWorld() : base(new MyOptionsImpl(), ClientServerBootstrap.CreateClientWorld)
+        public MyClientWorld(string name = "TestClient") : base(new MyOptionsImpl { WorldName = name }, ClientServerBootstrap.CreateClientWorld)
         {
         }
     }
@@ -133,8 +142,9 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
     [WorldBaseSystem]
     public class MySystem : ComponentSystem
     {
-        protected override void OnUpdate()
+       protected override void OnUpdate()
         {
+
         }
     }
 }

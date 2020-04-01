@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Sibz.CommandBufferHelpers;
+using Sibz.EntityEvents;
 using Sibz.WorldSystemHelpers;
 using Unity.Entities;
 
@@ -15,6 +16,11 @@ namespace Sibz.NetCode
 
         protected readonly BeginInitCommandBuffer CommandBuffer;
 
+        private readonly IReadOnlyList<Type> baseIncludeSystems = new List<Type>
+        {
+            typeof(EventComponentSystem)
+        };
+
         protected WorldBase(IWorldOptionsBase options, Func<World, string, World> creationMethod,
             List<Type> systems = null)
         {
@@ -25,14 +31,24 @@ namespace Sibz.NetCode
 
             World = creationMethod.Invoke(World.DefaultGameObjectInjectionWorld, options.WorldName);
 
-            World.ImportSystemsFromList<TDefaultSystemGroup>(
-                systems.AppendTypesWithAttribute<WorldBaseSystemAttribute>());
+            ImportSystems(systems);
 
             CommandBuffer = new BeginInitCommandBuffer(World);
 
             options.SharedDataPrefabs.Instantiate();
 
             World.EnqueueEvent<WorldCreated>();
+        }
+
+        private void ImportSystems(List<Type> systems)
+        {
+            systems = systems ?? new List<Type>();
+
+            systems.AddRange(baseIncludeSystems);
+
+            systems.AppendTypesWithAttribute<WorldBaseSystemAttribute>();
+
+            World.ImportSystemsFromList<TDefaultSystemGroup>(systems);
         }
 
         public void Dispose()

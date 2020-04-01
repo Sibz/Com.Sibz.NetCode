@@ -1,0 +1,12 @@
+{
+  "author": "Steven Turner",
+  "dependencies": {
+    "com.sibz.netcode": "0.0.1"
+  },
+  "deprecated": false,
+  "description": "Server package for netcode api",
+  "displayName": "Sibz: NetCode Server",
+  "license": "ISC",
+  "name": "com.sibz.netcode.server",
+  "version": "0.0.1"
+}

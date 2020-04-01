@@ -1,6 +1,7 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Sibz.NetCode.Server;
 using Unity.Entities;
+using UnityEngine;
 
 namespace Sibz.NetCode.Tests.Server
 {
@@ -25,9 +26,16 @@ namespace Sibz.NetCode.Tests.Server
         [Test]
         public void ShouldCreateStatusEntity()
         {
-            ServerWorld world = new ServerWorld();
-            EntityQuery q = world.World.EntityManager.CreateEntityQuery(typeof(NetworkStatus));
-            Assert.AreEqual(1, q.CalculateEntityCount());
+            Assert.AreEqual(1, StatusQuery.CalculateEntityCount());
+        }
+
+        [Test]
+        public void Listen_ShouldUpdateStatus()
+        {
+            testWorld.Listen();
+            var state = StatusQuery.GetSingleton<NetworkStatus>().State;
+            Debug.Log(state);
+            Assert.AreNotEqual(NetworkState.Uninitialised, state);
         }
     }
 }

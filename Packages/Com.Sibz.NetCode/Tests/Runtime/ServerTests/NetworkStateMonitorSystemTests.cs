@@ -1,6 +1,7 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using Sibz.NetCode.Server;
 using Unity.Entities;
+using Unity.NetCode;
 
 namespace Sibz.NetCode.Tests.Server
 {
@@ -16,13 +17,12 @@ namespace Sibz.NetCode.Tests.Server
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-
         }
 
         [SetUp]
         public void SetUp()
         {
-            serverWorld = new ServerWorld(new ServerOptions() { Port = 20250});
+            serverWorld = new ServerWorld(new ServerOptions() {Port = 20250});
         }
 
         [TearDown]
@@ -43,8 +43,9 @@ namespace Sibz.NetCode.Tests.Server
             {
                 Assert.Fail($"Server state should be listening for this test, was {NetworkStatus.State}");
             }
+
             serverWorld.Disconnect();
-            serverWorld.World.GetExistingSystem<NetworkStateMonitorSystem>().Update();
+            UpdateWorld(serverWorld);
             Assert.AreEqual(NetworkState.Disconnected, NetworkStatus.State);
         }
 
@@ -53,7 +54,7 @@ namespace Sibz.NetCode.Tests.Server
         {
             serverWorld.Listen();
             serverWorld.Disconnect();
-            serverWorld.World.GetExistingSystem<NetworkStateMonitorSystem>().Update();
+            UpdateWorld(serverWorld);
             serverWorld.Listen();
             Assert.AreEqual(NetworkState.Listening, NetworkStatus.State);
         }
@@ -70,6 +71,12 @@ namespace Sibz.NetCode.Tests.Server
         public void WhenClientIsNotInGame_ShouldHaveCorrectInGameCount()
         {
             Assert.Fail();
+        }
+
+        private void UpdateWorld(ServerWorld world)
+        {
+            world.World.GetExistingSystem<ServerInitializationSystemGroup>().Update();
+            world.World.GetExistingSystem<ServerSimulationSystemGroup>().Update();
         }
     }
 }

@@ -10,10 +10,10 @@ namespace Sibz.NetCode.Server
         private EntityQuery connectionCountQuery;
         private EntityQuery connectionInGameCountQuery;
         private NetworkStreamReceiveSystem pNetworkStreamReceiveSystem;
+        private NetworkState lastKnownState;
         private NetworkStreamReceiveSystem NetworkStreamReceiveSystem =>
             pNetworkStreamReceiveSystem
             ?? (pNetworkStreamReceiveSystem = World.GetExistingSystem<NetworkStreamReceiveSystem>());
-        private float timeoutTime = -1;
 
         protected override void OnCreate()
         {
@@ -69,6 +69,7 @@ namespace Sibz.NetCode.Server
 
                 status.ConnectionCount = ConnectionCount;
                 status.InGameClientCount = InGameCount;
+
             }
         }
     }

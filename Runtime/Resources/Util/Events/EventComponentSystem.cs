@@ -8,6 +8,7 @@ using Unity.Jobs;
 
 namespace Sibz.EntityEvents
 {
+    [AlwaysUpdateSystem]
     public class EventComponentSystem : JobComponentSystem
     {
         private EntityQuery allEventComponentsQuery;
@@ -45,9 +46,10 @@ namespace Sibz.EntityEvents
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             commandBuffer.Buffer.DestroyEntity(allEventComponentsQuery);
-            foreach (object eventComponentData in eventQueue)
+
+            while (eventQueue.Count > 0)
             {
-                CreateSingletonFromObject(eventComponentData);
+                CreateSingletonFromObject(eventQueue.Dequeue());
             }
 
             return inputDeps;
@@ -55,8 +57,14 @@ namespace Sibz.EntityEvents
 
         private void CreateSingletonFromObject(object obj)
         {
-            typeof(EventComponentSystem).GetMethod("CreateSingleton", BindingFlags.Instance | BindingFlags.NonPublic)?
-                .MakeGenericMethod(obj.GetType()).Invoke(this, new object[0]);
+            var method = typeof(EventComponentSystem).GetMethod(nameof(CreateSingleton),
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            if (method is null)
+            {
+                throw new NullReferenceException($"Unable to get method {nameof(CreateSingleton)}");
+            }
+
+            method.MakeGenericMethod(obj.GetType()).Invoke(this, new object[1] { obj });
         }
 
         // ReSharper disable once UnusedMember.Local

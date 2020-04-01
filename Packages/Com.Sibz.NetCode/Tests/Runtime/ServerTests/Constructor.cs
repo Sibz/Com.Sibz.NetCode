@@ -37,5 +37,14 @@ namespace Sibz.NetCode.Tests.Server
             Debug.Log(state);
             Assert.AreNotEqual(NetworkState.Uninitialised, state);
         }
+
+        [Test]
+        public void Listen_ShouldUpdateStatusToListening()
+        {
+            testWorld.Listen();
+            var state = StatusQuery.GetSingleton<NetworkStatus>().State;
+            Debug.Log(state);
+            Assert.AreEqual(NetworkState.Listening, state);
+        }
     }
 }

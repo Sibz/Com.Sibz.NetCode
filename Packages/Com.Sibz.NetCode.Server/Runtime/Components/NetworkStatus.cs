@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-using Unity.Entities;
+﻿using Unity.Entities;
 
 namespace Sibz.NetCode.Server
 {

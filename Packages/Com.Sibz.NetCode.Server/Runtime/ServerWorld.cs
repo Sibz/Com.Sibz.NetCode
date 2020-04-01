@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Unity.Entities;
 using Unity.NetCode;
@@ -12,10 +12,11 @@ namespace Sibz.NetCode.Server
         protected Entity NetworkStatusEntity;
         protected readonly NetworkStreamReceiveSystem NetworkStreamReceiveSystem;
 
-        public ServerWorld(ServerOptions options = null)
-            : base(options??new ServerOptions(), ClientServerBootstrap.CreateServerWorld, new List<Type> {typeof(ServerSystemAttribute)})
+        public ServerWorld(ServerOptions options = null, List<Type> systems = null)
+            : base(options ?? new ServerOptions(), ClientServerBootstrap.CreateServerWorld,
+                systems.AppendTypesWithAttribute<ServerSystemAttribute>())
         {
-            Options = options??new ServerOptions();
+            Options = options ?? new ServerOptions();
 
             NetworkStatusEntity =
                 World.EntityManager.CreateEntity(typeof(NetworkStatus));

@@ -59,12 +59,15 @@ namespace Sibz.NetCode.Tests.Server
         }
 
         [Test]
-        public void WhenClientIsConnected_ShouldHaveCorrectConnectionCount()
+        public void WhenNoClientsConnected_ShouldHaveZeroConnectionCount()
         {
-            Assert.Fail();
+            serverWorld.Listen();
+            serverWorld.World.GetExistingSystem<NetworkStateMonitorSystem>().Update();
+            Assert.AreEqual(0, NetworkStatus.ConnectionCount);
         }
+
         [Test]
-        public void WhenClientIsInGame_ShouldHaveCorrectInGameCount()
+        public void WhenClientIsNotInGame_ShouldHaveCorrectInGameCount()
         {
             Assert.Fail();
         }

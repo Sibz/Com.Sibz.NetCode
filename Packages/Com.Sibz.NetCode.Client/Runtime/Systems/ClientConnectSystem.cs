@@ -2,7 +2,7 @@
 using Unity.Entities;
 using Unity.NetCode;
 
-namespace Sibz.NetCode
+namespace Sibz.NetCode.Client
 {
     [ClientSystem]
     public class ClientConnectSystem : ComponentSystem
@@ -68,7 +68,7 @@ namespace Sibz.NetCode
             }
 
             buffer.AddComponent(buffer.CreateEntity(),
-                new ConnectCompleteEvent
+                new ConnectionCompleteEvent
                 {
                     Success = false,
                     Message = $"Connection Timeout ({clientConnect.Timeout}). State: {clientConnect.State}"
@@ -80,20 +80,20 @@ namespace Sibz.NetCode
         private void ProcessGoingInGameState(ref ClientConnect clientConnect, Entity connectEntity,
             EntityCommandBuffer buffer)
         {
-            if (clientConnect.State != ClientConnectionState.GoingInGame ||
+            if (clientConnect.State != NetworkState.GoingInGame ||
                 incomingConfirmRequestQuery.CalculateEntityCount() <= 0)
             {
                 return;
             }
 
-            buffer.AddComponent(buffer.CreateEntity(), new ConnectCompleteEvent {Success = true});
+            buffer.AddComponent(buffer.CreateEntity(), new ConnectionCompleteEvent {Success = true});
             PostUpdateCommands.DestroyEntity(connectEntity);
             PostUpdateCommands.DestroyEntity(incomingConfirmRequestQuery);
         }
 
         private void ProcessConnectingState(ref ClientConnect clientConnect)
         {
-            if (clientConnect.State != ClientConnectionState.ConnectingToServer ||
+            if (clientConnect.State != NetworkState.ConnectingToServer ||
                 networkStreamQuery.CalculateEntityCount() <= 0)
             {
                 return;
@@ -103,12 +103,12 @@ namespace Sibz.NetCode
 
             CreateRpcRequestSystem.CreateRpcRequest<GoInGameRequest>(World, default);
 
-            clientConnect.State = ClientConnectionState.GoingInGame;
+            clientConnect.State = NetworkState.GoingInGame;
         }
 
         private void ProcessInitialState(ref ClientConnect clientConnect)
         {
-            if (clientConnect.State != ClientConnectionState.InitialRequest)
+            if (clientConnect.State != NetworkState.InitialRequest)
             {
                 return;
             }
@@ -117,7 +117,7 @@ namespace Sibz.NetCode
 /*#if DEBUG
             WorldBase.Debug($"{World.Name}:{clientConnect.EndPoint.Port} Connecting...");
 #endif*/
-            clientConnect.State = ClientConnectionState.ConnectingToServer;
+            clientConnect.State = NetworkState.ConnectingToServer;
         }
     }
 }

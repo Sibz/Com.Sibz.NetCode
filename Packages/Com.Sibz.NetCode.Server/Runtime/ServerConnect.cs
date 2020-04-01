@@ -1,7 +1,7 @@
 ﻿using Sibz.EntityEvents;
 using Unity.Networking.Transport;
 
-namespace Sibz.NetCode
+namespace Sibz.NetCode.Server
 {
     public struct ServerConnect : IEventComponentData
     {

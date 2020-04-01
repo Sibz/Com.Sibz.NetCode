@@ -1,10 +1,11 @@
-﻿namespace Sibz.NetCode
+﻿namespace Sibz.NetCode.Server
 {
     public enum NetworkState : byte
     {
         Uninitialised,
         ListenRequested,
-        ConnectionLive,
-        Disconnected
+        Listening,
+        Disconnected,
+        ListenFailed
     }
 }

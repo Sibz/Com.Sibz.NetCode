@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Networking.Transport;
 using UnityEngine;
 
-namespace Sibz.NetCode
+namespace Sibz.NetCode.Server
 {
     public class ServerOptions : IWorldOptionsBase
     {

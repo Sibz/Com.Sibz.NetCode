@@ -1,6 +1,6 @@
 ﻿using Unity.Entities;
 
-namespace Sibz.NetCode.Components
+namespace Sibz.NetCode.Server
 {
     public struct NetworkStatus : IComponentData
     {

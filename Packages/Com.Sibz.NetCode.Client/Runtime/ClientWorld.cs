@@ -1,6 +1,6 @@
-﻿using Unity.NetCode;
+using Unity.NetCode;
 
-namespace Sibz.NetCode.Client
+namespace Sibz.NetCode
 {
     public class ClientWorld : WorldBase<ClientSimulationSystemGroup>
     {

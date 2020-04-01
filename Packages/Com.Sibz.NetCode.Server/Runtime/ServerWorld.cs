@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sibz.NetCode.Server;
 using Unity.Entities;
 using Unity.NetCode;
 using Unity.Networking.Transport;
 
-namespace Sibz.NetCode.Server
+namespace Sibz.NetCode
 {
     public class ServerWorld : WorldBase<ServerSimulationSystemGroup>
     {

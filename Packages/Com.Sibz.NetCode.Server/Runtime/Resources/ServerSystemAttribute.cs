@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sibz.NetCode.Server
+namespace Sibz.NetCode
 {
     public class ServerSystemAttribute : Attribute
     {

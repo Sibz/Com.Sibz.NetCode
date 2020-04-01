@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Unity.Entities;
 using Unity.NetCode;
@@ -10,7 +10,7 @@ namespace Sibz.NetCode.Server
     {
         protected ServerOptions Options { get; }
         protected Entity NetworkStatusEntity;
-        protected readonly NetworkStreamReceiveSystem NetworkStreamReceiveSystem;
+        protected  NetworkStreamReceiveSystem NetworkStreamReceiveSystem;
 
         public ServerWorld(ServerOptions options = null, List<Type> systems = null)
             : base(options ?? new ServerOptions(), ClientServerBootstrap.CreateServerWorld,
@@ -43,6 +43,15 @@ namespace Sibz.NetCode.Server
             };
 
             World.EntityManager.SetComponentData(NetworkStatusEntity, networkStatus);
+        }
+
+        public void Disconnect()
+        {
+            World.DestroySystem(NetworkStreamReceiveSystem);
+            NetworkStreamReceiveSystem = World.CreateSystem<NetworkStreamReceiveSystem>();
+                World.GetExistingSystem<NetworkReceiveSystemGroup>()
+                .AddSystemToUpdateList(NetworkStreamReceiveSystem);
+                World.GetExistingSystem<NetworkReceiveSystemGroup>().SortSystemUpdateList();
         }
     }
 }

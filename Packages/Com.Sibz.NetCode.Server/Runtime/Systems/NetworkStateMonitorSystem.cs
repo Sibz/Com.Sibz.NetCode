@@ -4,18 +4,20 @@ using Unity.NetCode;
 
 namespace Sibz.NetCode.Server
 {
+    [ServerSystem]
     public sealed class NetworkStateMonitorSystem : JobComponentSystem
     {
         private EntityQuery connectionCountQuery;
         private EntityQuery connectionInGameCountQuery;
-        private NetworkStreamReceiveSystem networkStreamReceiveSystem;
+        private NetworkStreamReceiveSystem pNetworkStreamReceiveSystem;
+        private NetworkStreamReceiveSystem NetworkStreamReceiveSystem =>
+            pNetworkStreamReceiveSystem
+            ?? (pNetworkStreamReceiveSystem = World.GetExistingSystem<NetworkStreamReceiveSystem>());
         private float timeoutTime = -1;
 
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<NetworkStatus>();
-
-            networkStreamReceiveSystem = World.GetExistingSystem<NetworkStreamReceiveSystem>();
 
             connectionInGameCountQuery = GetEntityQuery(typeof(NetworkStreamInGame));
 
@@ -26,7 +28,7 @@ namespace Sibz.NetCode.Server
         {
             UpdateStateJob updateStateJob = new UpdateStateJob
             {
-                Listening = networkStreamReceiveSystem.Driver.Listening,
+                Listening = NetworkStreamReceiveSystem.Driver.Listening,
                 ConnectionCount = connectionCountQuery.CalculateEntityCount(),
                 InGameCount = connectionInGameCountQuery.CalculateEntityCount()
             };

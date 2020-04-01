@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using Sibz.CommandBufferHelpers;
 using Sibz.EntityEvents;
+using Sibz.NetCode.Server;
 using Unity.Entities;
 using Unity.NetCode;
 using Unity.Networking.Transport;
@@ -101,7 +102,7 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
             new List<Type>().AppendTypesWithAttribute<WorldBaseSystemAttribute>();
     }
 
-    public class MyWorldBaseImpl<T> : WorldBase<T>
+    public class MyWorldBaseImpl<T> : WorldBase<T, NetworkStatus>
         where T : ComponentSystemGroup
     {
         public BeginInitCommandBuffer Buffer => CommandBuffer;

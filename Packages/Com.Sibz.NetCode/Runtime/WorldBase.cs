@@ -4,17 +4,20 @@ using Sibz.CommandBufferHelpers;
 using Sibz.EntityEvents;
 using Sibz.WorldSystemHelpers;
 using Unity.Entities;
+using Unity.NetCode;
 
 [assembly: DisableAutoCreation]
 
 namespace Sibz.NetCode
 {
-    public abstract class WorldBase<TDefaultSystemGroup> : IWorldBase
+    public abstract class WorldBase<TDefaultSystemGroup, TStatusComponent> : IWorldBase
         where TDefaultSystemGroup : ComponentSystemGroup
     {
         public World World { get; }
 
         protected readonly BeginInitCommandBuffer CommandBuffer;
+        protected Entity NetworkStatusEntity;
+        protected NetworkStreamReceiveSystem NetworkStreamReceiveSystem;
 
         private readonly IReadOnlyList<Type> baseIncludeSystems = new List<Type>
         {
@@ -36,6 +39,11 @@ namespace Sibz.NetCode
             CommandBuffer = new BeginInitCommandBuffer(World);
 
             options.SharedDataPrefabs.Instantiate();
+
+            NetworkStatusEntity =
+                World.EntityManager.CreateEntity(typeof(TStatusComponent));
+
+            NetworkStreamReceiveSystem = World.GetExistingSystem<NetworkStreamReceiveSystem>();
 
             World.EnqueueEvent<WorldCreated>();
         }

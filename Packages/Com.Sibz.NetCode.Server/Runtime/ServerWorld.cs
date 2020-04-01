@@ -7,22 +7,15 @@ using Unity.Networking.Transport;
 
 namespace Sibz.NetCode
 {
-    public class ServerWorld : WorldBase<ServerSimulationSystemGroup>
+    public class ServerWorld : WorldBase<ServerSimulationSystemGroup, NetworkStatus>
     {
         protected ServerOptions Options { get; }
-        protected Entity NetworkStatusEntity;
-        protected  NetworkStreamReceiveSystem NetworkStreamReceiveSystem;
 
         public ServerWorld(ServerOptions options = null, List<Type> systems = null)
             : base(options ?? new ServerOptions(), ClientServerBootstrap.CreateServerWorld,
                 systems.AppendTypesWithAttribute<ServerSystemAttribute>())
         {
             Options = options ?? new ServerOptions();
-
-            NetworkStatusEntity =
-                World.EntityManager.CreateEntity(typeof(NetworkStatus));
-
-            NetworkStreamReceiveSystem = World.GetExistingSystem<NetworkStreamReceiveSystem>();
 
             if (Options.ConnectOnSpawn)
             {

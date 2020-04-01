@@ -32,13 +32,16 @@ namespace Sibz.NetCode.Server
         public void Listen()
         {
             NetworkEndPoint endPoint = NetworkEndPoint.Parse(Options.Address, Options.Port, Options.NetworkFamily);
-            NetworkStreamReceiveSystem.Connect(endPoint);
+
+            NetworkStreamReceiveSystem.Listen(endPoint);
+
             NetworkStatus networkStatus = new NetworkStatus
             {
                 State = NetworkStreamReceiveSystem.Driver.Listening
                     ? NetworkState.Listening
                     : NetworkState.ListenFailed
             };
+
             World.EntityManager.SetComponentData(NetworkStatusEntity, networkStatus);
         }
     }

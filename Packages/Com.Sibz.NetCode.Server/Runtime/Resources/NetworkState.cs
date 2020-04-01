@@ -3,7 +3,6 @@
     public enum NetworkState : byte
     {
         Uninitialised,
-        ListenRequested,
         Listening,
         Disconnected,
         ListenFailed

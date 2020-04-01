@@ -39,7 +39,6 @@ namespace Sibz.NetCode.Server
                     ? NetworkState.Listening
                     : NetworkState.ListenFailed
             };
-            networkStatus.State = NetworkStreamReceiveSystem.Driver.Listening ? NetworkState.Listening : NetworkState.ListenFailed;
             World.EntityManager.SetComponentData(NetworkStatusEntity, networkStatus);
         }
     }

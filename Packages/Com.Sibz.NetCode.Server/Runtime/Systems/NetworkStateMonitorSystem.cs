@@ -1,6 +1,7 @@
 ﻿using Unity.Entities;
 using Unity.Jobs;
 using Unity.NetCode;
+using UnityEngine;
 
 namespace Sibz.NetCode.Server
 {
@@ -36,6 +37,16 @@ namespace Sibz.NetCode.Server
 
             inputDeps = Entities.ForEach((ref NetworkStatus status) => { updateStateJob.Execute(ref status); })
                 .Schedule(inputDeps);
+
+            NetworkState currentState = GetSingleton<NetworkStatus>().State;
+
+            if (lastKnownState == currentState)
+            {
+                return inputDeps;
+            }
+
+            World.EnqueueEvent(new NetworkStateChangeEvent {StatusEntity = GetSingletonEntity<NetworkStatus>()});
+            lastKnownState = currentState;
 
             return inputDeps;
         }

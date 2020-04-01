@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using Sibz.EntityEvents;
 using Sibz.NetCode.Server;
 using Unity.Entities;
 using Unity.NetCode;
@@ -9,8 +10,12 @@ namespace Sibz.NetCode.Tests.Server
     {
         private ServerWorld serverWorld;
 
-        private EntityQuery NetworkStatusQuery =>
-            serverWorld.World.EntityManager.CreateEntityQuery(typeof(NetworkStatus));
+        private EntityQuery NetworkStatusQuery => GetSingletonQuery<NetworkStatus>();
+
+
+        private EntityQuery GetSingletonQuery<T>()
+            where T : struct, IComponentData=>
+            serverWorld.World.EntityManager.CreateEntityQuery(typeof(T));
 
         private NetworkStatus NetworkStatus => NetworkStatusQuery.GetSingleton<NetworkStatus>();
 
@@ -43,9 +48,8 @@ namespace Sibz.NetCode.Tests.Server
             {
                 Assert.Fail($"Server state should be listening for this test, was {NetworkStatus.State}");
             }
-
             serverWorld.Disconnect();
-            UpdateWorld(serverWorld);
+            serverWorld.World.GetExistingSystem<NetworkStateMonitorSystem>().Update();
             Assert.AreEqual(NetworkState.Disconnected, NetworkStatus.State);
         }
 
@@ -54,7 +58,7 @@ namespace Sibz.NetCode.Tests.Server
         {
             serverWorld.Listen();
             serverWorld.Disconnect();
-            UpdateWorld(serverWorld);
+            serverWorld.World.GetExistingSystem<NetworkStateMonitorSystem>().Update();
             serverWorld.Listen();
             Assert.AreEqual(NetworkState.Listening, NetworkStatus.State);
         }
@@ -65,6 +69,24 @@ namespace Sibz.NetCode.Tests.Server
             serverWorld.Listen();
             serverWorld.World.GetExistingSystem<NetworkStateMonitorSystem>().Update();
             Assert.AreEqual(0, NetworkStatus.ConnectionCount);
+        }
+
+        [Test]
+        public void WhenNetworksStateChanges_ShouldCreateEvent()
+        {
+            if (NetworkStatus.State != NetworkState.Uninitialised)
+            {
+                Assert.Fail($"Server state should be Uninitialised for this test, was {NetworkStatus.State}");
+            }
+            serverWorld.Listen();
+            // Detect change create eventity next frame
+            serverWorld.World.GetExistingSystem<NetworkStateMonitorSystem>().Update();
+            serverWorld.World.GetExistingSystem<EventComponentSystem>().Update();
+            serverWorld.World.GetExistingSystem<BeginInitializationEntityCommandBufferSystem>().Update();
+            //UpdateWorld(serverWorld); // Eventity added
+
+            Assert.AreEqual(1, GetSingletonQuery<NetworkStateChangeEvent>().CalculateEntityCount());
+
         }
 
         [Test]

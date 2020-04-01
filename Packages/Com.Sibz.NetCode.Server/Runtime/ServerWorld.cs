@@ -9,6 +9,8 @@ namespace Sibz.NetCode
 {
     public class ServerWorld : WorldBase<ServerSimulationSystemGroup, NetworkStatus>
     {
+        public Action<Entity> ClientConnected;
+        public Action<Entity> ClientDisconnected;
         protected ServerOptions Options { get; }
 
         public ServerWorld(ServerOptions options = null, List<Type> systems = null)

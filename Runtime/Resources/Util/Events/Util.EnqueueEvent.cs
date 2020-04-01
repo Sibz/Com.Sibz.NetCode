@@ -1,4 +1,5 @@
-﻿using Sibz.EntityEvents;
+﻿using System;
+using Sibz.EntityEvents;
 using Unity.Entities;
 
 namespace Sibz
@@ -8,8 +9,13 @@ namespace Sibz
         public static void EnqueueEvent<T>(this World world, T eventData = default)
             where T : struct, IEventComponentData
         {
+            EventComponentSystem system = world.GetExistingSystem<EventComponentSystem>();
+            if (system is null)
+            {
+                throw new NullReferenceException($"{nameof(EventComponentSystem)} is null. Unable to enqueue event");
+            }
             // ReSharper disable once HeapView.BoxingAllocation
-            world.GetOrCreateSystem<EventComponentSystem>().EnqueueEvent(eventData);
+            system.EnqueueEvent(eventData);
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Sibz.NetCode.Server
         private EntityQuery connectionInGameCountQuery;
         private NetworkStreamReceiveSystem pNetworkStreamReceiveSystem;
         private NetworkState lastKnownState;
+
         private NetworkStreamReceiveSystem NetworkStreamReceiveSystem =>
             pNetworkStreamReceiveSystem
             ?? (pNetworkStreamReceiveSystem = World.GetExistingSystem<NetworkStreamReceiveSystem>());
@@ -33,44 +34,10 @@ namespace Sibz.NetCode.Server
                 InGameCount = connectionInGameCountQuery.CalculateEntityCount()
             };
 
-            inputDeps = Entities.ForEach((ref NetworkStatus status) =>
-            {
-                updateStateJob.Execute(ref status);
-            }).Schedule(inputDeps);
+            inputDeps = Entities.ForEach((ref NetworkStatus status) => { updateStateJob.Execute(ref status); })
+                .Schedule(inputDeps);
 
             return inputDeps;
-        }
-
-        public struct UpdateStateJob
-        {
-            public bool Listening;
-            public int ConnectionCount;
-            public int InGameCount;
-
-            public void Execute(ref NetworkStatus status)
-            {
-                // ReSharper disable once ConvertIfStatementToSwitchStatement
-                if (status.State == NetworkState.Uninitialised)
-                {
-                    return;
-                }
-
-                if (status.State == NetworkState.Listening && !Listening)
-                {
-                    status.State = NetworkState.Disconnected;
-                }
-
-                if (status.State != NetworkState.Listening)
-                {
-                    status.ConnectionCount = 0;
-                    status.InGameClientCount = 0;
-                    return;
-                }
-
-                status.ConnectionCount = ConnectionCount;
-                status.InGameClientCount = InGameCount;
-
-            }
         }
     }
 }

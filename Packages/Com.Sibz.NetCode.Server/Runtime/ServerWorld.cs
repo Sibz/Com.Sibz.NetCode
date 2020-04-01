@@ -13,14 +13,14 @@ namespace Sibz.NetCode.Server
         public ServerWorld(ServerOptions options = null)
             : base(options??new ServerOptions(), ClientServerBootstrap.CreateServerWorld)
         {
-            Options = options;
+            Options = options??new ServerOptions();
 
             NetworkStatusEntity =
                 World.EntityManager.CreateEntity(typeof(NetworkStatus));
 
             NetworkStreamReceiveSystem = World.GetExistingSystem<NetworkStreamReceiveSystem>();
 
-            if (options.ConnectOnSpawn)
+            if (Options.ConnectOnSpawn)
             {
                 Listen();
             }

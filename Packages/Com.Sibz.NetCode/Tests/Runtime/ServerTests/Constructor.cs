@@ -12,17 +12,18 @@ namespace Sibz.NetCode.Tests.Server
         private EntityQuery StatusQuery =>
             testWorld.World.EntityManager.CreateEntityQuery(typeof(NetworkStatus));
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+        [SetUp]
+        public void ConstructorSetUp()
         {
             testWorld = new ServerWorld();
         }
 
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
+        [TearDown]
+        public void ConstructorTearDown()
         {
             testWorld.Dispose();
         }
+
         [Test]
         public void ShouldCreateStatusEntity()
         {

@@ -10,7 +10,7 @@ namespace Sibz.NetCode.Server
         public string WorldName { get; set; } = "Server";
         public List<GameObject> SharedDataPrefabs { get; } = new List<GameObject>();
         public List<Type> SystemImportAttributes { get; } = new List<Type>();
-        public bool ConnectOnSpawn { get; set; } = true;
+        public bool ConnectOnSpawn { get; set; } = false;
         public int ConnectTimeout { get; set; } = 2;
         public string Address { get; set; } = "0.0.0.0";
         public ushort Port { get; set; } = 21650;

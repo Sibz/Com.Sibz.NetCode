@@ -15,6 +15,8 @@ namespace Sibz.NetCode
     {
         public World World { get; }
 
+        public Action<TStatusComponent> NetworksStateChange;
+
         protected readonly BeginInitCommandBuffer CommandBuffer;
         protected Entity NetworkStatusEntity;
         protected NetworkStreamReceiveSystem NetworkStreamReceiveSystem;
@@ -62,6 +64,11 @@ namespace Sibz.NetCode
         public void Dispose()
         {
             World.Dispose();
+        }
+
+        internal void OnNetworkStateChange(TStatusComponent status)
+        {
+            NetworksStateChange?.Invoke(status);
         }
     }
 }

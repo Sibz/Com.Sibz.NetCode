@@ -1,6 +1,6 @@
 ﻿namespace Sibz.NetCode.Server
 {
-    public struct UpdateStateJob
+    public struct UpdateStateJob : INetworkStateChangeJob<NetworkStatus>
     {
         public bool Listening;
         public int ConnectionCount;
@@ -16,7 +16,7 @@
 
             if (status.State == NetworkState.Listening && !Listening)
             {
-                status.State = NetworkState.Disconnected;
+                status.NetworkState = NetworkState.Disconnected;
             }
 
             if (status.State != NetworkState.Listening)

@@ -35,7 +35,7 @@ namespace Sibz.NetCode
 
             NetworkStatus networkStatus = new NetworkStatus
             {
-                State = NetworkStreamReceiveSystem.Driver.Listening
+                NetworkState = NetworkStreamReceiveSystem.Driver.Listening
                     ? NetworkState.Listening
                     : NetworkState.ListenFailed
             };

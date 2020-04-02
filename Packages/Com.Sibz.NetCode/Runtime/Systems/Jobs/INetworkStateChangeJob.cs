@@ -5,6 +5,6 @@ namespace Sibz.NetCode
     public interface INetworkStateChangeJob<TStatusComponent>
     where TStatusComponent: struct, IComponentData
     {
-        void Execute<T>(ref T statusComponent);
+        void Execute(ref TStatusComponent statusComponent);
     }
 }

@@ -20,6 +20,7 @@ namespace Sibz.NetCode
         protected readonly BeginInitCommandBuffer CommandBuffer;
         protected Entity NetworkStatusEntity;
         protected NetworkStreamReceiveSystem NetworkStreamReceiveSystem;
+        protected NetCodeHookSystem HookSystem;
 
         private readonly IReadOnlyList<Type> baseIncludeSystems = new List<Type>
         {
@@ -47,6 +48,10 @@ namespace Sibz.NetCode
 
             NetworkStreamReceiveSystem = World.GetExistingSystem<NetworkStreamReceiveSystem>();
 
+            HookSystem = World.GetExistingSystem<NetCodeHookSystem>();
+
+            HookSystem.RegisterHook<NetworkStateChangeEvent>(OnNetworkStateChange);
+
             World.EnqueueEvent<WorldCreated>();
         }
 
@@ -66,9 +71,9 @@ namespace Sibz.NetCode
             World.Dispose();
         }
 
-        internal void OnNetworkStateChange(TStatusComponent status)
+        internal void OnNetworkStateChange(IEventComponentData status)
         {
-            NetworksStateChange?.Invoke(status);
+            NetworksStateChange?.Invoke((TStatusComponent)status);
         }
     }
 }

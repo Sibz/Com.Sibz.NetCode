@@ -13,10 +13,63 @@ namespace Sibz.EntityEvents
     {
         private EntityQuery allEventComponentsQuery;
         private BeginInitCommandBuffer commandBuffer;
+        private BeginInitCommandBuffer commandBufferConcurrent;
         private readonly Queue<object> eventQueue = new Queue<object>();
+        private int concurrentRequestCount;
 
         // ReSharper disable once MemberCanBePrivate.Global
         public static readonly ComponentType[] EventTypes = GetEventTypes();
+
+        public EnqueueEventJobPart<T> GetJobPart<T>(T eventData)
+            where T : struct, IEventComponentData
+        {
+            // This ensures the non concurrent buffer is created/executed first
+            // Required as the destroy entities on OnUpdate needs to occur first
+            // The actual exception should never be thrown
+            if (!commandBuffer.Buffer.IsCreated)
+            {
+                throw new InvalidOperationException();
+            }
+
+            return new EnqueueEventJobPart<T>
+            {
+                //TODO CommandBuffer should provide ability to get new Concurrent Buffer
+                CommandBuffer = new BeginInitCommandBuffer(World).Concurrent,
+                EventData = eventData,
+                Index = concurrentRequestCount++
+            };
+        }
+
+        public void ConcurrentBufferAddJobDependency(JobHandle job) =>
+            commandBufferConcurrent.AddJobDependency(job);
+
+        public void EnqueueEvent(object eventData)
+        {
+            eventQueue.Enqueue(eventData);
+        }
+
+        protected override void OnCreate()
+        {
+            allEventComponentsQuery = GetEntityQuery(new EntityQueryDesc {Any = EventTypes});
+            commandBuffer = new BeginInitCommandBuffer(World);
+            commandBufferConcurrent = new BeginInitCommandBuffer(World);
+        }
+
+        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        {
+            // TODO This should reset only when commandBufferConcurrent gets a new
+            // command buffer internally. Need a hook there to reset this.
+            concurrentRequestCount = 0;
+
+            commandBuffer.Buffer.DestroyEntity(allEventComponentsQuery);
+
+            while (eventQueue.Count > 0)
+            {
+                CreateSingletonFromObject(eventQueue.Dequeue());
+            }
+
+            return inputDeps;
+        }
 
         private static ComponentType[] GetEventTypes()
         {
@@ -31,30 +84,6 @@ namespace Sibz.EntityEvents
             return types.ToArray();
         }
 
-
-        public void EnqueueEvent(object eventData)
-        {
-            eventQueue.Enqueue(eventData);
-        }
-
-        protected override void OnCreate()
-        {
-            allEventComponentsQuery = GetEntityQuery(new EntityQueryDesc {Any = EventTypes});
-            commandBuffer = new BeginInitCommandBuffer(World);
-        }
-
-        protected override JobHandle OnUpdate(JobHandle inputDeps)
-        {
-            commandBuffer.Buffer.DestroyEntity(allEventComponentsQuery);
-
-            while (eventQueue.Count > 0)
-            {
-                CreateSingletonFromObject(eventQueue.Dequeue());
-            }
-
-            return inputDeps;
-        }
-
         private void CreateSingletonFromObject(object obj)
         {
             var method = typeof(EventComponentSystem).GetMethod(nameof(CreateSingleton),
@@ -64,7 +93,7 @@ namespace Sibz.EntityEvents
                 throw new NullReferenceException($"Unable to get method {nameof(CreateSingleton)}");
             }
 
-            method.MakeGenericMethod(obj.GetType()).Invoke(this, new object[1] { obj });
+            method.MakeGenericMethod(obj.GetType()).Invoke(this, new [] {obj});
         }
 
         // ReSharper disable once UnusedMember.Local

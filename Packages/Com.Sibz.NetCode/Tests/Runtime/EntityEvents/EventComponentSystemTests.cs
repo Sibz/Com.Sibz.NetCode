@@ -1,8 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
-using Sibz.CommandBufferHelpers;
 using Unity.Entities;
-using UnityEngine;
+using Unity.Jobs;
 
 // ReSharper disable HeapView.BoxingAllocation
 
@@ -118,11 +117,24 @@ namespace Sibz.EntityEvents.Tests
         }
 
         [Test]
-        public void WhenEnqueuingWithData_ShouldHaveCorrectData ()
+        public void WhenEnqueuingWithData_ShouldHaveCorrectData()
         {
-            TestWorld.EnqueueEvent(new TestEventWithData{ Index = 5});
+            TestWorld.EnqueueEvent(new TestEventWithData {Index = 5});
             EventComponentSystem.Update();
             BufferSystem.Update();
+            Assert.AreEqual(5, GetSingletonQuery<TestEventWithData>().GetSingleton<TestEventWithData>().Index);
+        }
+
+        [Test]
+        public void ConcurrentJobs_ShouldRaiseEvents()
+        {
+            EventComponentSystem.Update();
+            BufferSystem.Update();
+            TestEventRaisingSystem system = TestWorld.CreateSystem<TestEventRaisingSystem>();
+            system.Update();
+            EventComponentSystem.Update();
+            BufferSystem.Update();
+            Assert.AreEqual(1, GetSingletonQuery<TestEvent>().CalculateEntityCount());
             Assert.AreEqual(5, GetSingletonQuery<TestEventWithData>().GetSingleton<TestEventWithData>().Index);
         }
 
@@ -133,6 +145,41 @@ namespace Sibz.EntityEvents.Tests
         public struct TestEventWithData : IEventComponentData
         {
             public int Index;
+        }
+
+        public struct ConcurrentRaiseEventTest<T> : IJob
+            where T : struct, IEventComponentData
+        {
+            public EnqueueEventJobPart<T> JobPart;
+
+            public void Execute()
+            {
+                JobPart.Execute();
+            }
+        }
+
+        [DisableAutoCreation]
+        public class TestEventRaisingSystem : JobComponentSystem
+        {
+            protected override JobHandle OnUpdate(JobHandle inputDeps)
+            {
+                Enabled = false;
+                inputDeps = new ConcurrentRaiseEventTest<TestEvent>
+                {
+                    JobPart = World.GetEnqueueEventJobPart<TestEvent>()
+                }.Schedule(inputDeps);
+                inputDeps = new ConcurrentRaiseEventTest<TestEventWithData>
+                {
+                    JobPart = World.GetEnqueueEventJobPart(new TestEventWithData
+                    {
+                        Index = 5
+                    })
+                }.Schedule(inputDeps);
+
+                World.EventSystemAddJobDependency(inputDeps);
+
+                return inputDeps;
+            }
         }
     }
 }

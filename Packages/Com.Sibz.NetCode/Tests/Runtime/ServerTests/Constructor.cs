@@ -34,7 +34,7 @@ namespace Sibz.NetCode.Tests.Server
         public void Listen_ShouldUpdateStatus()
         {
             testWorld.Listen();
-            var state = StatusQuery.GetSingleton<NetworkStatus>().State;
+            NetworkState state = StatusQuery.GetSingleton<NetworkStatus>().State;
             Debug.Log(state);
             Assert.AreNotEqual(NetworkState.Uninitialised, state);
         }
@@ -43,7 +43,7 @@ namespace Sibz.NetCode.Tests.Server
         public void Listen_ShouldUpdateStatusToListening()
         {
             testWorld.Listen();
-            var state = StatusQuery.GetSingleton<NetworkStatus>().State;
+            NetworkState state = StatusQuery.GetSingleton<NetworkStatus>().State;
             Debug.Log(state);
             Assert.AreEqual(NetworkState.Listening, state);
         }

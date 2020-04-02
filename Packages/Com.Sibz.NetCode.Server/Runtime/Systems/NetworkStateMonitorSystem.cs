@@ -1,7 +1,5 @@
 ﻿using Unity.Entities;
-using Unity.Jobs;
 using Unity.NetCode;
-using UnityEngine;
 
 namespace Sibz.NetCode.Server
 {
@@ -21,12 +19,14 @@ namespace Sibz.NetCode.Server
             base.OnCreate();
         }
 
-        protected override UpdateStateJob CreateJob() =>
-            new UpdateStateJob
+        protected override UpdateStateJob CreateJob()
+        {
+            return new UpdateStateJob
             {
                 Listening = NetworkStreamReceiveSystem.Driver.Listening,
                 ConnectionCount = connectionCountQuery.CalculateEntityCount(),
                 InGameCount = connectionInGameCountQuery.CalculateEntityCount()
             };
+        }
     }
 }

@@ -1,9 +1,6 @@
 ﻿using NUnit.Framework;
 using Unity.Entities;
 using Unity.NetCode;
-using UnityEngine;
-
-
 
 namespace Sibz.NetCode.Tests
 {

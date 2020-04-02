@@ -14,8 +14,10 @@ namespace Sibz.NetCode.Tests.Server
 
 
         private EntityQuery GetSingletonQuery<T>()
-            where T : struct, IComponentData=>
-            serverWorld.World.EntityManager.CreateEntityQuery(typeof(T));
+            where T : struct, IComponentData
+        {
+            return serverWorld.World.EntityManager.CreateEntityQuery(typeof(T));
+        }
 
         private NetworkStatus NetworkStatus => NetworkStatusQuery.GetSingleton<NetworkStatus>();
 
@@ -27,7 +29,7 @@ namespace Sibz.NetCode.Tests.Server
         [SetUp]
         public void SetUp()
         {
-            serverWorld = new ServerWorld(new ServerOptions() {Port = 20250});
+            serverWorld = new ServerWorld(new ServerOptions {Port = 20250});
         }
 
         [TearDown]
@@ -48,6 +50,7 @@ namespace Sibz.NetCode.Tests.Server
             {
                 Assert.Fail($"Server state should be listening for this test, was {NetworkStatus.State}");
             }
+
             serverWorld.Disconnect();
             serverWorld.World.GetExistingSystem<NetworkStateMonitorSystem>().Update();
             Assert.AreEqual(NetworkState.Disconnected, NetworkStatus.State);
@@ -78,6 +81,7 @@ namespace Sibz.NetCode.Tests.Server
             {
                 Assert.Fail($"Server state should be Uninitialised for this test, was {NetworkStatus.State}");
             }
+
             serverWorld.Listen();
             // Detect change create eventity next frame
             serverWorld.World.GetExistingSystem<NetworkStateMonitorSystem>().Update();
@@ -86,7 +90,6 @@ namespace Sibz.NetCode.Tests.Server
             //UpdateWorld(serverWorld); // Eventity added
 
             Assert.AreEqual(1, GetSingletonQuery<NetworkStateChangeEvent>().CalculateEntityCount());
-
         }
 
         [Test]

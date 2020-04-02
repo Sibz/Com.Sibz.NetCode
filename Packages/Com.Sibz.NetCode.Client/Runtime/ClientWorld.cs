@@ -14,7 +14,8 @@ namespace Sibz.NetCode
         protected ClientOptions Options { get; }
 
         protected ClientWorld(ClientOptions options, List<Type> systems = null)
-        : base(options??new ClientOptions(), ClientServerBootstrap.CreateClientWorld, systems.AppendTypesWithAttribute<ClientSystemAttribute>())
+            : base(options ?? new ClientOptions(), ClientServerBootstrap.CreateClientWorld,
+                systems.AppendTypesWithAttribute<ClientSystemAttribute>())
         {
             Options = options ?? new ClientOptions();
 

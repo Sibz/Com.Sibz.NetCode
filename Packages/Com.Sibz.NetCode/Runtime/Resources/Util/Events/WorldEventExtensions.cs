@@ -14,6 +14,7 @@ namespace Sibz.EntityEvents
             {
                 throw new NullReferenceException($"{nameof(EventComponentSystem)} is null. Unable to enqueue event");
             }
+
             // ReSharper disable once HeapView.BoxingAllocation
             system.EnqueueEvent(eventData);
         }
@@ -37,6 +38,7 @@ namespace Sibz.EntityEvents
             {
                 throw new NullReferenceException($"{nameof(EventComponentSystem)} is null. Unable to enqueue event");
             }
+
             system.ConcurrentBufferAddJobDependency(job);
         }
     }

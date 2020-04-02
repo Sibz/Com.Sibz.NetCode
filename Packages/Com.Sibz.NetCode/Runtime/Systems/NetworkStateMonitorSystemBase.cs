@@ -1,7 +1,5 @@
 ﻿using System;
 using Sibz.EntityEvents;
-using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.NetCode;
@@ -9,9 +7,9 @@ using Unity.NetCode;
 namespace Sibz.NetCode
 {
     public abstract class NetworkStateMonitorSystemBase<TStatusComponent, TState, TJob> : JobComponentSystem
-    where TStatusComponent : struct, INetworkStatus<TState>
-    where TState: Enum
-    where TJob: struct, INetworkStateChangeJob<TStatusComponent>
+        where TStatusComponent : struct, INetworkStatus<TState>
+        where TState : Enum
+        where TJob : struct, INetworkStateChangeJob<TStatusComponent>
     {
         private EntityQuery networkStatusQuery;
         private NetworkStreamReceiveSystem pNetworkStreamReceiveSystem;

@@ -1,6 +1,4 @@
-﻿using Unity.Entities;
-
-namespace Sibz.NetCode.Server
+﻿namespace Sibz.NetCode.Server
 {
     public struct NetworkStatus : INetworkStatus<NetworkState>
     {

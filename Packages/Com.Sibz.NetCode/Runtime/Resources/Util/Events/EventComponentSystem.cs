@@ -40,8 +40,10 @@ namespace Sibz.EntityEvents
             };
         }
 
-        public void ConcurrentBufferAddJobDependency(JobHandle job) =>
+        public void ConcurrentBufferAddJobDependency(JobHandle job)
+        {
             commandBufferConcurrent.AddJobDependency(job);
+        }
 
         public void EnqueueEvent(object eventData)
         {
@@ -86,14 +88,14 @@ namespace Sibz.EntityEvents
 
         private void CreateSingletonFromObject(object obj)
         {
-            var method = typeof(EventComponentSystem).GetMethod(nameof(CreateSingleton),
+            MethodInfo method = typeof(EventComponentSystem).GetMethod(nameof(CreateSingleton),
                 BindingFlags.Instance | BindingFlags.NonPublic);
             if (method is null)
             {
                 throw new NullReferenceException($"Unable to get method {nameof(CreateSingleton)}");
             }
 
-            method.MakeGenericMethod(obj.GetType()).Invoke(this, new [] {obj});
+            method.MakeGenericMethod(obj.GetType()).Invoke(this, new[] {obj});
         }
 
         // ReSharper disable once UnusedMember.Local

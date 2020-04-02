@@ -19,14 +19,21 @@ namespace Sibz.EntityEvents.Tests
 
         private static Entity GetSingletonEntity<T>()
             where T : struct, IComponentData
-            => GetSingletonQuery<T>().GetSingletonEntity();
+        {
+            return GetSingletonQuery<T>().GetSingletonEntity();
+        }
 
         public static T GetSingleton<T>()
             where T : struct, IComponentData
-            => GetSingletonQuery<T>().GetSingleton<T>();
+        {
+            return GetSingletonQuery<T>().GetSingleton<T>();
+        }
 
         private static EntityQuery GetSingletonQuery<T>()
-            where T : struct, IComponentData => TestWorld.EntityManager.CreateEntityQuery(typeof(T));
+            where T : struct, IComponentData
+        {
+            return TestWorld.EntityManager.CreateEntityQuery(typeof(T));
+        }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()

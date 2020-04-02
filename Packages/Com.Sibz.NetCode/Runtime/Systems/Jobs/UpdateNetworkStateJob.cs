@@ -7,8 +7,8 @@ namespace Sibz.NetCode
 {
     [BurstCompile]
     public struct UpdateNetworkStateJob<TStatusComponent, TJob> : IJobChunk
-        where TStatusComponent: struct, IComponentData
-        where TJob: INetworkStateChangeJob<TStatusComponent>
+        where TStatusComponent : struct, IComponentData
+        where TJob : INetworkStateChangeJob<TStatusComponent>
     {
         public TJob Job;
         public ArchetypeChunkComponentType<TStatusComponent> StatusComponentType;
@@ -23,6 +23,7 @@ namespace Sibz.NetCode
             {
                 return;
             }
+
             TStatusComponent status = statuses[0];
             Job.Execute(ref status);
             statuses[0] = status;

@@ -4,6 +4,5 @@ namespace Sibz.NetCode
 {
     public class ServerSystemAttribute : Attribute
     {
-
     }
 }

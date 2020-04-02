@@ -116,7 +116,11 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
 
     public class MyClientWorld : MyWorldBaseImpl<ClientSimulationSystemGroup>
     {
-        public MyClientWorld(string name = "TestClient") : base(new MyOptionsImpl { WorldName = name }, ClientServerBootstrap.CreateClientWorld)
+        public MyClientWorld(string name = "TestClient") : base(new MyOptionsImpl
+            {
+                WorldName = name
+            },
+            ClientServerBootstrap.CreateClientWorld)
         {
         }
     }
@@ -143,9 +147,8 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
     [ClientAndServerSystem]
     public class MySystem : ComponentSystem
     {
-       protected override void OnUpdate()
+        protected override void OnUpdate()
         {
-
         }
     }
 }

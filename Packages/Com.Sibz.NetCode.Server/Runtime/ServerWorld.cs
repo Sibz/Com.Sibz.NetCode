@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Sibz.NetCode.Server;
+using Sibz.WorldSystemHelpers;
 using Unity.Entities;
 using Unity.NetCode;
 using Unity.Networking.Transport;
@@ -46,10 +47,9 @@ namespace Sibz.NetCode
         public void Disconnect()
         {
             World.DestroySystem(NetworkStreamReceiveSystem);
-            NetworkStreamReceiveSystem = World.CreateSystem<NetworkStreamReceiveSystem>();
-                World.GetExistingSystem<NetworkReceiveSystemGroup>()
-                .AddSystemToUpdateList(NetworkStreamReceiveSystem);
-                World.GetExistingSystem<NetworkReceiveSystemGroup>().SortSystemUpdateList();
+            World.CreateInGroup(typeof(NetworkStreamReceiveSystem),
+                World.GetExistingSystem<NetworkReceiveSystemGroup>());
+            NetworkStreamReceiveSystem = World.GetExistingSystem<NetworkStreamReceiveSystem>();
         }
     }
 }

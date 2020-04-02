@@ -1,7 +1,8 @@
 ﻿namespace Sibz.NetCode.Client
 {
-    public class NetworkStatus
+    public struct NetworkStatus : INetworkStatus<NetworkState>
     {
-        public NetworkState State;
+        public NetworkState NetworkState;
+        public NetworkState State => NetworkState;
     }
 }

@@ -99,7 +99,7 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
         }
 
         public static IEnumerable<Type> WorldBaseSystemTypes =
-            new List<Type>().AppendTypesWithAttribute<WorldBaseSystemAttribute>();
+            new List<Type>().AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
     }
 
     public class MyWorldBaseImpl<T> : WorldBase<T, NetworkStatus>
@@ -140,7 +140,7 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
         public NetworkFamily NetworkFamily { get; set; } = NetworkFamily.Ipv4;
     }
 
-    [WorldBaseSystem]
+    [ClientAndServerSystem]
     public class MySystem : ComponentSystem
     {
        protected override void OnUpdate()

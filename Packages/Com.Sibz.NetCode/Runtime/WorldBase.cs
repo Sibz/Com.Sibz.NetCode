@@ -56,7 +56,7 @@ namespace Sibz.NetCode
 
             systems.AddRange(baseIncludeSystems);
 
-            systems.AppendTypesWithAttribute<WorldBaseSystemAttribute>();
+            systems.AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
 
             World.ImportSystemsFromList<TDefaultSystemGroup>(systems);
         }

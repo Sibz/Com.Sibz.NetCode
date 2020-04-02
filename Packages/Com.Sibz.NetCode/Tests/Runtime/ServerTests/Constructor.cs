@@ -47,5 +47,14 @@ namespace Sibz.NetCode.Tests.Server
             Debug.Log(state);
             Assert.AreEqual(NetworkState.Listening, state);
         }
+
+        [Test]
+        public void WhenListening_ShouldCreateNetworkStateChangeEvent()
+        {
+            testWorld.Listen();
+            testWorld.World.GetExistingSystem<BeginInitializationEntityCommandBufferSystem>().Update();
+            Assert.AreEqual(1,
+                testWorld.World.EntityManager.CreateEntityQuery(typeof(NetworkStateChangeEvent)).CalculateEntityCount());
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sibz.EntityEvents;
 using Sibz.NetCode.Server;
 using Sibz.WorldSystemHelpers;
 using Unity.Entities;
@@ -42,6 +43,8 @@ namespace Sibz.NetCode
             };
 
             World.EntityManager.SetComponentData(NetworkStatusEntity, networkStatus);
+
+            World.EnqueueEvent(new NetworkStateChangeEvent {StatusEntity = NetworkStatusEntity});
         }
 
         public void Disconnect()

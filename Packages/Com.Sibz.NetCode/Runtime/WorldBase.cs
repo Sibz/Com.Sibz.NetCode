@@ -22,11 +22,6 @@ namespace Sibz.NetCode
         protected NetworkStreamReceiveSystem NetworkStreamReceiveSystem;
         protected NetCodeHookSystem HookSystem;
 
-        private readonly IReadOnlyList<Type> baseIncludeSystems = new List<Type>
-        {
-            typeof(EventComponentSystem)
-        };
-
         protected WorldBase(IWorldOptionsBase options, Func<World, string, World> creationMethod,
             List<Type> systems = null)
         {
@@ -58,8 +53,6 @@ namespace Sibz.NetCode
         private void ImportSystems(List<Type> systems)
         {
             systems = systems ?? new List<Type>();
-
-            systems.AddRange(baseIncludeSystems);
 
             systems.AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
 

@@ -5,6 +5,7 @@ using Unity.NetCode;
 
 namespace Sibz.NetCode
 {
+    [ClientAndServerSystem]
     public class CreateRpcRequestSystem : JobComponentSystem
     {
         private EntityQuery commandTargetComponentEntityQuery;

@@ -2,7 +2,7 @@
 
 namespace Sibz.NetCode
 {
-    public struct WorldCreated : IEventComponentData
+    public struct WorldCreatedEvent : IEventComponentData
     {
     }
 }

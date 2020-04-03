@@ -93,7 +93,7 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
             test.World.GetExistingSystem<ClientSimulationSystemGroup>().Update();
             test.World.GetExistingSystem<ClientInitializationSystemGroup>().Update();
             World.Update();
-            EntityQuery q = test.World.EntityManager.CreateEntityQuery(typeof(WorldCreated));
+            EntityQuery q = test.World.EntityManager.CreateEntityQuery(typeof(WorldCreatedEvent));
             Assert.AreEqual(1, q.CalculateEntityCount());
             test.Dispose();
         }

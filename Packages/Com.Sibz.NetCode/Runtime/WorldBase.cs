@@ -52,7 +52,7 @@ namespace Sibz.NetCode
 
             HookSystem.RegisterHook<NetworkStateChangeEvent>(OnNetworkStateChange);
 
-            World.EnqueueEvent<WorldCreated>();
+            World.EnqueueEvent<WorldCreatedEvent>();
         }
 
         private void ImportSystems(List<Type> systems)

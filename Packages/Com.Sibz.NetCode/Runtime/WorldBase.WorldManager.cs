@@ -27,9 +27,9 @@ namespace Sibz.NetCode
 
             public void CreateWorld()
             {
-                World = worldBase.creationMethod.Invoke(World.DefaultGameObjectInjectionWorld, Options.WorldName);
+                World = worldBase.CreationMethod.Invoke(World.DefaultGameObjectInjectionWorld, Options.WorldName);
 
-                World.ImportSystemsFromList<TDefaultSystemGroup>(worldBase.systems);
+                World.ImportSystemsFromList<TDefaultSystemGroup>(worldBase.Systems);
 
                 worldBase.CommandBuffer = new BeginInitCommandBuffer(World);
 

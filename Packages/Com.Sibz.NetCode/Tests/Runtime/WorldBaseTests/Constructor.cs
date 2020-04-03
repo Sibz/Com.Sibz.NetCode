@@ -29,84 +29,18 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
             myClientWorld.Dispose();
         }
 
-        [Test]
-        public void ShouldCreateServerWorld()
-        {
-            using (MyServerWorld myServerWorld = new MyServerWorld())
-            {
-                Assert.IsNotNull(myServerWorld.World);
-                Assert.IsTrue(World.All.Contains(myServerWorld.World));
-                Assert.IsNotNull(myServerWorld.World.GetExistingSystem<ServerSimulationSystemGroup>());
-            }
-        }
 
-        [Test]
-        public void ShouldCreateClientWorld()
-        {
-            Assert.IsNotNull(myClientWorld.World);
-            Assert.IsTrue(World.All.Contains(myClientWorld.World));
-            Assert.IsNotNull(myClientWorld.World.GetExistingSystem<ClientSimulationSystemGroup>());
-        }
-
-        [Test]
-        public void ShouldAddEventComponentSystem()
-        {
-            Assert.IsNotNull(myClientWorld.World.GetExistingSystem<EventComponentSystem>());
-        }
-
-        [Test]
-        public void ShouldCreateBuffer()
-        {
-            Assert.IsNotNull(myClientWorld.Buffer);
-        }
-
-        [Test]
-        public void ShouldCreateBufferThatIsCreated()
-        {
-            Assert.IsTrue(myClientWorld.Buffer.Buffer.IsCreated);
-        }
-
-        [Test]
-        public void ShouldBeAbleToUseBuffer()
-        {
-            myClientWorld.Buffer.Buffer.CreateEntity();
-        }
-
-        [Test]
-        public void ShouldImportWorldBaseSystems(
-            [ValueSource(nameof(WorldBaseSystemTypes))]
-            Type systemType)
-        {
-            Assert.IsNotNull(myClientWorld.World.GetExistingSystem(systemType));
-        }
-
-        [Test]
-        public void ShouldImportSharedDataPrefabs()
-        {
-            Assert.IsNotNull(GameObject.Find("Test"));
-        }
-
-        [Test]
-        public void ShouldCreateWorldCreatedEventEntity()
-        {
-            MyClientWorld test = new MyClientWorld("ClientTestTEST");
-            test.World.GetExistingSystem<ClientSimulationSystemGroup>().Update();
-            test.World.GetExistingSystem<ClientInitializationSystemGroup>().Update();
-            World.Update();
-            EntityQuery q = test.World.EntityManager.CreateEntityQuery(typeof(WorldCreatedEvent));
-            Assert.AreEqual(1, q.CalculateEntityCount());
-            test.Dispose();
-        }
 
         public static IEnumerable<Type> WorldBaseSystemTypes =
             new List<Type>().AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
     }
 
-    public class MyWorldBaseImpl<T> : WorldBase<T, NetworkStatus>
+    public class MyWorldBaseImpl<T> : WorldBase<T>
         where T : ComponentSystemGroup
     {
         public BeginInitCommandBuffer Buffer => CommandBuffer;
-
+        public new IWorldOptionsBase Options => base.Options;
+        public new List<Type> Systems => base.Systems;
 
         public MyWorldBaseImpl(IWorldOptionsBase options, Func<World, string, World> creationMethod,
             List<Type> systems = null) : base(options, creationMethod, systems)

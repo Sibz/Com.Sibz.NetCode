@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sibz.NetCode.Client;
 using Unity.Entities;
 using Unity.NetCode;
 using Unity.Networking.Transport;
@@ -9,7 +8,7 @@ using Unity.Networking.Transport;
 
 namespace Sibz.NetCode
 {
-    public class ClientWorld : WorldBase<ClientSimulationSystemGroup, NetworkStatus>
+    public class ClientWorld : WorldBase<ClientSimulationSystemGroup>
     {
         protected ClientOptions Options { get; }
 

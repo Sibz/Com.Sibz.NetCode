@@ -11,7 +11,7 @@ using Unity.Networking.Transport;
 
 namespace Sibz.NetCode
 {
-    public class ServerWorld : WorldBase<ServerSimulationSystemGroup, NetworkStatus>
+    public class ServerWorld : WorldBase<ServerSimulationSystemGroup>
     {
         public Action<Entity> ClientConnected;
         public Action<Entity> ClientDisconnected;
@@ -35,16 +35,17 @@ namespace Sibz.NetCode
 
             NetworkStreamReceiveSystem.Listen(endPoint);
 
-            NetworkStatus networkStatus = new NetworkStatus
+            /*NetworkStatus networkStatus = new NetworkStatus
             {
                 NetworkState = NetworkStreamReceiveSystem.Driver.Listening
                     ? NetworkState.Listening
                     : NetworkState.ListenFailed
-            };
+            };*/
 
+            /*
             World.EntityManager.SetComponentData(NetworkStatusEntity, networkStatus);
 
-            World.EnqueueEvent(new NetworkStateChangeEvent {StatusEntity = NetworkStatusEntity});
+            World.EnqueueEvent(new NetworkStateChangeEvent {StatusEntity = NetworkStatusEntity});*/
         }
 
         public void Disconnect()

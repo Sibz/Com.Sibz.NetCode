@@ -21,9 +21,9 @@ namespace Sibz.NetCode
         protected BeginInitCommandBuffer CommandBuffer { get; private set; }
         protected NetworkStreamReceiveSystem NetworkStreamReceiveSystem;
         protected NetCodeHookSystem HookSystem;
+        protected Func<World, string, World> CreationMethod;
+        protected readonly List<Type> Systems;
 
-        private Func<World, string, World> creationMethod;
-        private List<Type> systems;
         private IWorldManager worldManager;
 
         protected WorldBase(IWorldOptionsBase options, Func<World, string, World> creationMethod,
@@ -34,11 +34,11 @@ namespace Sibz.NetCode
                 throw new ArgumentNullException(creationMethod is null ? nameof(creationMethod) : nameof(options));
             }
 
-            this.systems = systems.AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
+            Systems = systems.AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
 
             Options = options;
 
-            worldManager = new WorldManagerClass(this);
+            worldManager = worldManager ?? new WorldManagerClass(this);
         }
 
         public void Dispose()

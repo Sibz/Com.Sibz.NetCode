@@ -10,20 +10,21 @@ using Unity.NetCode;
 
 namespace Sibz.NetCode
 {
-    public abstract class WorldBase<TDefaultSystemGroup> : IWorldBase
+    public abstract partial class WorldBase<TDefaultSystemGroup> : IWorldBase
         where TDefaultSystemGroup : ComponentSystemGroup
     {
         public World World { get; protected set; }
+
+        public IWorldManager WorldManager { set => worldManager = value; }
 
         protected virtual IWorldOptionsBase Options { get; }
         protected BeginInitCommandBuffer CommandBuffer { get; private set; }
         protected NetworkStreamReceiveSystem NetworkStreamReceiveSystem;
         protected NetCodeHookSystem HookSystem;
 
-
         private Func<World, string, World> creationMethod;
         private List<Type> systems;
-
+        private IWorldManager worldManager;
 
         protected WorldBase(IWorldOptionsBase options, Func<World, string, World> creationMethod,
             List<Type> systems = null)
@@ -36,28 +37,8 @@ namespace Sibz.NetCode
             this.systems = systems.AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
 
             Options = options;
-        }
 
-        protected virtual void CreateWorld()
-        {
-            World = creationMethod.Invoke(World.DefaultGameObjectInjectionWorld, Options.WorldName);
-
-            World.ImportSystemsFromList<TDefaultSystemGroup>(systems);
-
-            CommandBuffer = new BeginInitCommandBuffer(World);
-
-            Options.SharedDataPrefabs.Instantiate();
-
-            NetworkStreamReceiveSystem = World.GetExistingSystem<NetworkStreamReceiveSystem>();
-
-            HookSystem = World.GetExistingSystem<NetCodeHookSystem>();
-
-            World.EnqueueEvent<WorldCreatedEvent>();
-        }
-
-        protected virtual void DestroyWorld()
-        {
-            World.Dispose();
+            worldManager = new WorldManagerClass(this);
         }
 
         public void Dispose()

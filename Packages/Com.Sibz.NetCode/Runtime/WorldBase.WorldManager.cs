@@ -6,7 +6,7 @@ using Unity.NetCode;
 
 namespace Sibz.NetCode
 {
-    public abstract partial class WorldBase<TDefaultSystemGroup> : IWorldBase
+    public abstract partial class WorldBase<TDefaultSystemGroup>
         where TDefaultSystemGroup : ComponentSystemGroup
     {
         protected class WorldManagerClass : IWorldManager
@@ -33,7 +33,7 @@ namespace Sibz.NetCode
 
                 //worldBase.CommandBuffer = new BeginInitCommandBuffer(World);
 
-                Options.SharedDataPrefabs.Instantiate();
+                // TODO Import prefabs into world
 
                 worldBase.NetworkStreamReceiveSystem = World.GetExistingSystem<NetworkStreamReceiveSystem>();
 

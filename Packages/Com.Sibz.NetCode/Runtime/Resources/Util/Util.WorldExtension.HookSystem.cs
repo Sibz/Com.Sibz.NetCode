@@ -5,6 +5,6 @@ namespace Sibz
 {
     public static partial class Util
     {
-        public static NetCodeHookSystem HookSystem(this World world) => world.GetExistingSystem<NetCodeHookSystem>();
+        public static NetCodeHookSystem GetHookSystem(this World world) => world.GetExistingSystem<NetCodeHookSystem>();
     }
 }

@@ -6,6 +6,6 @@ namespace Sibz
 {
     public static partial class Util
     {
-        public static NetworkStreamReceiveSystem NetworkStreamReceiveSystem(this World world) => world.GetExistingSystem<NetworkStreamReceiveSystem>();
+        public static NetworkStreamReceiveSystem GetNetworkStreamReceiveSystem(this World world) => world.GetExistingSystem<NetworkStreamReceiveSystem>();
     }
 }

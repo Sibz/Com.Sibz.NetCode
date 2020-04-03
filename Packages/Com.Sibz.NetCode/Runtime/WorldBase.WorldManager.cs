@@ -35,10 +35,6 @@ namespace Sibz.NetCode
 
                 // TODO Import prefabs into world
 
-                worldBase.NetworkStreamReceiveSystem = World.GetExistingSystem<NetworkStreamReceiveSystem>();
-
-                worldBase.HookSystem = World.GetExistingSystem<NetCodeHookSystem>();
-
                 World.EnqueueEvent<WorldCreatedEvent>();
             }
 

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sibz.CommandBufferHelpers;
-using Sibz.EntityEvents;
-using Sibz.WorldSystemHelpers;
 using Unity.Entities;
 using Unity.NetCode;
 
@@ -17,8 +14,6 @@ namespace Sibz.NetCode
 
         protected IWorldOptionsBase Options { get; }
         //protected BeginInitCommandBuffer CommandBuffer { get; private set; }
-        protected NetworkStreamReceiveSystem NetworkStreamReceiveSystem;
-        protected NetCodeHookSystem HookSystem;
         protected Func<World, string, World> CreationMethod;
         protected readonly List<Type> Systems;
 

@@ -9,7 +9,7 @@ namespace Sibz.NetCode
     public abstract partial class WorldBase<TDefaultSystemGroup> : IWorldBase
         where TDefaultSystemGroup : ComponentSystemGroup
     {
-        private class WorldManagerClass : IWorldManager
+        protected class WorldManagerClass : IWorldManager
         {
             private WorldBase<TDefaultSystemGroup> worldBase;
 

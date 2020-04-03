@@ -15,9 +15,7 @@ namespace Sibz.NetCode
     {
         public World World { get; protected set; }
 
-        public IWorldManager WorldManager { set => worldManager = value; }
-
-        protected virtual IWorldOptionsBase Options { get; }
+        protected IWorldOptionsBase Options { get; }
         protected BeginInitCommandBuffer CommandBuffer { get; private set; }
         protected NetworkStreamReceiveSystem NetworkStreamReceiveSystem;
         protected NetCodeHookSystem HookSystem;
@@ -27,7 +25,7 @@ namespace Sibz.NetCode
         private IWorldManager worldManager;
 
         protected WorldBase(IWorldOptionsBase options, Func<World, string, World> creationMethod,
-            List<Type> systems = null)
+            List<Type> systems = null, IWorldManager worldManager = null)
         {
             if (creationMethod is null || options is null)
             {
@@ -38,12 +36,17 @@ namespace Sibz.NetCode
 
             Options = options;
 
-            worldManager = worldManager ?? new WorldManagerClass(this);
+            this.worldManager = worldManager ?? new WorldManagerClass(this);
+
+            if (Options.ConnectOnSpawn)
+            {
+               worldManager.CreateWorld();
+            }
         }
 
         public void Dispose()
         {
-            if (World.IsCreated)
+            if (!(World is null) && World.IsCreated)
             {
                 World.Dispose();
             }

@@ -124,7 +124,7 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
 
     public class MyWorldBaseImpl : WorldBase<ClientSimulationSystemGroup>
     {
-        public BeginInitCommandBuffer Buffer => CommandBuffer;
+        //public BeginInitCommandBuffer Buffer => CommandBuffer;
         public new IWorldOptionsBase Options => base.Options;
         public new List<Type> Systems => base.Systems;
 

@@ -16,7 +16,7 @@ namespace Sibz.NetCode
         public World World { get; protected set; }
 
         protected IWorldOptionsBase Options { get; }
-        protected BeginInitCommandBuffer CommandBuffer { get; private set; }
+        //protected BeginInitCommandBuffer CommandBuffer { get; private set; }
         protected NetworkStreamReceiveSystem NetworkStreamReceiveSystem;
         protected NetCodeHookSystem HookSystem;
         protected Func<World, string, World> CreationMethod;

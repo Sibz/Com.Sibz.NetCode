@@ -31,7 +31,7 @@ namespace Sibz.NetCode
 
                 World.ImportSystemsFromList<TDefaultSystemGroup>(worldBase.Systems);
 
-                worldBase.CommandBuffer = new BeginInitCommandBuffer(World);
+                //worldBase.CommandBuffer = new BeginInitCommandBuffer(World);
 
                 Options.SharedDataPrefabs.Instantiate();
 

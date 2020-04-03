@@ -10,17 +10,20 @@ using Unity.NetCode;
 
 namespace Sibz.NetCode
 {
-    public abstract class WorldBase<TDefaultSystemGroup, TStatusComponent> : IWorldBase
+    public abstract class WorldBase<TDefaultSystemGroup> : IWorldBase
         where TDefaultSystemGroup : ComponentSystemGroup
     {
-        public World World { get; }
+        public World World { get; protected set; }
 
-        public Action<TStatusComponent> NetworksStateChange;
-
-        protected readonly BeginInitCommandBuffer CommandBuffer;
-        protected Entity NetworkStatusEntity;
+        protected virtual IWorldOptionsBase Options { get; }
+        protected BeginInitCommandBuffer CommandBuffer { get; private set; }
         protected NetworkStreamReceiveSystem NetworkStreamReceiveSystem;
         protected NetCodeHookSystem HookSystem;
+
+
+        private Func<World, string, World> creationMethod;
+        private List<Type> systems;
+
 
         protected WorldBase(IWorldOptionsBase options, Func<World, string, World> creationMethod,
             List<Type> systems = null)
@@ -30,43 +33,39 @@ namespace Sibz.NetCode
                 throw new ArgumentNullException(creationMethod is null ? nameof(creationMethod) : nameof(options));
             }
 
-            World = creationMethod.Invoke(World.DefaultGameObjectInjectionWorld, options.WorldName);
+            this.systems = systems.AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
 
-            ImportSystems(systems);
+            Options = options;
+        }
+
+        protected virtual void CreateWorld()
+        {
+            World = creationMethod.Invoke(World.DefaultGameObjectInjectionWorld, Options.WorldName);
+
+            World.ImportSystemsFromList<TDefaultSystemGroup>(systems);
 
             CommandBuffer = new BeginInitCommandBuffer(World);
 
-            options.SharedDataPrefabs.Instantiate();
-
-            NetworkStatusEntity =
-                World.EntityManager.CreateEntity(typeof(TStatusComponent));
+            Options.SharedDataPrefabs.Instantiate();
 
             NetworkStreamReceiveSystem = World.GetExistingSystem<NetworkStreamReceiveSystem>();
 
             HookSystem = World.GetExistingSystem<NetCodeHookSystem>();
 
-            HookSystem.RegisterHook<NetworkStateChangeEvent>(OnNetworkStateChange);
-
             World.EnqueueEvent<WorldCreatedEvent>();
         }
 
-        private void ImportSystems(List<Type> systems)
-        {
-            systems = systems ?? new List<Type>();
-
-            systems.AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
-
-            World.ImportSystemsFromList<TDefaultSystemGroup>(systems);
-        }
-
-        public void Dispose()
+        protected virtual void DestroyWorld()
         {
             World.Dispose();
         }
 
-        internal void OnNetworkStateChange(IEventComponentData status)
+        public void Dispose()
         {
-            NetworksStateChange?.Invoke((TStatusComponent)status);
+            if (World.IsCreated)
+            {
+                World.Dispose();
+            }
         }
     }
 }

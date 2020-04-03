@@ -33,7 +33,7 @@ namespace Sibz.NetCode
         {
             NetworkEndPoint endPoint = NetworkEndPoint.Parse(Options.Address, Options.Port, Options.NetworkFamily);
 
-            NetworkStreamReceiveSystem.Listen(endPoint);
+            World.GetNetworkStreamReceiveSystem().Listen(endPoint);
 
             /*NetworkStatus networkStatus = new NetworkStatus
             {
@@ -46,14 +46,6 @@ namespace Sibz.NetCode
             World.EntityManager.SetComponentData(NetworkStatusEntity, networkStatus);
 
             World.EnqueueEvent(new NetworkStateChangeEvent {StatusEntity = NetworkStatusEntity});*/
-        }
-
-        public void Disconnect()
-        {
-            World.DestroySystem(NetworkStreamReceiveSystem);
-            World.CreateInGroup(typeof(NetworkStreamReceiveSystem),
-                World.GetExistingSystem<NetworkReceiveSystemGroup>());
-            NetworkStreamReceiveSystem = World.GetExistingSystem<NetworkStreamReceiveSystem>();
         }
     }
 }

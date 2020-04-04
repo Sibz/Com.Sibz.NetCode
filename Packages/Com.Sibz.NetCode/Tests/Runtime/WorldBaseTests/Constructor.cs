@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Sibz.EntityEvents;
 using Unity.Entities;
 using Unity.Networking.Transport;
 using UnityEngine;
@@ -24,6 +25,30 @@ namespace Sibz.NetCode.Tests
         public void TearDown_Constructor()
         {
             //current?.Dispose();
+        }
+
+        [Test]
+        public void ShouldBindCallbacksToWorldManager()
+        {
+            int calledCount = 0;
+            var wm = new MyWorldManager(worldManagerOptions);
+            current = new MyWorldBaseImpl(wm);
+            wm.CreateWorld(current.Systems);
+            current.WorldCreated += () => calledCount++;
+            current.WorldDestroyed += () => calledCount++;
+            current.PreWorldDestroy += () => calledCount++;
+            wm.InvokeAllCallbacks();
+            Assert.AreEqual(3, calledCount);
+
+        }
+
+        [Test]
+        public void ShouldHaveCorrectSystems()
+        {
+            var wm = new MyWorldManager(worldManagerOptions);
+            current = new MyWorldBaseImpl(wm);
+            wm.CreateWorld(current.Systems);
+            Assert.IsNotNull(current.World.GetExistingSystem<EventComponentSystem>());
         }
 
         [Test]

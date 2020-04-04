@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Sibz.EntityEvents;
 using Unity.Entities;
 
 namespace Sibz.NetCode.Tests
@@ -9,12 +10,14 @@ namespace Sibz.NetCode.Tests
     {
         private MyWorldManagerOptions options;
         private MyWorldManager wm;
+        private MyCallbackProvider cbp;
 
         [SetUp]
         public void SetUp()
         {
             options = MyWorldManagerOptions.Defaults;
-            wm = new MyWorldManager(options);
+            cbp = new MyCallbackProvider();
+            wm = new MyWorldManager(options, cbp);
         }
 
         [TearDown]
@@ -29,6 +32,43 @@ namespace Sibz.NetCode.Tests
             options.CreateWorldOnInstantiate = true;
             wm = new MyWorldManager(options);
             Assert.IsTrue(wm.Options.CreateWorldOnInstantiate);
+        }
+
+        [Test]
+        public void ShouldCallbackOnCreation()
+        {
+            bool calledBack = false;
+            cbp.WorldCreated += () => calledBack = true;
+            wm.CreateWorld(new List<Type>());
+            Assert.IsTrue(calledBack);
+        }
+
+        [Test]
+        public void ShouldCallBackPreWorldDestroy()
+        {
+            bool calledBack = false;
+            cbp.PreWorldDestroy += () =>
+            {
+                calledBack = true;
+                Assert.IsTrue(wm.WorldIsCreated);
+            };
+            wm.CreateWorld(new List<Type>());
+            wm.DestroyWorld();
+            Assert.IsTrue(calledBack);
+        }
+
+        [Test]
+        public void ShouldCallBackPostWorldDestroy()
+        {
+            bool calledBack = false;
+            cbp.WorldDestroyed += () =>
+            {
+                calledBack = true;
+                Assert.IsFalse(wm.WorldIsCreated);
+            };
+            wm.CreateWorld(new List<Type>());
+            wm.DestroyWorld();
+            Assert.IsTrue(calledBack);
         }
 
         [Test]
@@ -48,10 +88,11 @@ namespace Sibz.NetCode.Tests
         [Test]
         public void CreateWorld_WithItemsInList_ShouldAddSystems()
         {
-            var wm = new MyWorldManager(options);
+            var wm = new MyWorldManager(options, cbp);
             wm.CreateWorld(new List<Type> { typeof(MySystem) });
             Assert.IsNotNull(wm.World.GetExistingSystem<MySystem>());
         }
+
 
         [Test]
         public void ShouldCall_ImportPrefabs()
@@ -61,6 +102,13 @@ namespace Sibz.NetCode.Tests
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
+        }
+
+        public class MyCallbackProvider : IWorldCallbackProvider
+        {
+            public Action WorldCreated { get; set; }
+            public Action WorldDestroyed { get; set; }
+            public Action PreWorldDestroy { get; set; }
         }
 
         public class MySystem : ComponentSystem

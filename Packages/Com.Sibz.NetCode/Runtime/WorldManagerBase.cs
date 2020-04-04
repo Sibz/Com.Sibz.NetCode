@@ -11,13 +11,11 @@ namespace Sibz.NetCode
         public World World { get; protected set; }
         public bool WorldIsCreated => World?.IsCreated ?? false;
 
-        public Action WorldCreated;
-        public Action WorldDestroyed;
-        public Action PreDestroyWorld;
+        public IWorldCallbackProvider CallbackProvider { protected get; set; }
 
         public IWorldManagerOptions Options { get; }
 
-        public WorldManagerBase(IWorldManagerOptions options)
+        public WorldManagerBase(IWorldManagerOptions options, IWorldCallbackProvider callbackProvider = null)
         {
             if (options is null)
             {
@@ -25,6 +23,8 @@ namespace Sibz.NetCode
             }
 
             Options = options;
+
+            CallbackProvider = callbackProvider;
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Sibz.NetCode
 
             ImportPrefabs();
 
-            WorldCreated?.Invoke();
+            CallbackProvider?.WorldCreated?.Invoke();
         }
 
         protected virtual void ImportPrefabs()
@@ -67,11 +67,11 @@ namespace Sibz.NetCode
                 return;
             }
 
-            PreDestroyWorld?.Invoke();
+            CallbackProvider?.PreWorldDestroy?.Invoke();
 
             World.Dispose();
 
-            WorldDestroyed?.Invoke();
+            CallbackProvider?.WorldDestroyed?.Invoke();
         }
 
         public void Dispose() => DestroyWorld();

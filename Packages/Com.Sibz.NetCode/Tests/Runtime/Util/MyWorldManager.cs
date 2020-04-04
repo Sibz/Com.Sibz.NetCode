@@ -16,8 +16,15 @@ namespace Sibz.NetCode.Tests
 
         protected override void ImportPrefabs() => CalledImportPrefabs = true;
 
-        public MyWorldManager(IWorldManagerOptions options) : base(options)
+        public MyWorldManager(IWorldManagerOptions options, IWorldCallbackProvider callbackProvider = null) : base(options, callbackProvider)
         {
+        }
+
+        public void InvokeAllCallbacks()
+        {
+            CallbackProvider?.WorldCreated?.Invoke();
+            CallbackProvider?.WorldDestroyed?.Invoke();
+            CallbackProvider?.PreWorldDestroy?.Invoke();
         }
     }
 }

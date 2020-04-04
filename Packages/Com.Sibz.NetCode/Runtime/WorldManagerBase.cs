@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Sibz.WorldSystemHelpers;
 using Unity.Entities;
@@ -43,7 +43,7 @@ namespace Sibz.NetCode
 
             if (WorldIsCreated)
             {
-                throw new InvalidOperationException("Can not create world. World is all ready created.");
+                throw new InvalidOperationException("Can not create world as world is already created.");
             }
 
             World = BootStrapCreateWorld(Options.WorldName);

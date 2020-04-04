@@ -8,15 +8,9 @@ namespace Sibz.NetCode.Tests
         protected World World;
 
         [SetUp]
-        public void SetUp()
-        {
-            World = new World("Test");
-        }
+        public void SetUp() => World = new World("Test");
 
         [TearDown]
-        public void TearDown()
-        {
-            World.Dispose();
-        }
+        public void TearDown() => World.Dispose();
     }
 }

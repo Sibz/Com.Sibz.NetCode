@@ -1,8 +1,9 @@
-﻿namespace Sibz.NetCode
+﻿using Sibz.EntityEvents;
+
+namespace Sibz.NetCode
 {
     [ClientAndServerSystem]
-    public class NetCodeEventComponentSystem : EntityEvents.EventComponentSystem
+    public class NetCodeEventComponentSystem : EventComponentSystem
     {
-
     }
 }

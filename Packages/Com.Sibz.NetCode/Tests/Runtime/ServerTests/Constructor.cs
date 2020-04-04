@@ -1,7 +1,4 @@
 ﻿using NUnit.Framework;
-using Sibz.NetCode.Server;
-using Unity.Entities;
-using UnityEngine;
 
 namespace Sibz.NetCode.Tests.Server
 {
@@ -19,11 +16,6 @@ namespace Sibz.NetCode.Tests.Server
         }
 
         [TearDown]
-        public void ConstructorTearDown()
-        {
-            testWorld?.Dispose();
-        }
-
-
+        public void ConstructorTearDown() => testWorld?.Dispose();
     }
 }

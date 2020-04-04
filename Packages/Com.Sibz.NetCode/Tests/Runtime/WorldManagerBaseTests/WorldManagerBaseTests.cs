@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Sibz.EntityEvents;
 using Unity.Entities;
 
 namespace Sibz.NetCode.Tests
@@ -37,7 +36,7 @@ namespace Sibz.NetCode.Tests
         [Test]
         public void ShouldCallbackOnCreation()
         {
-            bool calledBack = false;
+            var calledBack = false;
             cbp.WorldCreated += () => calledBack = true;
             wm.CreateWorld(new List<Type>());
             Assert.IsTrue(calledBack);
@@ -46,7 +45,7 @@ namespace Sibz.NetCode.Tests
         [Test]
         public void ShouldCallBackPreWorldDestroy()
         {
-            bool calledBack = false;
+            var calledBack = false;
             cbp.PreWorldDestroy += () =>
             {
                 calledBack = true;
@@ -60,7 +59,7 @@ namespace Sibz.NetCode.Tests
         [Test]
         public void ShouldCallBackPostWorldDestroy()
         {
-            bool calledBack = false;
+            var calledBack = false;
             cbp.WorldDestroyed += () =>
             {
                 calledBack = true;

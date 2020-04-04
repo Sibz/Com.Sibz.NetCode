@@ -9,12 +9,9 @@ namespace Sibz.NetCode
 {
     public abstract class WorldBase : IWorldBase, IWorldCallbackProvider
     {
-        public World World => WorldManager.World;
-
         protected readonly List<Type> Systems;
-
         protected readonly IWorldManager WorldManager;
-
+        public World World => WorldManager.World;
         public Action WorldCreated { get; set; }
         public Action WorldDestroyed { get; set; }
         public Action PreWorldDestroy { get; set; }

@@ -11,11 +11,8 @@ namespace Sibz.NetCode.Tests
     public class Constructor
     {
         private Func<World, string, World> creationMethod;
-
         private MyWorldBaseImpl current;
-
         private MyWorldManagerOptions worldManagerOptions;
-
         public World Create(World world, string str) => World.DefaultGameObjectInjectionWorld;
 
         [SetUp]
@@ -30,7 +27,7 @@ namespace Sibz.NetCode.Tests
         [Test]
         public void ShouldBindCallbacksToWorldManager()
         {
-            int calledCount = 0;
+            var calledCount = 0;
             var wm = new MyWorldManager(worldManagerOptions);
             current = new MyWorldBaseImpl(wm);
             wm.CreateWorld(current.Systems);
@@ -39,7 +36,6 @@ namespace Sibz.NetCode.Tests
             current.PreWorldDestroy += () => calledCount++;
             wm.InvokeAllCallbacks();
             Assert.AreEqual(3, calledCount);
-
         }
 
         [Test]

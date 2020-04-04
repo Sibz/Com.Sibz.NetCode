@@ -15,7 +15,7 @@ namespace Sibz
                 throw new ArgumentNullException(nameof(list));
             }
 
-            var prefabs = list.ToArray();
+            GameObject[] prefabs = list.ToArray();
             foreach (GameObject prefab in prefabs)
             {
                 Object.Instantiate(prefab);

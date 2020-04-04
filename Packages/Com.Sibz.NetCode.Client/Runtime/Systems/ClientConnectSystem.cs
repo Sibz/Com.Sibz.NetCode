@@ -8,11 +8,9 @@ namespace Sibz.NetCode.Client
     public class ClientConnectSystem : ComponentSystem
     {
         private NetworkStreamReceiveSystem network;
-
         private EntityQuery connectQuery;
         private EntityQuery networkStreamQuery;
         private EntityQuery incomingConfirmRequestQuery;
-
         private BeginInitializationEntityCommandBufferSystem bufferSystem;
 
         protected override void OnCreate()
@@ -86,7 +84,7 @@ namespace Sibz.NetCode.Client
                 return;
             }
 
-            buffer.AddComponent(buffer.CreateEntity(), new ConnectionCompleteEvent {Success = true});
+            buffer.AddComponent(buffer.CreateEntity(), new ConnectionCompleteEvent { Success = true });
             PostUpdateCommands.DestroyEntity(connectEntity);
             PostUpdateCommands.DestroyEntity(incomingConfirmRequestQuery);
         }

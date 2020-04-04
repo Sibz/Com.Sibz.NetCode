@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sibz.WorldSystemHelpers;
 using Unity.Entities;
 
 namespace Sibz.NetCode
@@ -9,9 +8,7 @@ namespace Sibz.NetCode
     {
         public World World { get; protected set; }
         public bool WorldIsCreated => World?.IsCreated ?? false;
-
         public IWorldCallbackProvider CallbackProvider { protected get; set; }
-
         public IWorldManagerOptions Options { get; }
 
         public WorldManagerBase(IWorldManagerOptions options, IWorldCallbackProvider callbackProvider = null)

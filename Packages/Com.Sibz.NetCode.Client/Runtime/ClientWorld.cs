@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Unity.Entities;
-using Unity.NetCode;
+﻿using Unity.Entities;
 using Unity.Networking.Transport;
 
 [assembly: DisableAutoCreation]
@@ -12,14 +9,14 @@ namespace Sibz.NetCode
     {
         protected ClientOptions Options { get; }
 
+        public ClientWorld(IWorldManager worldManager) : base(worldManager)
+        {
+        }
+
 
         private void Connect()
         {
             NetworkEndPoint endPoint = NetworkEndPoint.Parse(Options.Address, Options.Port, Options.NetworkFamily);
-        }
-
-        public ClientWorld(IWorldManager worldManager) : base(worldManager)
-        {
         }
     }
 }

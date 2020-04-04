@@ -7,7 +7,6 @@ namespace Sibz.NetCode.Tests
         [Test]
         public void ShouldConnectToServer()
         {
-
         }
     }
 }

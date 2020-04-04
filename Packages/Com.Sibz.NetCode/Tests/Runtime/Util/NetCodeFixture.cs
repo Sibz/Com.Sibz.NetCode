@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using Unity.Entities;
 using Unity.NetCode;
-using UnityEngine;
 
 namespace Sibz.NetCode.Tests
 {
@@ -33,10 +32,7 @@ namespace Sibz.NetCode.Tests
 
 
         [OneTimeSetUp]
-        public void OneTimeSetup()
-        {
-            SetUpDefaultWorld();
-        }
+        public void OneTimeSetup() => SetUpDefaultWorld();
 
         [OneTimeTearDown]
         public void OneTimeTearDown()

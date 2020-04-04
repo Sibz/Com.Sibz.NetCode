@@ -11,6 +11,11 @@ namespace Sibz.NetCode.Tests
         public bool CalledBootStrapCreateWorld;
         public bool CalledImportPrefabs;
 
+        public MyWorldManager(IWorldManagerOptions options, IWorldCallbackProvider callbackProvider = null) : base(
+            options, callbackProvider)
+        {
+        }
+
         protected override World BootStrapCreateWorld(string name)
         {
             CalledBootStrapCreateWorld = true;
@@ -21,10 +26,6 @@ namespace Sibz.NetCode.Tests
             World.ImportSystemsFromList<ClientSimulationSystemGroup>(systems);
 
         protected override void ImportPrefabs() => CalledImportPrefabs = true;
-
-        public MyWorldManager(IWorldManagerOptions options, IWorldCallbackProvider callbackProvider = null) : base(options, callbackProvider)
-        {
-        }
 
         public void InvokeAllCallbacks()
         {

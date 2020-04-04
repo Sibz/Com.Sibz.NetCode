@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using Unity.Networking.Transport;
 
 namespace Sibz.NetCode

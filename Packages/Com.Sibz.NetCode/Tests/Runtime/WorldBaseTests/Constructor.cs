@@ -2,119 +2,75 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using Unity.Entities;
-using Unity.NetCode;
 using Unity.Networking.Transport;
 using UnityEngine;
 
-namespace Sibz.NetCode.Tests.WorldBaseTests
+namespace Sibz.NetCode.Tests
 {
-    public class Constructor : TestBase
+    public class Constructor
     {
         private Func<World, string, World> creationMethod;
 
         private MyWorldBaseImpl current;
 
-        public World Create(World world, string str)
-        {
-            return World.DefaultGameObjectInjectionWorld;
-        }
+        private MyWorldManagerOptions worldManagerOptions;
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp_Constructor()
-        {
-            Debug.Log("OneTimeSetUp_Constructor");
-        }
+        public World Create(World world, string str) => World.DefaultGameObjectInjectionWorld;
 
-        [OneTimeTearDown]
-        public void OneTimeTearDown_Constructor()
-        {
-            //  myClientWorld.Dispose();
-        }
+        [SetUp]
+        public void SetUp() => worldManagerOptions = MyWorldManagerOptions.Defaults;
 
         [TearDown]
         public void TearDown_Constructor()
         {
-            current?.Dispose();
+            //current?.Dispose();
         }
 
         [Test]
-        public void WhenWorldManagerIsNull_ShouldThrow()
-        {
+        public void WhenWorldManagerIsNull_ShouldThrow() =>
             Assert.Catch<ArgumentNullException>(() => new MyWorldBaseImpl(null));
-        }
 
         [Test]
         public void ShouldSetSystems()
         {
-            current = new MyWorldBaseImpl(new MyWorldManager());
+            current = new MyWorldBaseImpl(new MyWorldManager(worldManagerOptions));
             Assert.IsNotNull(current.Systems);
         }
 
         [Test]
         public void ShouldAddMySystemToSystemsList()
         {
-            current = new MyWorldBaseImpl(new MyWorldManager());
+            current = new MyWorldBaseImpl(new MyWorldManager(worldManagerOptions));
             Assert.Contains(typeof(MySystem), current.Systems);
         }
 
         [Test]
         public void ShouldAddMySystem2ToSystemsList()
         {
-            current = new MyWorldBaseImpl(new MyWorldManager());
+            worldManagerOptions.Systems.Add(typeof(MySystem2));
+            current = new MyWorldBaseImpl(new MyWorldManager(worldManagerOptions));
             Assert.Contains(typeof(MySystem2), current.Systems);
         }
 
         [Test]
         public void WhenOptionSpecified_ShouldCreateWorldFromConstructor()
         {
-            MyWorldManager worldManager = new MyWorldManager(true);
+            worldManagerOptions.CreateWorldOnInstantiate = true;
+            var worldManager = new MyWorldManager(worldManagerOptions);
             current = new MyWorldBaseImpl(worldManager);
-            Assert.IsTrue(worldManager.CalledCreateWorld);
+            Assert.IsTrue(worldManager.CalledBootStrapCreateWorld);
         }
 
         [Test]
         public void WhenOptionNotSpecified_ShouldNotCreateWorldFromConstructor()
         {
-            MyWorldManager worldManager = new MyWorldManager();
+            worldManagerOptions.CreateWorldOnInstantiate = false;
+            var worldManager = new MyWorldManager(worldManagerOptions);
             current = new MyWorldBaseImpl(worldManager);
-            Assert.IsFalse(worldManager.CalledCreateWorld);
+            Assert.IsFalse(worldManager.CalledBootStrapCreateWorld);
         }
     }
 
-    public class MyWorldManager : IWorldManager
-    {
-        public bool CalledCreateWorld;
-
-        public void CreateWorld()
-        {
-            CalledCreateWorld = true;
-        }
-
-        public MyWorldManager(bool create = false)
-        {
-            CreateWorldOnInstantiate = create;
-        }
-        public World World { get; private set; }
-        public bool CreateWorldOnInstantiate { get; }
-        public List<Type> GetSystemsList()
-        {
-            return new List<Type> {typeof(MySystem2)};
-        }
-
-        public void CreateWorld(List<Type> systems)
-        {
-            CalledCreateWorld = true;
-        }
-
-        public void DestroyWorld()
-        {
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-    }
 
     public class MyWorldBaseImpl : WorldBase
     {
@@ -148,7 +104,7 @@ namespace Sibz.NetCode.Tests.WorldBaseTests
     public class MyOptionsImpl : IWorldOptionsBase
     {
         public string WorldName { get; set; } = "Test";
-        public List<GameObject> SharedDataPrefabs { get; } = new List<GameObject> {new GameObject("Test")};
+        public List<GameObject> SharedDataPrefabs { get; } = new List<GameObject> { new GameObject("Test") };
         public List<Type> SystemImportAttributes { get; } = new List<Type>();
         public bool ConnectOnSpawn { get; set; }
         public int ConnectTimeout { get; set; } = 2;

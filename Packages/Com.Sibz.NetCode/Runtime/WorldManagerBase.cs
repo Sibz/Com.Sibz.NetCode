@@ -1,12 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Sibz.WorldSystemHelpers;
 using Unity.Entities;
 
 namespace Sibz.NetCode
 {
-    public abstract class WorldManagerBase<TDefaultSystemGroup> : IWorldManager
-        where TDefaultSystemGroup : ComponentSystemGroup
+    public abstract class WorldManagerBase : IWorldManager
     {
         public World World { get; protected set; }
         public bool WorldIsCreated => World?.IsCreated ?? false;
@@ -34,6 +33,8 @@ namespace Sibz.NetCode
         /// <returns></returns>
         protected abstract World BootStrapCreateWorld(string worldName);
 
+        protected abstract void InjectSystems(List<Type> systems);
+
         public void CreateWorld(List<Type> systems)
         {
             if (systems is null)
@@ -48,7 +49,7 @@ namespace Sibz.NetCode
 
             World = BootStrapCreateWorld(Options.WorldName);
 
-            World.ImportSystemsFromList<TDefaultSystemGroup>(systems);
+            InjectSystems(systems);
 
             ImportPrefabs();
 

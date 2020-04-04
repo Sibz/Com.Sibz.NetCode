@@ -1,9 +1,12 @@
-﻿using Unity.Entities;
+﻿using System;
+using System.Collections.Generic;
+using Sibz.WorldSystemHelpers;
+using Unity.Entities;
 using Unity.NetCode;
 
 namespace Sibz.NetCode.Tests
 {
-    public class MyWorldManager : WorldManagerBase<ClientSimulationSystemGroup>
+    public class MyWorldManager : WorldManagerBase
     {
         public bool CalledBootStrapCreateWorld;
         public bool CalledImportPrefabs;
@@ -13,6 +16,9 @@ namespace Sibz.NetCode.Tests
             CalledBootStrapCreateWorld = true;
             return ClientServerBootstrap.CreateClientWorld(NetCodeFixture.DefaultWorld, name);
         }
+
+        protected override void InjectSystems(List<Type> systems) =>
+            World.ImportSystemsFromList<ClientSimulationSystemGroup>(systems);
 
         protected override void ImportPrefabs() => CalledImportPrefabs = true;
 

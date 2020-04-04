@@ -21,27 +21,22 @@ namespace Sibz.NetCode
                 throw new ArgumentNullException(nameof(worldManager));
             }
 
-            Systems = worldManager.GetSystemsList().AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
+            Systems = worldManager.Options.Systems.AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
 
             WorldManager = worldManager;
 
-            if (worldManager.CreateWorldOnInstantiate)
+            if (worldManager.Options.CreateWorldOnInstantiate)
             {
                 CreateWorld();
             }
         }
 
-        protected void CreateWorld() =>
-            WorldManager.CreateWorld(Systems);
+        protected void CreateWorld() => WorldManager.CreateWorld(Systems);
 
 
-        protected void DestroyWorld() =>
-            WorldManager.DestroyWorld();
+        protected void DestroyWorld() => WorldManager.DestroyWorld();
 
 
-        public void Dispose()
-        {
-            WorldManager.DestroyWorld();
-        }
+        public void Dispose() => WorldManager.DestroyWorld();
     }
 }

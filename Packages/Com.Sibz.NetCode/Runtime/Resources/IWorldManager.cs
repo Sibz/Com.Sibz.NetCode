@@ -6,9 +6,8 @@ namespace Sibz.NetCode
 {
     public interface IWorldManager : IDisposable
     {
+        IWorldManagerOptions Options { get; }
         World World { get; }
-        bool CreateWorldOnInstantiate { get; }
-        List<Type> GetSystemsList();
         void CreateWorld(List<Type> systems);
         void DestroyWorld();
     }

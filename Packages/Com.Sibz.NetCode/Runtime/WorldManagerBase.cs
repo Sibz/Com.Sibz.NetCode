@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sibz.EntityEvents;
 using Sibz.WorldSystemHelpers;
 using Unity.Entities;
 
@@ -10,25 +9,30 @@ namespace Sibz.NetCode
         where TDefaultSystemGroup : ComponentSystemGroup
     {
         public World World { get; protected set; }
-        public List<Type> GetSystemsList() => new List<Type>();
-        public bool CreateWorldOnInstantiate { get; }
         public bool WorldIsCreated => World?.IsCreated ?? false;
 
         public Action WorldCreated;
         public Action WorldDestroyed;
         public Action PreDestroyWorld;
 
-        public WorldManagerBase(bool createWorld = false)
+        public IWorldManagerOptions Options { get; }
+
+        public WorldManagerBase(IWorldManagerOptions options)
         {
-            CreateWorldOnInstantiate = createWorld;
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            Options = options;
         }
 
         /// <summary>
-        /// Define call to ClientServerBootstrap.CreateServerWorld or CreateClientWorld in here.
+        ///     Define call to ClientServerBootstrap.CreateServerWorld or CreateClientWorld in here.
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="worldName"></param>
         /// <returns></returns>
-        protected abstract World BootStrapCreateWorld();
+        protected abstract World BootStrapCreateWorld(string worldName);
 
         public void CreateWorld(List<Type> systems)
         {
@@ -42,15 +46,18 @@ namespace Sibz.NetCode
                 throw new InvalidOperationException("Can not create world. World is all ready created.");
             }
 
-            World = BootStrapCreateWorld();
+            World = BootStrapCreateWorld(Options.WorldName);
 
             World.ImportSystemsFromList<TDefaultSystemGroup>(systems);
 
-            // TODO Import prefabs into world
-
-            World.EnqueueEvent<WorldCreatedEvent>();
+            ImportPrefabs();
 
             WorldCreated?.Invoke();
+        }
+
+        protected virtual void ImportPrefabs()
+        {
+            // TODO Import prefabs into world;
         }
 
         public void DestroyWorld()
@@ -67,9 +74,6 @@ namespace Sibz.NetCode
             WorldDestroyed?.Invoke();
         }
 
-        public void Dispose()
-        {
-            DestroyWorld();
-        }
+        public void Dispose() => DestroyWorld();
     }
 }

@@ -1,50 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
 using Unity.Entities;
-using Unity.NetCode;
 
 [assembly: DisableAutoCreation]
 
 namespace Sibz.NetCode
 {
-    public abstract partial class WorldBase<TDefaultSystemGroup> : IWorldBase
-        where TDefaultSystemGroup : ComponentSystemGroup
+    public abstract class WorldBase : IWorldBase
     {
-        public World World { get; protected set; }
+        public World World => WorldManager.World;
 
-        protected IWorldOptionsBase Options { get; }
-        //protected BeginInitCommandBuffer CommandBuffer { get; private set; }
-        protected Func<World, string, World> CreationMethod;
         protected readonly List<Type> Systems;
 
-        private IWorldManager worldManager;
+        protected readonly IWorldManager WorldManager;
 
-        protected WorldBase(IWorldOptionsBase options, Func<World, string, World> creationMethod,
-            List<Type> systems = null, IWorldManager worldManager = null)
+        protected WorldBase(IWorldManager worldManager)
         {
-            if (creationMethod is null || options is null)
+            if (worldManager is null)
             {
-                throw new ArgumentNullException(creationMethod is null ? nameof(creationMethod) : nameof(options));
+                throw new ArgumentNullException(nameof(worldManager));
             }
 
-            Systems = systems.AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
+            Systems = worldManager.GetSystemsList().AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
 
-            Options = options;
+            WorldManager = worldManager;
 
-            this.worldManager = worldManager ?? new WorldManagerClass(this);
-
-            if (Options.ConnectOnSpawn)
+            if (worldManager.CreateWorldOnInstantiate)
             {
-               worldManager.CreateWorld();
+                CreateWorld();
             }
         }
 
+        protected void CreateWorld() =>
+            WorldManager.CreateWorld(Systems);
+
+
+        protected void DestroyWorld() =>
+            WorldManager.DestroyWorld();
+
+
         public void Dispose()
         {
-            if (!(World is null) && World.IsCreated)
-            {
-                World.Dispose();
-            }
+            WorldManager.DestroyWorld();
         }
     }
 }

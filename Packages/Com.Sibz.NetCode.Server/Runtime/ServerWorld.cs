@@ -11,23 +11,11 @@ using Unity.Networking.Transport;
 
 namespace Sibz.NetCode
 {
-    public class ServerWorld : WorldBase<ServerSimulationSystemGroup>
+    public class ServerWorld : WorldBase
     {
         public Action<Entity> ClientConnected;
         public Action<Entity> ClientDisconnected;
         protected ServerOptions Options { get; }
-
-        public ServerWorld(ServerOptions options = null, List<Type> systems = null)
-            : base(options ?? new ServerOptions(), ClientServerBootstrap.CreateServerWorld,
-                systems.AppendTypesWithAttribute<ServerSystemAttribute>())
-        {
-            Options = options ?? new ServerOptions();
-
-            if (Options.ConnectOnSpawn)
-            {
-                Listen();
-            }
-        }
 
         public void Listen()
         {
@@ -46,6 +34,10 @@ namespace Sibz.NetCode
             World.EntityManager.SetComponentData(NetworkStatusEntity, networkStatus);
 
             World.EnqueueEvent(new NetworkStateChangeEvent {StatusEntity = NetworkStatusEntity});*/
+        }
+
+        public ServerWorld(IWorldManager worldManager) : base(worldManager)
+        {
         }
     }
 }

@@ -15,13 +15,13 @@ namespace Sibz.NetCode.Tests.Server
         [SetUp]
         public void ConstructorSetUp()
         {
-            testWorld = new ServerWorld();
+            //testWorld = new ServerWorld();
         }
 
         [TearDown]
         public void ConstructorTearDown()
         {
-            testWorld.Dispose();
+            testWorld?.Dispose();
         }
 
 

@@ -12,10 +12,8 @@ namespace Sibz.NetCode.WorldExtensions
         private const string NoSystemError = "{0}: {1} does not exist.";
         private const string InvalidPrefabError = "{0}: Prefab should have {1} attached.";
 
-        public static void ImportGhostCollection(this World world, GameObject prefab)
-        {
+        public static void ImportGhostCollection(this World world, GameObject prefab) =>
             ImportGhostCollection(world, GetCteSystem(), prefab);
-        }
 
         public static void ImportGhostCollection(this World world, IEnumerable<GameObject> prefabs)
         {
@@ -33,7 +31,6 @@ namespace Sibz.NetCode.WorldExtensions
             prefab = prefab ?? throw new ArgumentNullException(nameof(prefab));
             world = world ?? throw new ArgumentNullException(nameof(world));
             cteSystem = cteSystem ?? throw new ArgumentNullException(nameof(cteSystem));
-
 
             if (prefab.GetComponentInChildren<GhostCollectionAuthoringComponent>() is null)
             {
@@ -54,9 +51,7 @@ namespace Sibz.NetCode.WorldExtensions
                     cteSystem.BlobAssetStore
                 );
 
-            Entity entity = GameObjectConversionUtility.ConvertGameObjectHierarchy(
-                prefab, conversionSettings);
-
+            Entity entity = GameObjectConversionUtility.ConvertGameObjectHierarchy(prefab, conversionSettings);
             RemovePrefabComponentFromEntityAndDirectChildren(world, entity);
         }
 

@@ -13,9 +13,13 @@ namespace Sibz.NetCode.Tests.UtilTests
     {
         private World testWorld;
 
+        private GameObject gameObject;
+
         [SetUp]
-        public void SetUp() => testWorld =
-            ClientServerBootstrap.CreateClientWorld(World.DefaultGameObjectInjectionWorld, "TestWorld");
+        public void SetUp()
+        {
+            testWorld = ClientServerBootstrap.CreateClientWorld(World.DefaultGameObjectInjectionWorld, "TestWorld");
+        }
 
         [TearDown]
         public void TearDown() => testWorld.Dispose();
@@ -23,7 +27,19 @@ namespace Sibz.NetCode.Tests.UtilTests
         [Test]
         public void WhenWorldIsNull_ShouldThrow() =>
             Assert.Catch<ArgumentNullException>(() =>
-                ImportGhostCollectionWorldExtension.ImportGhostCollection(null, new List<GameObject>()));
+                ImportGhostCollectionWorldExtension.ImportGhostCollection(null, new List<GameObject>(){ Resources.Load<GameObject>("NetCodeTestCollection")  } ));
+
+        [Test]
+        public void WhenPrefabInListIsNull_ShouldThrow() =>
+            Assert.Catch<ArgumentNullException>(() =>
+                ImportGhostCollectionWorldExtension.ImportGhostCollection(testWorld, new List<GameObject>(){ null } ));
+
+        [Test]
+        public void WhenPrefabDoesNotHaveGhostAuthComponent_ShouldThrow()
+        {
+             Assert.Catch<ArgumentException>(() =>
+                            ImportGhostCollectionWorldExtension.ImportGhostCollection(testWorld, new List<GameObject>(){ new GameObject() } ));
+        }
 
         [Test]
         public void ShouldImportPrefabIntoWorld()

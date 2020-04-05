@@ -17,13 +17,6 @@ namespace Sibz.NetCode.WorldExtensions
             var convertToEntitySystem =
                 World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<ConvertToEntitySystem>();
 
-            ThrowIfWorldIsNullOrConvertSystemDoesNotExist(world, convertToEntitySystem);
-
-            if (prefab is null)
-            {
-                throw new ArgumentNullException(nameof(prefab));
-            }
-
             ImportGhostCollection(world, convertToEntitySystem, prefab);
         }
 
@@ -31,8 +24,6 @@ namespace Sibz.NetCode.WorldExtensions
         {
             var convertToEntitySystem =
                 World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<ConvertToEntitySystem>();
-
-            ThrowIfWorldIsNullOrConvertSystemDoesNotExist(world, convertToEntitySystem);
 
             if (prefabs is null)
             {
@@ -45,23 +36,24 @@ namespace Sibz.NetCode.WorldExtensions
             }
         }
 
-        private static void ThrowIfWorldIsNullOrConvertSystemDoesNotExist(World world, ConvertToEntitySystem convertToEntitySystem)
+        private static void ImportGhostCollection(World world, ConvertToEntitySystem convertToEntitySystem, GameObject prefab)
         {
             if (world is null)
             {
                 throw new ArgumentNullException(nameof(world));
             }
 
-            if (convertToEntitySystem is
-                null)
+            if (convertToEntitySystem is null)
             {
                 throw new InvalidOperationException(
                     string.Format(NoSystemError, nameof(ImportGhostCollection), nameof(ConvertToEntitySystem)));
             }
-        }
 
-        private static void ImportGhostCollection(World world, ConvertToEntitySystem convertToEntitySystem, GameObject prefab)
-        {
+            if (prefab is null)
+            {
+                throw new ArgumentNullException(nameof(prefab));
+            }
+
             if (prefab.GetComponentInChildren<GhostCollectionAuthoringComponent>() is null)
             {
                 throw new ArgumentException(
@@ -84,10 +76,10 @@ namespace Sibz.NetCode.WorldExtensions
             Entity entity = GameObjectConversionUtility.ConvertGameObjectHierarchy(
                 prefab, conversionSettings);
 
-            RemovePrefabComponentFromSelfAndDirectChildren(world, entity);
+            RemovePrefabComponentFromEntityAndDirectChildren(world, entity);
         }
 
-        private static void RemovePrefabComponentFromSelfAndDirectChildren(World world, Entity entity)
+        private static void RemovePrefabComponentFromEntityAndDirectChildren(World world, Entity entity)
         {
             DynamicBuffer<LinkedEntityGroup> buff = world.EntityManager.GetBuffer<LinkedEntityGroup>(entity);
 

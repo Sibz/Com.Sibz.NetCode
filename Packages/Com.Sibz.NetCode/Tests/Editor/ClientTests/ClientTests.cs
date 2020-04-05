@@ -2,7 +2,7 @@
 
 namespace Sibz.NetCode.Tests
 {
-    public class ClientTests : TestBase
+    public class ClientTests
     {
         [Test]
         public void ShouldConnectToServer()

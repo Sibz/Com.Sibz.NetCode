@@ -2,7 +2,7 @@
 
 namespace Sibz.NetCode.Tests.Server
 {
-    public class ServerWorldTests : TestBase
+    public class ServerWorldTests
     {
         private ServerWorld testWorld;
 

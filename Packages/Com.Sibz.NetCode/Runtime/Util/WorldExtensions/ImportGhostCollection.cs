@@ -15,7 +15,10 @@ namespace Sibz.NetCode.WorldExtensions
         public static void ImportGhostCollection(this World world, GameObject prefab)
         {
             var convertToEntitySystem =
-                World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<ConvertToEntitySystem>();
+                World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<ConvertToEntitySystem>()
+                ?? throw new InvalidOperationException(
+                    string.Format(NoSystemError, nameof(ImportGhostCollection), nameof(ConvertToEntitySystem))
+                );
 
             ImportGhostCollection(world, convertToEntitySystem, prefab);
         }
@@ -25,7 +28,10 @@ namespace Sibz.NetCode.WorldExtensions
             prefabs = prefabs ?? throw new ArgumentNullException(nameof(prefabs));
 
             var convertToEntitySystem =
-                World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<ConvertToEntitySystem>();
+                World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<ConvertToEntitySystem>()
+                ?? throw new InvalidOperationException(
+                    string.Format(NoSystemError, nameof(ImportGhostCollection), nameof(ConvertToEntitySystem))
+                );
 
             foreach (GameObject prefab in prefabs)
             {
@@ -33,15 +39,14 @@ namespace Sibz.NetCode.WorldExtensions
             }
         }
 
-        private static void ImportGhostCollection(World world, ConvertToEntitySystem convertToEntitySystem,
+        private static void ImportGhostCollection(World world, ConvertToEntitySystem convertSystem,
             GameObject prefab)
         {
             // ReSharper disable once Unity.NoNullCoalescing
             prefab = prefab ?? throw new ArgumentNullException(nameof(prefab));
             world = world ?? throw new ArgumentNullException(nameof(world));
-            convertToEntitySystem = convertToEntitySystem ?? throw new InvalidOperationException(
-                string.Format(NoSystemError, nameof(ImportGhostCollection), nameof(ConvertToEntitySystem))
-            );
+            convertSystem = convertSystem ?? throw new ArgumentNullException(nameof(convertSystem));
+
 
             if (prefab.GetComponentInChildren<GhostCollectionAuthoringComponent>() is null)
             {
@@ -59,7 +64,7 @@ namespace Sibz.NetCode.WorldExtensions
                 new GameObjectConversionSettings(
                     world,
                     GameObjectConversionUtility.ConversionFlags.AssignName,
-                    convertToEntitySystem.BlobAssetStore
+                    convertSystem.BlobAssetStore
                 );
 
             Entity entity = GameObjectConversionUtility.ConvertGameObjectHierarchy(

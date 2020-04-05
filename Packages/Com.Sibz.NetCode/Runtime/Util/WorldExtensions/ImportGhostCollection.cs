@@ -14,28 +14,16 @@ namespace Sibz.NetCode.WorldExtensions
 
         public static void ImportGhostCollection(this World world, GameObject prefab)
         {
-            var convertToEntitySystem =
-                World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<ConvertToEntitySystem>()
-                ?? throw new InvalidOperationException(
-                    string.Format(NoSystemError, nameof(ImportGhostCollection), nameof(ConvertToEntitySystem))
-                );
-
-            ImportGhostCollection(world, convertToEntitySystem, prefab);
+            ImportGhostCollection(world, GetCteSystem(), prefab);
         }
 
         public static void ImportGhostCollection(this World world, IEnumerable<GameObject> prefabs)
         {
             prefabs = prefabs ?? throw new ArgumentNullException(nameof(prefabs));
 
-            var convertToEntitySystem =
-                World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<ConvertToEntitySystem>()
-                ?? throw new InvalidOperationException(
-                    string.Format(NoSystemError, nameof(ImportGhostCollection), nameof(ConvertToEntitySystem))
-                );
-
             foreach (GameObject prefab in prefabs)
             {
-                ImportGhostCollection(world, convertToEntitySystem, prefab);
+                ImportGhostCollection(world, GetCteSystem(), prefab);
             }
         }
 
@@ -88,5 +76,11 @@ namespace Sibz.NetCode.WorldExtensions
             commandBuffer.Playback(world.EntityManager);
             commandBuffer.Dispose();
         }
+
+        private static ConvertToEntitySystem GetCteSystem() =>
+            World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<ConvertToEntitySystem>()
+            ?? throw new InvalidOperationException(
+                string.Format(NoSystemError, nameof(ImportGhostCollection), nameof(ConvertToEntitySystem))
+            );
     }
 }

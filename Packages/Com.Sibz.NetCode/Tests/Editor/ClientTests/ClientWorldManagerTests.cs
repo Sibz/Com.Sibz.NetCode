@@ -31,6 +31,9 @@ namespace Sibz.NetCode.Tests.Client
             connectingEventQuery = worldManager.World.EntityManager.CreateEntityQuery(typeof(ConnectionInitiatedEvent));
         }
 
+        [TearDown]
+        public void TearDown() => worldManager.Dispose();
+
         [Test]
         public void Connect_WhenSettingIsNull_ShouldThrow()
         {

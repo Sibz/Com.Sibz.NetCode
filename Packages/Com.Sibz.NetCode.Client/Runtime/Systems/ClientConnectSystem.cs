@@ -4,7 +4,7 @@ using Unity.NetCode;
 
 namespace Sibz.NetCode.Client
 {
-    [ClientSystem]
+    /*[ClientSystem]
     public class ClientConnectSystem : ComponentSystem
     {
         private NetworkStreamReceiveSystem network;
@@ -114,8 +114,8 @@ namespace Sibz.NetCode.Client
             network.Connect(clientConnect.EndPoint);
 /*#if DEBUG
             WorldBase.Debug($"{World.Name}:{clientConnect.EndPoint.Port} Connecting...");
-#endif*/
+#endif#1#
             clientConnect.State = NetworkState.ConnectingToServer;
         }
-    }
+    }*/
 }

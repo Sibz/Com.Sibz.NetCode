@@ -3,13 +3,10 @@ using Unity.Networking.Transport;
 
 namespace Sibz.NetCode.Client
 {
-    public struct ClientConnect : IComponentData
+    public struct Connecting : IComponentData
     {
         public NetworkEndPoint EndPoint;
-        public int Timeout;
-        public float InitialTime;
         public NetworkState State;
-
-        public float TimeoutTime => InitialTime + Timeout;
+        public float TimeoutTime;
     }
 }

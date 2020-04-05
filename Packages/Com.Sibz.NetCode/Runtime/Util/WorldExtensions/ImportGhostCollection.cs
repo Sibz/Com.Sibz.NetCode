@@ -18,7 +18,6 @@ namespace Sibz.NetCode.WorldExtensions
         public static void ImportGhostCollection(this World world, IEnumerable<GameObject> prefabs)
         {
             prefabs = prefabs ?? throw new ArgumentNullException(nameof(prefabs));
-
             GameObjectConversionSettings settings = GetConversionSettings(world);
 
             foreach (GameObject prefab in prefabs)
@@ -53,7 +52,6 @@ namespace Sibz.NetCode.WorldExtensions
         private static void RemovePrefabComponentFromEntityAndDirectChildren(World world, Entity entity)
         {
             DynamicBuffer<LinkedEntityGroup> buff = world.EntityManager.GetBuffer<LinkedEntityGroup>(entity);
-
             var commandBuffer = new EntityCommandBuffer(Allocator.TempJob);
 
             for (var i = 0; i < buff.Length; i++)

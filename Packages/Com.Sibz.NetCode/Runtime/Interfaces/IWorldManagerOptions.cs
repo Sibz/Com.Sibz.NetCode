@@ -9,6 +9,6 @@ namespace Sibz.NetCode
         string WorldName { get; }
         bool CreateWorldOnInstantiate { get; }
         List<Type> Systems { get; }
-        List<GameObject> ConvertToClientServerEntityPrefabs { get; }
+        List<GameObject> GhostCollectionPrefabs { get; }
     }
 }

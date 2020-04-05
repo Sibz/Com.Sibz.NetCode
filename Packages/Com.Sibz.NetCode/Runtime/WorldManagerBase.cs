@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
+using UnityEngine;
 
 namespace Sibz.NetCode
 {
@@ -53,9 +55,18 @@ namespace Sibz.NetCode
             CallbackProvider?.WorldCreated?.Invoke();
         }
 
-        protected virtual void ImportPrefabs()
+        private const string NoPrefabsWarning = "Option {0} is null, or list is empty. World can not communicate " +
+                                                "if no ghost collections & prefabs are present.";
+
+        public virtual void ImportPrefabs()
         {
-            // TODO Import prefabs into world;
+            if (Options.GhostCollectionPrefabs is null || Options.GhostCollectionPrefabs.Count == 0)
+            {
+                Debug.LogWarning(string.Format(NoPrefabsWarning, nameof(Options.GhostCollectionPrefabs)));
+                return;
+            }
+
+            World.ImportGhostCollection(Options.GhostCollectionPrefabs);
         }
 
         public void DestroyWorld()

@@ -11,6 +11,6 @@ namespace Sibz.NetCode.Tests
         public string WorldName => $"TestWorld{TestCount++}";
         public bool CreateWorldOnInstantiate { get; set; }
         public List<Type> Systems { get; } = new List<Type>();
-        public List<GameObject> ConvertToClientServerEntityPrefabs { get; } = new List<GameObject>();
+        public List<GameObject> GhostCollectionPrefabs { get; set; } = new List<GameObject>();
     }
 }

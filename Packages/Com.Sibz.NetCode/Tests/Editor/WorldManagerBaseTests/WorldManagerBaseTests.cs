@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using Unity.Entities;
+using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace Sibz.NetCode.Tests
 {
@@ -23,6 +26,14 @@ namespace Sibz.NetCode.Tests
         public void TearDown()
         {
             //wm.Dispose();
+        }
+
+        [Test]
+        public void WhenImportPrefabsIsNull_ShouldLogWarning()
+        {
+            wm = new MyWorldManager(new MyWorldManagerOptions() { GhostCollectionPrefabs = null });
+            wm.ImportPrefabs();
+            LogAssert.Expect(LogType.Warning, new Regex(".*"));
         }
 
         [Test]

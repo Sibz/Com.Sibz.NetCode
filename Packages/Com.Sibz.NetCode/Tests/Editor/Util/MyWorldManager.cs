@@ -25,7 +25,11 @@ namespace Sibz.NetCode.Tests
         protected override void InjectSystems(List<Type> systems) =>
             World.ImportSystemsFromList<ClientSimulationSystemGroup>(systems);
 
-        protected override void ImportPrefabs() => CalledImportPrefabs = true;
+        public override void ImportPrefabs()
+        {
+            CalledImportPrefabs = true;
+            base.ImportPrefabs();
+        }
 
         public void InvokeAllCallbacks()
         {

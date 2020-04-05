@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Unity.Networking.Transport;
 
 namespace Sibz.NetCode.Tests.Server
 {
@@ -33,6 +34,40 @@ namespace Sibz.NetCode.Tests.Server
         {
             wm.CreateWorld(new List<Type> { typeof(NetCodeEventComponentSystem) });
             Assert.IsTrue(wm.Listen(serverOptions));
+        }
+
+        [Test]
+        public void Listen_ShouldSetIsListeningToTrue()
+        {
+            wm.CreateWorld(new List<Type> { typeof(NetCodeEventComponentSystem) });
+            wm.Listen(serverOptions);
+            Assert.IsTrue(wm.IsListening);
+        }
+
+        [Test]
+        public void Listen_ShouldInvokeCallback()
+        {
+            bool success = false;
+            void OnListenSuccess()
+            {
+                success = true;
+            }
+            wm.CallbackProvider = new MyServerCallbackProvider { ListenSuccess = OnListenSuccess };
+            wm.CreateWorld(new List<Type> { typeof(NetCodeEventComponentSystem) });
+            wm.Listen(serverOptions);
+            Assert.IsTrue(success);
+        }
+
+        public class MyServerCallbackProvider: IServerWorldCallbackProvider
+        {
+            public Action WorldCreated { get; set; }
+            public Action WorldDestroyed { get; set; }
+            public Action PreWorldDestroy { get; set; }
+            public Action<NetworkConnection> ClientConnected { get; set; }
+            public Action<NetworkConnection> ClientDisconnected { get; set; }
+            public Action ListenSuccess { get; set; }
+            public Action ListenFailed { get; set; }
+            public Action Closed { get; set; }
         }
     }
 }

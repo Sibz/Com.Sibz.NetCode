@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Sibz.EntityEvents;
-using Sibz.NetCode.Server;
 using Sibz.NetCode.WorldExtensions;
 using Sibz.WorldSystemHelpers;
 using Unity.Entities;
 using Unity.NetCode;
 using Unity.Networking.Transport;
 
-namespace Sibz.NetCode
+namespace Sibz.NetCode.Server
 {
     public class ServerWorldManager : WorldManagerBase, IServerWorldManager
     {

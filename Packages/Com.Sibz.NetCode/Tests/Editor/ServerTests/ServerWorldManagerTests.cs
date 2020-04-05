@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Sibz.NetCode.Server;
 using Unity.Networking.Transport;
 
 namespace Sibz.NetCode.Tests.Server

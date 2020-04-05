@@ -18,13 +18,5 @@ namespace Sibz.NetCode.Tests.Server
 
         [TearDown]
         public void ConstructorTearDown() => testWorld?.Dispose();
-
-        [Test]
-        public void ListenShouldReturnTrue()
-        {
-
-        }
-
-
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using Sibz.NetCode.Client;
 using Unity.Entities;
+using Unity.NetCode;
 using Unity.Transforms;
 
 namespace Sibz.NetCode.Tests.Client
@@ -13,6 +14,8 @@ namespace Sibz.NetCode.Tests.Client
         private ClientOptions options;
         private int testCount;
         private EntityQuery connectingQuery;
+        private EntityQuery connectingEventQuery;
+
         private readonly List<Type> systems =
             new List<Type>()
                 .AppendTypesWithAttribute<ClientAndServerSystemAttribute>()
@@ -25,19 +28,20 @@ namespace Sibz.NetCode.Tests.Client
             worldManager = new ClientWorldManager(options);
             worldManager.CreateWorld(systems);
             connectingQuery = worldManager.World.EntityManager.CreateEntityQuery(typeof(Connecting));
+            connectingEventQuery = worldManager.World.EntityManager.CreateEntityQuery(typeof(ConnectionInitiatedEvent));
         }
 
         [Test]
         public void Connect_WhenSettingIsNull_ShouldThrow()
         {
-            Assert.Catch<ArgumentNullException>(()=>worldManager.Connect(null));
+            Assert.Catch<ArgumentNullException>(() => worldManager.Connect(null));
         }
 
         [Test]
         public void Connect_WhenWorldInSotCreated_ShouldThrow()
         {
             worldManager.DestroyWorld();
-            Assert.Catch<InvalidOperationException>(()=>worldManager.Connect(options));
+            Assert.Catch<InvalidOperationException>(() => worldManager.Connect(options));
         }
 
         [Test]
@@ -45,6 +49,20 @@ namespace Sibz.NetCode.Tests.Client
         {
             worldManager.Connect(options);
             Assert.AreEqual(1, connectingQuery.CalculateEntityCount());
+        }
+
+        [Test]
+        public void Connect_ShouldCreateConnectionInitiatedEvent()
+        {
+            worldManager.Connect(options);
+            UpdateWorld();
+            Assert.AreEqual(1, connectingEventQuery.CalculateEntityCount());
+        }
+
+        private void UpdateWorld()
+        {
+            worldManager.World.GetExistingSystem<ClientInitializationSystemGroup>().Update();
+            worldManager.World.GetExistingSystem<ClientSimulationSystemGroup>().Update();
         }
     }
 }

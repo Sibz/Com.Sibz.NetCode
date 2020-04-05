@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sibz.EntityEvents;
 using Sibz.NetCode.WorldExtensions;
 using Sibz.WorldSystemHelpers;
 using Unity.Entities;
@@ -34,9 +35,7 @@ namespace Sibz.NetCode.Client
                 State = NetworkState.ConnectingToServer
             });
 
-
-            /*World.GetNetworkStreamReceiveSystem()
-                .Connect();*/
+            World.EnqueueEvent(new ConnectionInitiatedEvent());
         }
 
         public ClientWorldManager(IWorldManagerOptions options, IWorldCallbackProvider callbackProvider = null) : base(

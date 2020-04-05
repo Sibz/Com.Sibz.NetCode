@@ -5,15 +5,14 @@ using UnityEngine;
 
 namespace Sibz.NetCode
 {
-    public class ClientOptions : INetworkEndpointSettings
+    public class ClientOptions : INetworkEndpointSettings, IWorldManagerOptions
     {
-        public string WorldName { get; set; } = "Client";
-        public List<GameObject> SharedDataPrefabs { get; } = new List<GameObject>();
-        public List<Type> SystemImportAttributes { get; } = new List<Type>();
-        public bool ConnectOnSpawn { get; set; } = false;
-        public int ConnectTimeout { get; set; } = 10;
-        public string Address { get; set; } = "127.0.0.1";
+        public string Address { get; set; } = "0.0.0.0";
         public ushort Port { get; set; } = 21650;
         public NetworkFamily NetworkFamily { get; set; } = NetworkFamily.Ipv4;
+        public string WorldName { get; set; } = "Client";
+        public bool CreateWorldOnInstantiate { get; set; } = true;
+        public List<Type> Systems { get; set; } = new List<Type>();
+        public List<GameObject> GhostCollectionPrefabs { get; set; } = new List<GameObject>();
     }
 }

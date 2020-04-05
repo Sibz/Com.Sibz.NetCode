@@ -27,13 +27,12 @@ namespace Sibz.NetCode.WorldExtensions
             }
         }
 
-        private static void ImportGhostCollection(World world, ConvertToEntitySystem convertSystem,
-            GameObject prefab)
+        private static void ImportGhostCollection(World world, ConvertToEntitySystem cteSystem, GameObject prefab)
         {
             // ReSharper disable once Unity.NoNullCoalescing
             prefab = prefab ?? throw new ArgumentNullException(nameof(prefab));
             world = world ?? throw new ArgumentNullException(nameof(world));
-            convertSystem = convertSystem ?? throw new ArgumentNullException(nameof(convertSystem));
+            cteSystem = cteSystem ?? throw new ArgumentNullException(nameof(cteSystem));
 
 
             if (prefab.GetComponentInChildren<GhostCollectionAuthoringComponent>() is null)
@@ -52,7 +51,7 @@ namespace Sibz.NetCode.WorldExtensions
                 new GameObjectConversionSettings(
                     world,
                     GameObjectConversionUtility.ConversionFlags.AssignName,
-                    convertSystem.BlobAssetStore
+                    cteSystem.BlobAssetStore
                 );
 
             Entity entity = GameObjectConversionUtility.ConvertGameObjectHierarchy(

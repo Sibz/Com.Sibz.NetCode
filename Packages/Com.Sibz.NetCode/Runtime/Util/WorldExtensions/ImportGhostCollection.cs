@@ -22,13 +22,10 @@ namespace Sibz.NetCode.WorldExtensions
 
         public static void ImportGhostCollection(this World world, IEnumerable<GameObject> prefabs)
         {
+            prefabs = prefabs ?? throw new ArgumentNullException(nameof(prefabs));
+
             var convertToEntitySystem =
                 World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<ConvertToEntitySystem>();
-
-            if (prefabs is null)
-            {
-                throw new ArgumentNullException(nameof(prefabs));
-            }
 
             foreach (GameObject prefab in prefabs)
             {
@@ -36,23 +33,15 @@ namespace Sibz.NetCode.WorldExtensions
             }
         }
 
-        private static void ImportGhostCollection(World world, ConvertToEntitySystem convertToEntitySystem, GameObject prefab)
+        private static void ImportGhostCollection(World world, ConvertToEntitySystem convertToEntitySystem,
+            GameObject prefab)
         {
-            if (world is null)
-            {
-                throw new ArgumentNullException(nameof(world));
-            }
-
-            if (convertToEntitySystem is null)
-            {
-                throw new InvalidOperationException(
-                    string.Format(NoSystemError, nameof(ImportGhostCollection), nameof(ConvertToEntitySystem)));
-            }
-
-            if (prefab is null)
-            {
-                throw new ArgumentNullException(nameof(prefab));
-            }
+            // ReSharper disable once Unity.NoNullCoalescing
+            prefab = prefab ?? throw new ArgumentNullException(nameof(prefab));
+            world = world ?? throw new ArgumentNullException(nameof(world));
+            convertToEntitySystem = convertToEntitySystem ?? throw new InvalidOperationException(
+                string.Format(NoSystemError, nameof(ImportGhostCollection), nameof(ConvertToEntitySystem))
+            );
 
             if (prefab.GetComponentInChildren<GhostCollectionAuthoringComponent>() is null)
             {

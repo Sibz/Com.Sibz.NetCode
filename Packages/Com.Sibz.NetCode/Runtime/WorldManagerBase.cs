@@ -56,7 +56,7 @@ namespace Sibz.NetCode
         }
 
         private const string NoPrefabsWarning = "Option {0} is null, or list is empty. World can not communicate " +
-                                                "if no ghost collections & prefabs are present.";
+                                                "if ghost collections are present.";
 
         public virtual void ImportPrefabs()
         {

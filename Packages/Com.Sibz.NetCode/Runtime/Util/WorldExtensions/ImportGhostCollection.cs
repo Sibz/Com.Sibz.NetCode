@@ -13,24 +13,26 @@ namespace Sibz.NetCode.WorldExtensions
         private const string InvalidPrefabError = "{0}: Prefab should have {1} attached.";
 
         public static void ImportGhostCollection(this World world, GameObject prefab) =>
-            ImportGhostCollection(world, GetCteSystem(), prefab);
+            ImportGhostCollection(world, GetConversionSettings(world), prefab);
 
         public static void ImportGhostCollection(this World world, IEnumerable<GameObject> prefabs)
         {
             prefabs = prefabs ?? throw new ArgumentNullException(nameof(prefabs));
 
+            GameObjectConversionSettings settings = GetConversionSettings(world);
+
             foreach (GameObject prefab in prefabs)
             {
-                ImportGhostCollection(world, GetCteSystem(), prefab);
+                ImportGhostCollection(world, settings, prefab);
             }
         }
 
-        private static void ImportGhostCollection(World world, ConvertToEntitySystem cteSystem, GameObject prefab)
+        private static void ImportGhostCollection(World world, GameObjectConversionSettings settings, GameObject prefab)
         {
             // ReSharper disable once Unity.NoNullCoalescing
             prefab = prefab ?? throw new ArgumentNullException(nameof(prefab));
             world = world ?? throw new ArgumentNullException(nameof(world));
-            cteSystem = cteSystem ?? throw new ArgumentNullException(nameof(cteSystem));
+            settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
             if (prefab.GetComponentInChildren<GhostCollectionAuthoringComponent>() is null)
             {
@@ -44,14 +46,7 @@ namespace Sibz.NetCode.WorldExtensions
                 );
             }
 
-            var conversionSettings =
-                new GameObjectConversionSettings(
-                    world,
-                    GameObjectConversionUtility.ConversionFlags.AssignName,
-                    cteSystem.BlobAssetStore
-                );
-
-            Entity entity = GameObjectConversionUtility.ConvertGameObjectHierarchy(prefab, conversionSettings);
+            Entity entity = GameObjectConversionUtility.ConvertGameObjectHierarchy(prefab, settings);
             RemovePrefabComponentFromEntityAndDirectChildren(world, entity);
         }
 
@@ -71,10 +66,13 @@ namespace Sibz.NetCode.WorldExtensions
             commandBuffer.Dispose();
         }
 
-        private static ConvertToEntitySystem GetCteSystem() =>
-            World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<ConvertToEntitySystem>()
-            ?? throw new InvalidOperationException(
-                string.Format(NoSystemError, nameof(ImportGhostCollection), nameof(ConvertToEntitySystem))
-            );
+        private static GameObjectConversionSettings GetConversionSettings(World world) =>
+            new GameObjectConversionSettings(
+                world,
+                GameObjectConversionUtility.ConversionFlags.AssignName,
+                (World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<ConvertToEntitySystem>()
+                 ?? throw new InvalidOperationException(
+                     string.Format(NoSystemError, nameof(ImportGhostCollection), nameof(ConvertToEntitySystem))
+                 )).BlobAssetStore);
     }
 }

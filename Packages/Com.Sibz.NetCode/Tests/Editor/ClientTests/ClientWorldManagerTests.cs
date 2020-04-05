@@ -59,10 +59,33 @@ namespace Sibz.NetCode.Tests.Client
             Assert.AreEqual(1, connectingEventQuery.CalculateEntityCount());
         }
 
+        [Test]
+        public void Connect_ShouldCallback()
+        {
+            bool success = false;
+
+            void OnConnecting()
+            {
+                success = true;
+            }
+
+            worldManager.CallbackProvider = new MyClientCallbackProvider { Connecting = OnConnecting };
+            worldManager.Connect(options);
+            Assert.IsTrue(success);
+        }
+
         private void UpdateWorld()
         {
             worldManager.World.GetExistingSystem<ClientInitializationSystemGroup>().Update();
             worldManager.World.GetExistingSystem<ClientSimulationSystemGroup>().Update();
+        }
+
+        private class MyClientCallbackProvider : IClientWorldCallbackProvider
+        {
+            public Action Connecting { get; set; }
+            public Action Connected { get; set; }
+            public Action ConnectionFailed { get; set; }
+            public Action Disconnected { get; set; }
         }
     }
 }

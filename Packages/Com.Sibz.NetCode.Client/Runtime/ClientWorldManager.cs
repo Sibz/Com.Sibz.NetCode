@@ -14,6 +14,13 @@ namespace Sibz.NetCode.Client
         private const string WorldNotCreatedError =
             "{0}: Unable to connect, world is not created.";
 
+        public new IClientWorldCallbackProvider CallbackProvider { protected get; set; }
+
+        public ClientWorldManager(IWorldManagerOptions options, IWorldCallbackProvider callbackProvider = null) : base(
+            options, callbackProvider)
+        {
+        }
+
         public void Connect(INetworkEndpointSettings settings, int timeout = 10)
         {
             if (settings is null)
@@ -36,11 +43,8 @@ namespace Sibz.NetCode.Client
             });
 
             World.EnqueueEvent(new ConnectionInitiatedEvent());
-        }
 
-        public ClientWorldManager(IWorldManagerOptions options, IWorldCallbackProvider callbackProvider = null) : base(
-            options, callbackProvider)
-        {
+            CallbackProvider?.Connecting?.Invoke();
         }
 
         protected override World BootStrapCreateWorld(string worldName) =>

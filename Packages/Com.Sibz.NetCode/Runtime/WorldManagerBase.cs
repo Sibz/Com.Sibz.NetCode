@@ -8,6 +8,11 @@ namespace Sibz.NetCode
 {
     public abstract class WorldManagerBase : IWorldManager
     {
+        private const string WorldAlreadyCreatedError = "Can not create world as world is already created.";
+
+        private const string NoPrefabsWarning = "Option {0} is null, or list is empty. World can only communicate " +
+                                                "if ghost collections are present.";
+
         public World World { get; protected set; }
         public bool WorldIsCreated => World?.IsCreated ?? false;
         public IWorldCallbackProvider CallbackProvider { protected get; set; }
@@ -43,7 +48,7 @@ namespace Sibz.NetCode
 
             if (WorldIsCreated)
             {
-                throw new InvalidOperationException("Can not create world as world is already created.");
+                throw new InvalidOperationException(WorldAlreadyCreatedError);
             }
 
             World = BootStrapCreateWorld(Options.WorldName);
@@ -54,9 +59,6 @@ namespace Sibz.NetCode
 
             CallbackProvider?.WorldCreated?.Invoke();
         }
-
-        private const string NoPrefabsWarning = "Option {0} is null, or list is empty. World can not communicate " +
-                                                "if ghost collections are present.";
 
         public virtual void ImportPrefabs()
         {

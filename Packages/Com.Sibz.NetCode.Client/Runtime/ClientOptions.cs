@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Sibz.NetCode
 {
-    public class ClientOptions : IWorldOptionsBase
+    public class ClientOptions : INetworkEndpointSettings
     {
         public string WorldName { get; set; } = "Client";
         public List<GameObject> SharedDataPrefabs { get; } = new List<GameObject>();

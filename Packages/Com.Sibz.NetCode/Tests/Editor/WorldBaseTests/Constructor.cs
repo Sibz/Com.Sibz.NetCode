@@ -122,7 +122,7 @@ namespace Sibz.NetCode.Tests
         }
     }*/
 
-    public class MyOptionsImpl : IWorldOptionsBase
+    public class MyBaseOptionsImpl : INetworkEndpointSettings
     {
         public string WorldName { get; set; } = "Test";
         public List<GameObject> SharedDataPrefabs { get; } = new List<GameObject> { new GameObject("Test") };

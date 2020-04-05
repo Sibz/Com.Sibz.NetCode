@@ -2,20 +2,29 @@
 
 namespace Sibz.NetCode.Tests.Server
 {
-    public class Constructor : TestBase
+    public class ServerWorldTests : TestBase
     {
         private ServerWorld testWorld;
 
         /*private EntityQuery StatusQuery =>
             testWorld.World.EntityManager.CreateEntityQuery(typeof(NetworkStatus));*/
 
+        private int testCount;
         [SetUp]
         public void ConstructorSetUp()
         {
-            //testWorld = new ServerWorld();
+         //   testWorld = new ServerWorld(new ServerOptions { WorldName = $"Server{testCount++}"});
         }
 
         [TearDown]
         public void ConstructorTearDown() => testWorld?.Dispose();
+
+        [Test]
+        public void ListenShouldReturnTrue()
+        {
+
+        }
+
+
     }
 }

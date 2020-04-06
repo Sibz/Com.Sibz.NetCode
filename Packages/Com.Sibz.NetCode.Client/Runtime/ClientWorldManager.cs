@@ -38,7 +38,7 @@ namespace Sibz.NetCode.Client
             World.CreateSingleton(new Connecting
             {
                 EndPoint = endPoint,
-                TimeoutTime = UnityEngine.Time.time + timeout,
+                TimeoutTime = (float)World.Time.ElapsedTime + timeout,
                 State = NetworkState.ConnectingToServer
             });
 

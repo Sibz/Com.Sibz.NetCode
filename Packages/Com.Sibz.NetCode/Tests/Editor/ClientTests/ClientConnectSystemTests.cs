@@ -4,7 +4,7 @@ using Sibz.NetCode.Client;
 using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
 
-namespace Packages.Com.Sibz.NetCode.Tests.Editor.ClientTests
+namespace Sibz.NetCode.Tests.Client
 {
     public class ClientConnectSystemTests
     {
@@ -19,6 +19,9 @@ namespace Packages.Com.Sibz.NetCode.Tests.Editor.ClientTests
 
         private EntityQuery ConnectInitEventQuery =>
             world.EntityManager.CreateEntityQuery(typeof(ConnectionInitiatedEvent));
+
+        private EntityQuery ConnectFailedEventQuery =>
+            world.EntityManager.CreateEntityQuery(typeof(ConnectionFailedEvent));
 
         [SetUp]
         public void SetUp()
@@ -55,14 +58,18 @@ namespace Packages.Com.Sibz.NetCode.Tests.Editor.ClientTests
         [Test]
         public void WhenTimeoutHasPassed_ShouldCreateFailureEvent()
         {
+            connectSystem.World.EntityManager.SetComponentData(ConnectingSingletonQuery.GetSingletonEntity(),
+                new Connecting { TimeoutTime = -1 });
             connectSystem.Update();
             initBufferSystem.Update();
-            Assert.AreEqual(1, ConnectInitEventQuery.CalculateEntityCount());
+            Assert.AreEqual(1, ConnectFailedEventQuery.CalculateEntityCount());
         }
 
         [Test]
         public void WhenTimeoutHasPassed_ShouldDestroyConnectingSingleton()
         {
+            connectSystem.World.EntityManager.SetComponentData(ConnectingSingletonQuery.GetSingletonEntity(),
+                new Connecting { TimeoutTime = -1 });
             connectSystem.Update();
             Assert.AreEqual(0, ConnectingSingletonQuery.CalculateEntityCount());
         }

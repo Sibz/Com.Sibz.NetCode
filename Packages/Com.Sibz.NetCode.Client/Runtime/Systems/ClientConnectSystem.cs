@@ -1,4 +1,5 @@
 ﻿using System;
+using Sibz.EntityEvents;
 using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
 using Unity.NetCode;
@@ -33,6 +34,7 @@ namespace Sibz.NetCode.Client
             if (connecting.TimeoutTime < Time.ElapsedTime)
             {
                 EntityManager.DestroyEntity(GetSingletonEntity<Connecting>());
+                World.EnqueueEvent(new ConnectionFailedEvent {Message = "Connection timed out"});
             }
 
             if (HasSingleton<ConnectionInitiatedEvent>())

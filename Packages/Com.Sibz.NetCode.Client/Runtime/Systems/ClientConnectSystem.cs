@@ -1,29 +1,20 @@
 ﻿using System;
+using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
 using Unity.NetCode;
+using UnityEngine;
 
 namespace Sibz.NetCode.Client
 {
-    /*[ClientSystem]
+    [ClientSystem]
     public class ClientConnectSystem : ComponentSystem
     {
-        private NetworkStreamReceiveSystem network;
-        private EntityQuery connectQuery;
         private EntityQuery networkStreamQuery;
         private EntityQuery incomingConfirmRequestQuery;
-        private BeginInitializationEntityCommandBufferSystem bufferSystem;
 
         protected override void OnCreate()
         {
-            connectQuery = GetEntityQuery(new EntityQueryDesc
-            {
-                All = new[]
-                {
-                    ComponentType.ReadOnly<ClientConnect>()
-                }
-            });
-            RequireForUpdate(connectQuery);
-            network = World.GetExistingSystem<NetworkStreamReceiveSystem>();
+            RequireSingletonForUpdate<Connecting>();
             networkStreamQuery = GetEntityQuery(typeof(NetworkStreamConnection));
             incomingConfirmRequestQuery = GetEntityQuery(new EntityQueryDesc
             {
@@ -33,20 +24,23 @@ namespace Sibz.NetCode.Client
                     ComponentType.ReadOnly<ReceiveRpcCommandRequestComponent>()
                 }
             });
-
-            bufferSystem = World.GetExistingSystem<BeginInitializationEntityCommandBufferSystem>();
         }
 
         protected override void OnUpdate()
         {
-            if (connectQuery.CalculateEntityCount() > 1)
+            var connecting = GetSingleton<Connecting>();
+
+            if (connecting.TimeoutTime < Time.ElapsedTime)
             {
-                throw new SystemException("Expected only one entity with connect component!");
+                EntityManager.DestroyEntity(GetSingletonEntity<Connecting>());
             }
 
-            EntityCommandBuffer buffer = bufferSystem.CreateCommandBuffer();
+            if (HasSingleton<ConnectionInitiatedEvent>())
+            {
+                World.GetNetworkStreamReceiveSystem().Connect(connecting.EndPoint);
+            }
 
-            Entities.ForEach((Entity connectEntity, ref ClientConnect connect) =>
+            /*Entities.ForEach((Entity connectEntity, ref ClientConnect connect) =>
             {
                 ProcessInitialState(ref connect);
 
@@ -55,10 +49,10 @@ namespace Sibz.NetCode.Client
                 ProcessGoingInGameState(ref connect, connectEntity, buffer);
 
                 ProcessTimeOut(ref connect, connectEntity, buffer);
-            });
+            });*/
         }
 
-        private void ProcessTimeOut(ref ClientConnect clientConnect, Entity connectEntity, EntityCommandBuffer buffer)
+        /*private void ProcessTimeOut(ref ClientConnect clientConnect, Entity connectEntity, EntityCommandBuffer buffer)
         {
             if (!(clientConnect.TimeoutTime > UnityEngine.Time.time))
             {
@@ -116,6 +110,6 @@ namespace Sibz.NetCode.Client
             WorldBase.Debug($"{World.Name}:{clientConnect.EndPoint.Port} Connecting...");
 #endif#1#
             clientConnect.State = NetworkState.ConnectingToServer;
-        }
-    }*/
+        }*/
+    }
 }

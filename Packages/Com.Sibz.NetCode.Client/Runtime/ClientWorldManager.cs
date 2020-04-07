@@ -39,7 +39,7 @@ namespace Sibz.NetCode.Client
             {
                 EndPoint = endPoint,
                 TimeoutTime = (float)World.Time.ElapsedTime + timeout,
-                State = NetworkState.ConnectingToServer
+                State = NetworkState.InitialRequest
             });
 
             World.EnqueueEvent(new ConnectionInitiatedEvent());

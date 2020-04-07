@@ -55,6 +55,13 @@ namespace Sibz.NetCode.Tests.Client
         }
 
         [Test]
+        public void Connect_WhenCreatingConnectingEntity_ShouldSetStateToInitiating()
+        {
+            worldManager.Connect(options);
+            Assert.AreEqual(NetworkState.InitialRequest, connectingQuery.GetSingleton<Connecting>().State);
+        }
+
+        [Test]
         public void Connect_ShouldCreateConnectionInitiatedEvent()
         {
             worldManager.Connect(options);

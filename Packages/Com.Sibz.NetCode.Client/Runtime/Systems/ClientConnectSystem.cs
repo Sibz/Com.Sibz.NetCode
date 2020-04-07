@@ -40,6 +40,13 @@ namespace Sibz.NetCode.Client
             if (HasSingleton<ConnectionInitiatedEvent>())
             {
                 World.GetNetworkStreamReceiveSystem().Connect(connecting.EndPoint);
+                connecting.State = NetworkState.ConnectingToServer;
+                EntityManager.SetComponentData(GetSingletonEntity<Connecting>(), connecting);
+            }
+
+            if (connecting.State == NetworkState.ConnectingToServer)
+            {
+                connecting.State = NetworkState.GoingInGame;
             }
 
             /*Entities.ForEach((Entity connectEntity, ref ClientConnect connect) =>

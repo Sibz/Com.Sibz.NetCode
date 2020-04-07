@@ -79,7 +79,7 @@ namespace Sibz.NetCode.Tests.Client
         [Test]
         public void WhenConnectionProgresses_ShouldUpdateState()
         {
-
+            SetState(new Connecting { State = NetworkState.InitialRequest });
         }
     }
 

@@ -23,6 +23,9 @@ namespace Sibz.NetCode.Tests.Client
         private EntityQuery ConnectFailedEventQuery =>
             world.EntityManager.CreateEntityQuery(typeof(ConnectionFailedEvent));
 
+        private void SetState(Connecting connecting) =>
+            world.EntityManager.SetComponentData(ConnectingSingletonQuery.GetSingletonEntity(), connecting);
+
         [SetUp]
         public void SetUp()
         {
@@ -68,10 +71,15 @@ namespace Sibz.NetCode.Tests.Client
         [Test]
         public void WhenTimeoutHasPassed_ShouldDestroyConnectingSingleton()
         {
-            connectSystem.World.EntityManager.SetComponentData(ConnectingSingletonQuery.GetSingletonEntity(),
-                new Connecting { TimeoutTime = -1 });
+            SetState(new Connecting { TimeoutTime = -1 });
             connectSystem.Update();
             Assert.AreEqual(0, ConnectingSingletonQuery.CalculateEntityCount());
+        }
+
+        [Test]
+        public void WhenConnectionProgresses_ShouldUpdateState()
+        {
+
         }
     }
 

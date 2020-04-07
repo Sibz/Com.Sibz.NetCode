@@ -90,6 +90,12 @@ namespace Sibz.NetCode.Tests.Client
             connectSystem.Update();
             Assert.AreEqual(NetworkState.ConnectingToServer, State.State);
         }
+
+        [Test]
+        public void WhenConnectionProgressesFromConnectingToServer_ShouldUpdateToGoingInGame()
+        {
+            
+        }
     }
 
     public class ClientConnectSystemTest : ClientConnectSystem

@@ -44,6 +44,11 @@ namespace Sibz.NetCode.Client
                 EntityManager.SetComponentData(GetSingletonEntity<Connecting>(), connecting);
             }
 
+            if (connecting.State == NetworkState.ConnectingToServer)
+            {
+                connecting.State = NetworkState.GoingInGame;
+            }
+
             /*Entities.ForEach((Entity connectEntity, ref ClientConnect connect) =>
             {
                 ProcessInitialState(ref connect);

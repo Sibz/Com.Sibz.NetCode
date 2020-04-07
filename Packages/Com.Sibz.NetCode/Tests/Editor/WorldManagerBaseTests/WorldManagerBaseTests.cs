@@ -6,7 +6,7 @@ using Unity.Entities;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace Sibz.NetCode.Tests
+namespace Sibz.NetCode.Tests.Base
 {
     public class WorldManagerBaseTests
     {

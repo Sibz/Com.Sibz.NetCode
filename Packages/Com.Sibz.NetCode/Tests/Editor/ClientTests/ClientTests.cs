@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace Sibz.NetCode.Tests
+namespace Sibz.NetCode.Tests.Client
 {
     public class ClientTests
     {

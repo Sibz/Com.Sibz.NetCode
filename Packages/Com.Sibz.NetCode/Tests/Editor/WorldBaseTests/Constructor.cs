@@ -6,7 +6,7 @@ using Unity.Entities;
 using Unity.Networking.Transport;
 using UnityEngine;
 
-namespace Sibz.NetCode.Tests
+namespace Sibz.NetCode.Tests.Base
 {
     public class Constructor
     {

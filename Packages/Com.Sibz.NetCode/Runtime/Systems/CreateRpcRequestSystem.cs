@@ -16,6 +16,9 @@ namespace Sibz.NetCode
         private static Entity GetTargetConnection(World world) =>
             world.GetOrCreateSystem<CreateRpcRequestSystem>().CommandTargetComponentEntity;
 
+        public static Entity CreateRpcRequest<T>(World world)
+            where T : struct, IRpcCommand =>
+            CreateRpcRequest<T>(world, default);
         public static Entity CreateRpcRequest<T>(World world, T rpcCommand)
             where T : struct, IRpcCommand
         {

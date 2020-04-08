@@ -8,10 +8,10 @@ namespace Sibz.NetCode
     [ClientAndServerSystem]
     public class CreateRpcRequestSystem : JobComponentSystem
     {
-        private EntityQuery commandTargetComponentEntityQuery;
+        private EntityQuery networkIdEntityQuery;
 
         public Entity CommandTargetComponentEntity =>
-            commandTargetComponentEntityQuery.GetSingletonEntity();
+            networkIdEntityQuery.GetSingletonEntity();
 
         private static Entity GetTargetConnection(World world) =>
             world.GetOrCreateSystem<CreateRpcRequestSystem>().CommandTargetComponentEntity;
@@ -36,7 +36,7 @@ namespace Sibz.NetCode
 
         protected override void OnCreate()
         {
-            commandTargetComponentEntityQuery = GetEntityQuery(typeof(CommandTargetComponent));
+            networkIdEntityQuery = GetEntityQuery(typeof(NetworkIdComponent));
             Enabled = false;
         }
 

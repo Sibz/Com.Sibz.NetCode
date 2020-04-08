@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Packages.Com.Sibz.NetCode.Client.Runtime.Systems;
 using Sibz.EntityEvents;
 using Sibz.NetCode.Client;
 using Sibz.NetCode.WorldExtensions;
@@ -55,6 +56,7 @@ namespace Sibz.NetCode.Tests.Client
             eventSystem = world.CreateSystem<EventComponentSystem>();
             world.GetOrCreateSystem<ClientSimulationSystemGroup>().AddSystemToUpdateList(connectSystem);
             world.GetOrCreateSystem<ClientSimulationSystemGroup>().AddSystemToUpdateList(eventSystem);
+            world.GetOrCreateSystem<ClientSimulationSystemGroup>().AddSystemToUpdateList(world.CreateSystem<GoInGameRequestSystem>());
             world.GetOrCreateSystem<ClientSimulationSystemGroup>().SortSystemUpdateList();
 
             world.CreateSingleton<Connecting>();
@@ -143,6 +145,19 @@ namespace Sibz.NetCode.Tests.Client
             UpdateServerAndClient();
             UpdateServerAndClient();
             Assert.AreEqual(1, GoInGameRequestQuery.CalculateEntityCount());
+        }
+
+        [Test]
+        public void WhenGoInGameRequestRaised_ShouldGetSent()
+        {
+            State = new Connecting { State = NetworkState.ConnectingToServer };
+            world.GetNetworkStreamReceiveSystem().Connect(NetworkEndPoint.Parse("127.0.0.1", 21650));
+            UpdateServerAndClient();
+            UpdateServerAndClient();
+            Assert.AreEqual(1, GoInGameRequestQuery.CalculateEntityCount());
+            UpdateServerAndClient();
+            Assert.AreEqual(0, GoInGameRequestQuery.CalculateEntityCount(),
+                "Failing this means the GoInGameRequestSystem doesn't exist or isn't doing its thing");
         }
 
         public void UpdateServerAndClient()

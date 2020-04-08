@@ -27,39 +27,68 @@ namespace Sibz.NetCode.Client
         {
             var connecting = GetSingleton<Connecting>();
 
-            if (connecting.TimeoutTime < Time.ElapsedTime)
+            if (ProcessTimeout(ref connecting))
             {
-                EntityManager.DestroyEntity(GetSingletonEntity<Connecting>());
-                World.EnqueueEvent(new ConnectionFailedEvent { Message = "Connection timed out" });
+                return;
             }
 
-            if (HasSingleton<ConnectionInitiatedEvent>())
-            {
-                NetworkStreamSystemProxy.Connect(connecting.EndPoint);
-                connecting.State = NetworkState.ConnectingToServer;
-            }
-            else if (connecting.State == NetworkState.ConnectingToServer && HasSingleton<NetworkIdComponent>())
-            {
-                Entity targetConnection = GetSingletonEntity<NetworkIdComponent>();
-                connecting.State = NetworkState.GoingInGame;
-                EntityManager.AddComponent<NetworkStreamInGame>(targetConnection);
+            ProcessConnectionInitiatedEvent(ref connecting);
 
-                Entity entity =
-                    EntityManager.CreateEntity(typeof(GoInGameRequest), typeof(SendRpcCommandRequestComponent));
-                EntityManager.SetComponentData(entity,
-                    new SendRpcCommandRequestComponent { TargetConnection = targetConnection });
-            } else if (connecting.State == NetworkState.GoingInGame &&
-                       incomingConfirmRequestQuery.CalculateEntityCount() == 1)
-            {
-                World.EnqueueEvent(new ConnectionCompleteEvent());
-                EntityManager.DestroyEntity(GetSingletonEntity<Connecting>());
-                EntityManager.DestroyEntity(incomingConfirmRequestQuery);
-            }
+            ProcessConnectionGoInGame(ref connecting);
+
+            ProcessConnectionComplete(ref connecting);
 
             if (HasSingleton<Connecting>())
             {
                 EntityManager.SetComponentData(GetSingletonEntity<Connecting>(), connecting);
             }
+        }
+
+        private bool ProcessTimeout(ref Connecting connecting)
+        {
+            if (connecting.TimeoutTime < Time.ElapsedTime)
+            {
+                EntityManager.DestroyEntity(GetSingletonEntity<Connecting>());
+                World.EnqueueEvent(new ConnectionFailedEvent { Message = "Connection timed out" });
+                return true;
+            }
+
+            return false;
+        }
+
+        private void ProcessConnectionInitiatedEvent(ref Connecting connecting)
+        {
+            if (!HasSingleton<ConnectionInitiatedEvent>())
+            {
+                return;
+            }
+
+            NetworkStreamSystemProxy.Connect(connecting.EndPoint);
+            connecting.State = NetworkState.ConnectingToServer;
+        }
+
+        private void ProcessConnectionGoInGame(ref Connecting connecting)
+        {
+            if (connecting.State != NetworkState.ConnectingToServer || !HasSingleton<NetworkIdComponent>())
+            {
+                return;
+            }
+
+            connecting.State = NetworkState.GoingInGame;
+            EntityManager.AddComponent<NetworkStreamInGame>(GetSingletonEntity<NetworkIdComponent>());
+            World.CreateRpcRequest<GoInGameRequest>();
+        }
+
+        private void ProcessConnectionComplete(ref Connecting connecting)
+        {
+            if (connecting.State != NetworkState.GoingInGame || incomingConfirmRequestQuery.CalculateEntityCount() != 1)
+            {
+                return;
+            }
+
+            World.EnqueueEvent(new ConnectionCompleteEvent());
+            EntityManager.DestroyEntity(GetSingletonEntity<Connecting>());
+            EntityManager.DestroyEntity(incomingConfirmRequestQuery);
         }
     }
 }

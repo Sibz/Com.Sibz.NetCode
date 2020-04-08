@@ -17,7 +17,7 @@ namespace Sibz.NetCode.Tests
             }
 
             DefaultWorldInitialization.Initialize("DefaultTestWorld", true);
-            new ClientServerBootstrap().Initialize("DefaultTestWorld");
+            //new ClientServerBootstrap().Initialize("DefaultTestWorld");
             foreach (World world in World.All)
             {
                 if (world.Name != "DefaultTestWorld")

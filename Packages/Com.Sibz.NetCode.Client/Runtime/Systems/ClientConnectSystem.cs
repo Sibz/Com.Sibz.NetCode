@@ -42,9 +42,9 @@ namespace Sibz.NetCode.Client
                 World.GetNetworkStreamReceiveSystem().Connect(connecting.EndPoint);
                 connecting.State = NetworkState.ConnectingToServer;
             }
-            else if (connecting.State == NetworkState.ConnectingToServer && HasSingleton<NetworkStreamConnection>())
+            else if (connecting.State == NetworkState.ConnectingToServer && HasSingleton<NetworkIdComponent>())
             {
-                Entity targetConnection = GetSingletonEntity<NetworkStreamConnection>();
+                Entity targetConnection = GetSingletonEntity<NetworkIdComponent>();
                 connecting.State = NetworkState.GoingInGame;
                 EntityManager.AddComponent<NetworkStreamInGame>(targetConnection);
 

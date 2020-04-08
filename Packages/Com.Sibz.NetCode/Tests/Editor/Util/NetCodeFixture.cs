@@ -17,10 +17,10 @@ namespace Sibz.NetCode.Tests
             }
 
             DefaultWorldInitialization.Initialize("DefaultTestWorld", true);
-            //new ClientServerBootstrap().Initialize("DefaultTestWorld");
+            new ClientServerBootstrap().Initialize("DefaultNetWorld");
             foreach (World world in World.All)
             {
-                if (world.Name != "DefaultTestWorld")
+                if (world.Name != "DefaultNetWorld")
                 {
                     continue;
                 }
@@ -39,7 +39,7 @@ namespace Sibz.NetCode.Tests
         {
             for (int i = World.All.Count - 1; i >= 0; i--)
             {
-                if (World.All[i].Name.StartsWith("Test") || World.All[i].Name == "DefaultWorldSomething"
+                if (World.All[i].Name.StartsWith("Test") || World.All[i].Name == "DefaultNetWorld"
                                                          || World.All[i].Name.StartsWith("Client")
                                                          || World.All[i].Name.StartsWith("Server"))
                 {

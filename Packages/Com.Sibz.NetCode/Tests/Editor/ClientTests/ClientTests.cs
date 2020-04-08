@@ -1,4 +1,4 @@
-﻿/*using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Sibz.NetCode.Tests.Client
 {
@@ -9,4 +9,4 @@ namespace Sibz.NetCode.Tests.Client
         {
         }
     }
-}*/
+}

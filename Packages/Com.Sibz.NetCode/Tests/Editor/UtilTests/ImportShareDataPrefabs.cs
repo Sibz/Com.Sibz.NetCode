@@ -1,4 +1,4 @@
-﻿/*using System;
+﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Sibz.NetCode.WorldExtensions;
@@ -75,4 +75,4 @@ namespace Sibz.NetCode.Tests.UtilTests
         }
         // ReSharper restore ExpressionIsAlwaysNull
     }
-}*/
+}

@@ -1,4 +1,4 @@
-﻿/*using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Sibz.NetCode.Tests.Server
 {
@@ -7,7 +7,7 @@ namespace Sibz.NetCode.Tests.Server
         private ServerWorld testWorld;
 
         /*private EntityQuery StatusQuery =>
-            testWorld.World.EntityManager.CreateEntityQuery(typeof(NetworkStatus));#1#
+            testWorld.World.EntityManager.CreateEntityQuery(typeof(NetworkStatus));*/
 
         private int testCount;
         [SetUp]
@@ -19,4 +19,4 @@ namespace Sibz.NetCode.Tests.Server
         [TearDown]
         public void ConstructorTearDown() => testWorld?.Dispose();
     }
-}*/
+}

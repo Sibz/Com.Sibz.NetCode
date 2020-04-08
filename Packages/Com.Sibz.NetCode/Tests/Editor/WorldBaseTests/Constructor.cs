@@ -1,4 +1,4 @@
-﻿/*using System;
+﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Sibz.EntityEvents;
@@ -120,7 +120,7 @@ namespace Sibz.NetCode.Tests.Base
         public MyServerWorld() : base(new MyOptionsImpl(), ClientServerBootstrap.CreateServerWorld)
         {
         }
-    }#1#
+    }*/
 
     public class MyBaseOptionsImpl : INetworkEndpointSettings
     {
@@ -148,4 +148,4 @@ namespace Sibz.NetCode.Tests.Base
         {
         }
     }
-}*/
+}

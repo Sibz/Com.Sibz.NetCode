@@ -1,4 +1,4 @@
-﻿/*using System;
+﻿using System;
 using NUnit.Framework;
 using Packages.Com.Sibz.NetCode.Client.Runtime.Systems;
 using Sibz.EntityEvents;
@@ -49,14 +49,14 @@ namespace Sibz.NetCode.Tests.Client
         {
             testServer = new ServerWorld(new ServerOptions { WorldName = "ClientConnectTestServerWorld" });
             testServer.Listen();
-        }#1#
+        }*/
 
         [SetUp]
         public void SetUp()
         {
             world = new World(
                 $"TestClientConnectSystem{testCount++}"); /*ClientServerBootstrap.CreateClientWorld(World.DefaultGameObjectInjectionWorld,
-                $"TestClientConnectSystem{testCount++}");#2#
+                $"TestClientConnectSystem{testCount++}");*/
             connectSystem = world.CreateSystem<ClientConnectSystemTest>();
             initBufferSystem = world.GetOrCreateSystem<BeginInitializationEntityCommandBufferSystem>();
             eventSystem = world.CreateSystem<EventComponentSystem>();
@@ -78,7 +78,7 @@ namespace Sibz.NetCode.Tests.Client
         public void OneTimeTearDown()
         {
             testServer.Dispose();
-        }#2#
+        }*/
 
         [Test]
         public void WhenSingletonDoesNotExist_ShouldNotRun()
@@ -199,7 +199,7 @@ namespace Sibz.NetCode.Tests.Client
             world.GetExistingSystem<ClientSimulationSystemGroup>().Update();
             testServer.World.GetExistingSystem<ServerInitializationSystemGroup>().Update();
             testServer.World.GetExistingSystem<ServerSimulationSystemGroup>().Update();
-        }#2#
+        }*/
     }
 
     public class ClientConnectSystemTest : ClientConnectSystem
@@ -212,5 +212,4 @@ namespace Sibz.NetCode.Tests.Client
             base.OnUpdate();
         }
     }
-
-}*/
+}

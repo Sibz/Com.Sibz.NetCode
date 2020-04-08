@@ -26,6 +26,12 @@ namespace Sibz.NetCode.Tests.Client
         private EntityQuery ConnectFailedEventQuery =>
             world.EntityManager.CreateEntityQuery(typeof(ConnectionFailedEvent));
 
+        private EntityQuery NetworkStreamQuery =>
+            world.EntityManager.CreateEntityQuery(typeof(NetworkStreamConnection));
+
+        private EntityQuery GoInGameRequestQuery =>
+            world.EntityManager.CreateEntityQuery(typeof(GoInGameRequest), typeof(SendRpcCommandRequestComponent));
+
         private Connecting State
         {
             get => ConnectingSingletonQuery.GetSingleton<Connecting>();
@@ -35,7 +41,7 @@ namespace Sibz.NetCode.Tests.Client
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            testServer = new ServerWorld(new ServerOptions{ WorldName = "ClientConnectTestServerWorld"});
+            testServer = new ServerWorld(new ServerOptions { WorldName = "ClientConnectTestServerWorld" });
             testServer.Listen();
         }
 
@@ -116,6 +122,27 @@ namespace Sibz.NetCode.Tests.Client
             UpdateServerAndClient();
             UpdateServerAndClient();
             Assert.AreEqual(NetworkState.GoingInGame, State.State);
+        }
+
+        [Test]
+        public void WhenConnected_ShouldAddNetworkInStreamComponent()
+        {
+            State = new Connecting { State = NetworkState.ConnectingToServer };
+            world.GetNetworkStreamReceiveSystem().Connect(NetworkEndPoint.Parse("127.0.0.1", 21650));
+            UpdateServerAndClient();
+            UpdateServerAndClient();
+            Assert.IsTrue(
+                world.EntityManager.HasComponent<NetworkStreamInGame>(NetworkStreamQuery.GetSingletonEntity()));
+        }
+
+        [Test]
+        public void WhenConnected_ShouldSendGoInGameRequest()
+        {
+            State = new Connecting { State = NetworkState.ConnectingToServer };
+            world.GetNetworkStreamReceiveSystem().Connect(NetworkEndPoint.Parse("127.0.0.1", 21650));
+            UpdateServerAndClient();
+            UpdateServerAndClient();
+            Assert.AreEqual(1, GoInGameRequestQuery.CalculateEntityCount());
         }
 
         public void UpdateServerAndClient()

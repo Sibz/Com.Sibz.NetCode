@@ -34,16 +34,24 @@ namespace Sibz.NetCode.Client
             if (connecting.TimeoutTime < Time.ElapsedTime)
             {
                 EntityManager.DestroyEntity(GetSingletonEntity<Connecting>());
-                World.EnqueueEvent(new ConnectionFailedEvent {Message = "Connection timed out"});
+                World.EnqueueEvent(new ConnectionFailedEvent { Message = "Connection timed out" });
             }
 
             if (HasSingleton<ConnectionInitiatedEvent>())
             {
                 World.GetNetworkStreamReceiveSystem().Connect(connecting.EndPoint);
                 connecting.State = NetworkState.ConnectingToServer;
-            } else if (connecting.State == NetworkState.ConnectingToServer && HasSingleton<NetworkStreamConnection>())
+            }
+            else if (connecting.State == NetworkState.ConnectingToServer && HasSingleton<NetworkStreamConnection>())
             {
+                Entity targetConnection = GetSingletonEntity<NetworkStreamConnection>();
                 connecting.State = NetworkState.GoingInGame;
+                EntityManager.AddComponent<NetworkStreamInGame>(targetConnection);
+
+                Entity entity =
+                    EntityManager.CreateEntity(typeof(GoInGameRequest), typeof(SendRpcCommandRequestComponent));
+                EntityManager.SetComponentData(entity,
+                    new SendRpcCommandRequestComponent { TargetConnection = targetConnection });
             }
 
             if (HasSingleton<Connecting>())

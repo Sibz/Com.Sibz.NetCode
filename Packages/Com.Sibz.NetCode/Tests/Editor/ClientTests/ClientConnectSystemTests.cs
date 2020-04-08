@@ -16,8 +16,9 @@ namespace Sibz.NetCode.Tests.Client
         private int testCount;
         private ClientConnectSystemTest connectSystem;
         private EventComponentSystem eventSystem;
+
         private BeginInitializationEntityCommandBufferSystem initBufferSystem;
-        private ServerWorld testServer;
+        //private ServerWorld testServer;
 
         private EntityQuery ConnectingSingletonQuery =>
             world.EntityManager.CreateEntityQuery(typeof(Connecting));
@@ -28,11 +29,14 @@ namespace Sibz.NetCode.Tests.Client
         private EntityQuery ConnectFailedEventQuery =>
             world.EntityManager.CreateEntityQuery(typeof(ConnectionFailedEvent));
 
-        private EntityQuery NetworkStreamQuery =>
-            world.EntityManager.CreateEntityQuery(typeof(NetworkStreamConnection));
+        private EntityQuery NetworkIdQuery =>
+            world.EntityManager.CreateEntityQuery(typeof(NetworkIdComponent));
 
         private EntityQuery GoInGameRequestQuery =>
             world.EntityManager.CreateEntityQuery(typeof(GoInGameRequest), typeof(SendRpcCommandRequestComponent));
+
+        private EntityQuery ConnectSuccessEventQuery =>
+            world.EntityManager.CreateEntityQuery(typeof(ConnectionCompleteEvent));
 
         private Connecting State
         {
@@ -40,18 +44,19 @@ namespace Sibz.NetCode.Tests.Client
             set => world.EntityManager.SetComponentData(ConnectingSingletonQuery.GetSingletonEntity(), value);
         }
 
-        [OneTimeSetUp]
+        /*[OneTimeSetUp]
         public void OneTimeSetUp()
         {
             testServer = new ServerWorld(new ServerOptions { WorldName = "ClientConnectTestServerWorld" });
             testServer.Listen();
-        }
+        }*/
 
         [SetUp]
         public void SetUp()
         {
-            world = ClientServerBootstrap.CreateClientWorld(World.DefaultGameObjectInjectionWorld,
-                $"TestClientConnectSystem{testCount++}");
+            world = new World(
+                $"TestClientConnectSystem{testCount++}"); /*ClientServerBootstrap.CreateClientWorld(World.DefaultGameObjectInjectionWorld,
+                $"TestClientConnectSystem{testCount++}");*/
             connectSystem = world.CreateSystem<ClientConnectSystemTest>();
             initBufferSystem = world.GetOrCreateSystem<BeginInitializationEntityCommandBufferSystem>();
             eventSystem = world.CreateSystem<EventComponentSystem>();
@@ -69,24 +74,24 @@ namespace Sibz.NetCode.Tests.Client
             world.Dispose();
         }
 
-        [OneTimeTearDown]
+        /*[OneTimeTearDown]
         public void OneTimeTearDown()
         {
             testServer.Dispose();
-        }
+        }*/
 
         [Test]
         public void WhenSingletonDoesNotExist_ShouldNotRun()
         {
             world.EntityManager.DestroyEntity(ConnectingSingletonQuery.GetSingletonEntity());
-            connectSystem.Update();
+            UpdateClient();
             Assert.IsFalse(connectSystem.Updated);
         }
 
         [Test]
         public void WhenSingletonExists_ShouldRun()
         {
-            connectSystem.Update();
+            UpdateClient();
             Assert.IsTrue(connectSystem.Updated);
         }
 
@@ -95,8 +100,8 @@ namespace Sibz.NetCode.Tests.Client
         {
             connectSystem.World.EntityManager.SetComponentData(ConnectingSingletonQuery.GetSingletonEntity(),
                 new Connecting { TimeoutTime = -1 });
-            connectSystem.Update();
-            initBufferSystem.Update();
+            UpdateClient();
+            UpdateClient();
             Assert.AreEqual(1, ConnectFailedEventQuery.CalculateEntityCount());
         }
 
@@ -104,7 +109,7 @@ namespace Sibz.NetCode.Tests.Client
         public void WhenTimeoutHasPassed_ShouldDestroyConnectingSingleton()
         {
             State = new Connecting { TimeoutTime = -1 };
-            connectSystem.Update();
+            UpdateClient();
             Assert.AreEqual(0, ConnectingSingletonQuery.CalculateEntityCount());
         }
 
@@ -113,17 +118,19 @@ namespace Sibz.NetCode.Tests.Client
         {
             State = new Connecting { State = NetworkState.InitialRequest };
             world.EnqueueEvent<ConnectionInitiatedEvent>();
-            UpdateServerAndClient();
+            connectSystem.NetworkStreamSystemProxy = new MyClientNetworkStreamSystemProxy();
+            UpdateClient();
+            UpdateClient();
             Assert.AreEqual(NetworkState.ConnectingToServer, State.State);
         }
 
-        /*
+
         [Test]
         public void WhenConnectionProgressesFromConnectingToServer_ShouldUpdateToGoingInGame()
         {
             State = new Connecting { State = NetworkState.ConnectingToServer };
             world.CreateSingleton<NetworkIdComponent>();
-            UpdateServerAndClient();
+            UpdateClient();
             Assert.AreEqual(NetworkState.GoingInGame, State.State);
         }
 
@@ -132,10 +139,9 @@ namespace Sibz.NetCode.Tests.Client
         {
             State = new Connecting { State = NetworkState.ConnectingToServer };
             world.CreateSingleton<NetworkIdComponent>();
-            UpdateServerAndClient();
-            UpdateServerAndClient();
+            UpdateClient();
             Assert.IsTrue(
-                world.EntityManager.HasComponent<NetworkStreamInGame>(NetworkStreamQuery.GetSingletonEntity()));
+                world.EntityManager.HasComponent<NetworkStreamInGame>(NetworkIdQuery.GetSingletonEntity()));
         }
 
         [Test]
@@ -143,31 +149,57 @@ namespace Sibz.NetCode.Tests.Client
         {
             State = new Connecting { State = NetworkState.ConnectingToServer };
             world.CreateSingleton<NetworkIdComponent>();
-            UpdateServerAndClient();
-            UpdateServerAndClient();
+            UpdateClient();
+            UpdateClient();
             Assert.AreEqual(1, GoInGameRequestQuery.CalculateEntityCount());
-        }*/
+        }
 
-        /*[Test]
-        public void WhenGoInGameRequestRaised_ShouldGetSent()
+        [Test]
+        public void WhenReceivedConnectConfirmation_ShouldRaiseConnectCompleteEvent()
         {
-            State = new Connecting { State = NetworkState.ConnectingToServer };
-            world.GetNetworkStreamReceiveSystem().Connect(NetworkEndPoint.Parse("127.0.0.1", 21650));
-            UpdateServerAndClient();
-            UpdateServerAndClient();
-            Assert.AreEqual(1, GoInGameRequestQuery.CalculateEntityCount());
-            UpdateServerAndClient();
-            Assert.AreEqual(0, GoInGameRequestQuery.CalculateEntityCount(),
-                "Failing this means the GoInGameRequestSystem doesn't exist or isn't doing its thing");
-        }*/
+            State = new Connecting { State = NetworkState.GoingInGame };
+            world.EntityManager.CreateEntity(typeof(ConfirmConnectionRequest),
+                typeof(ReceiveRpcCommandRequestComponent));
+            UpdateClient();
+            UpdateClient();
+            Assert.AreEqual(1, ConnectSuccessEventQuery.CalculateEntityCount());
+        }
 
-        public void UpdateServerAndClient()
+        [Test]
+        public void WhenReceivedConnectConfirmation_ShouldDestroyConnectingComponent()
+        {
+            State = new Connecting { State = NetworkState.GoingInGame };
+            world.EntityManager.CreateEntity(typeof(ConfirmConnectionRequest),
+                typeof(ReceiveRpcCommandRequestComponent));
+            UpdateClient();
+            UpdateClient();
+            Assert.AreEqual(0, ConnectingSingletonQuery.CalculateEntityCount());
+        }
+
+        [Test]
+        public void WhenReceivedConnectConfirmation_ShouldDestroyRequestEntity()
+        {
+            State = new Connecting { State = NetworkState.GoingInGame };
+            var entity = world.EntityManager.CreateEntity(typeof(ConfirmConnectionRequest),
+                typeof(ReceiveRpcCommandRequestComponent));
+            UpdateClient();
+            UpdateClient();
+            Assert.IsFalse(world.EntityManager.Exists(entity));
+        }
+
+        public void UpdateClient()
+        {
+            initBufferSystem.Update();
+            world.GetExistingSystem<ClientSimulationSystemGroup>().Update();
+        }
+
+        /*public void UpdateServerAndClient()
         {
             world.GetExistingSystem<ClientInitializationSystemGroup>().Update();
             world.GetExistingSystem<ClientSimulationSystemGroup>().Update();
             testServer.World.GetExistingSystem<ServerInitializationSystemGroup>().Update();
             testServer.World.GetExistingSystem<ServerSimulationSystemGroup>().Update();
-        }
+        }*/
     }
 
     public class ClientConnectSystemTest : ClientConnectSystem

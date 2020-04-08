@@ -12,7 +12,7 @@ namespace Sibz.NetCode
         public NetworkFamily NetworkFamily { get; set; } = NetworkFamily.Ipv4;
         public string WorldName { get; set; } = "Client";
         public bool CreateWorldOnInstantiate { get; set; } = true;
-        public List<Type> Systems { get; set; } = new List<Type>();
+        public List<Type> Systems { get; set; } = new List<Type>().AppendTypesWithAttribute<ClientSystemAttribute>();
         public List<GameObject> GhostCollectionPrefabs { get; set; } = new List<GameObject>();
     }
 }

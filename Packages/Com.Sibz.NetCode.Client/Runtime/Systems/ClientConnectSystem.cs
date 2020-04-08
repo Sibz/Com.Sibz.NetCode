@@ -10,21 +10,17 @@ namespace Sibz.NetCode.Client
     [ClientSystem]
     public class ClientConnectSystem : ComponentSystem
     {
-        private EntityQuery networkStreamQuery;
         private EntityQuery incomingConfirmRequestQuery;
+        public IClientNetworkStreamSystemProxy NetworkStreamSystemProxy { get; set; }
 
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<Connecting>();
-            networkStreamQuery = GetEntityQuery(typeof(NetworkStreamConnection));
-            incomingConfirmRequestQuery = GetEntityQuery(new EntityQueryDesc
-            {
-                All = new[]
-                {
-                    ComponentType.ReadOnly<ConfirmConnectionRequest>(),
-                    ComponentType.ReadOnly<ReceiveRpcCommandRequestComponent>()
-                }
-            });
+            incomingConfirmRequestQuery =
+                GetEntityQuery(
+                    typeof(ConfirmConnectionRequest),
+                    typeof(ReceiveRpcCommandRequestComponent));
+            NetworkStreamSystemProxy = new ClientNetworkStreamSystemProxy(World);
         }
 
         protected override void OnUpdate()
@@ -39,7 +35,7 @@ namespace Sibz.NetCode.Client
 
             if (HasSingleton<ConnectionInitiatedEvent>())
             {
-                World.GetNetworkStreamReceiveSystem().Connect(connecting.EndPoint);
+                NetworkStreamSystemProxy.Connect(connecting.EndPoint);
                 connecting.State = NetworkState.ConnectingToServer;
             }
             else if (connecting.State == NetworkState.ConnectingToServer && HasSingleton<NetworkIdComponent>())
@@ -52,83 +48,18 @@ namespace Sibz.NetCode.Client
                     EntityManager.CreateEntity(typeof(GoInGameRequest), typeof(SendRpcCommandRequestComponent));
                 EntityManager.SetComponentData(entity,
                     new SendRpcCommandRequestComponent { TargetConnection = targetConnection });
+            } else if (connecting.State == NetworkState.GoingInGame &&
+                       incomingConfirmRequestQuery.CalculateEntityCount() == 1)
+            {
+                World.EnqueueEvent(new ConnectionCompleteEvent());
+                EntityManager.DestroyEntity(GetSingletonEntity<Connecting>());
+                EntityManager.DestroyEntity(incomingConfirmRequestQuery);
             }
 
             if (HasSingleton<Connecting>())
             {
                 EntityManager.SetComponentData(GetSingletonEntity<Connecting>(), connecting);
             }
-
-            /*Entities.ForEach((Entity connectEntity, ref ClientConnect connect) =>
-            {
-                ProcessInitialState(ref connect);
-
-                ProcessConnectingState(ref connect);
-
-                ProcessGoingInGameState(ref connect, connectEntity, buffer);
-
-                ProcessTimeOut(ref connect, connectEntity, buffer);
-            });*/
         }
-
-        /*private void ProcessTimeOut(ref ClientConnect clientConnect, Entity connectEntity, EntityCommandBuffer buffer)
-        {
-            if (!(clientConnect.TimeoutTime > UnityEngine.Time.time))
-            {
-                return;
-            }
-
-            buffer.AddComponent(buffer.CreateEntity(),
-                new ConnectionCompleteEvent
-                {
-                    Success = false,
-                    Message = $"Connection Timeout ({clientConnect.Timeout}). State: {clientConnect.State}"
-                });
-
-            PostUpdateCommands.DestroyEntity(connectEntity);
-        }
-
-        private void ProcessGoingInGameState(ref ClientConnect clientConnect, Entity connectEntity,
-            EntityCommandBuffer buffer)
-        {
-            if (clientConnect.State != NetworkState.GoingInGame ||
-                incomingConfirmRequestQuery.CalculateEntityCount() <= 0)
-            {
-                return;
-            }
-
-            buffer.AddComponent(buffer.CreateEntity(), new ConnectionCompleteEvent { Success = true });
-            PostUpdateCommands.DestroyEntity(connectEntity);
-            PostUpdateCommands.DestroyEntity(incomingConfirmRequestQuery);
-        }
-
-        private void ProcessConnectingState(ref ClientConnect clientConnect)
-        {
-            if (clientConnect.State != NetworkState.ConnectingToServer ||
-                networkStreamQuery.CalculateEntityCount() <= 0)
-            {
-                return;
-            }
-
-            EntityManager.AddComponent<NetworkStreamInGame>(GetSingletonEntity<NetworkStreamConnection>());
-
-            CreateRpcRequestSystem.CreateRpcRequest<GoInGameRequest>(World, default);
-
-            clientConnect.State = NetworkState.GoingInGame;
-        }
-
-        private void ProcessInitialState(ref ClientConnect clientConnect)
-        {
-            if (clientConnect.State != NetworkState.InitialRequest)
-            {
-                return;
-            }
-
-            network.Connect(clientConnect.EndPoint);
-/*#if DEBUG
-            WorldBase.Debug($"{World.Name}:{clientConnect.EndPoint.Port} Connecting...");
-#endif#1#
-            clientConnect.State = NetworkState.ConnectingToServer;
-        }*/
     }
 }

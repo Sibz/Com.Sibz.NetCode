@@ -4,6 +4,7 @@ using Sibz.NetCode.Client;
 using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
 using Unity.NetCode;
+using Unity.Networking.Transport;
 
 namespace Sibz.NetCode.Tests.Client
 {
@@ -14,6 +15,7 @@ namespace Sibz.NetCode.Tests.Client
         private ClientConnectSystemTest connectSystem;
         private EventComponentSystem eventSystem;
         private BeginInitializationEntityCommandBufferSystem initBufferSystem;
+        private ServerWorld testServer;
 
         private EntityQuery ConnectingSingletonQuery =>
             world.EntityManager.CreateEntityQuery(typeof(Connecting));
@@ -30,6 +32,13 @@ namespace Sibz.NetCode.Tests.Client
             set => world.EntityManager.SetComponentData(ConnectingSingletonQuery.GetSingletonEntity(), value);
         }
 
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            testServer = new ServerWorld(new ServerOptions{ WorldName = "ClientConnectTestServerWorld"});
+            testServer.Listen();
+        }
+
         [SetUp]
         public void SetUp()
         {
@@ -38,6 +47,9 @@ namespace Sibz.NetCode.Tests.Client
             connectSystem = world.CreateSystem<ClientConnectSystemTest>();
             initBufferSystem = world.GetOrCreateSystem<BeginInitializationEntityCommandBufferSystem>();
             eventSystem = world.CreateSystem<EventComponentSystem>();
+            world.GetOrCreateSystem<ClientSimulationSystemGroup>().AddSystemToUpdateList(connectSystem);
+            world.GetOrCreateSystem<ClientSimulationSystemGroup>().AddSystemToUpdateList(eventSystem);
+            world.GetOrCreateSystem<ClientSimulationSystemGroup>().SortSystemUpdateList();
 
             world.CreateSingleton<Connecting>();
         }
@@ -46,6 +58,12 @@ namespace Sibz.NetCode.Tests.Client
         public void TearDown()
         {
             world.Dispose();
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            testServer.Dispose();
         }
 
         [Test]
@@ -86,15 +104,26 @@ namespace Sibz.NetCode.Tests.Client
         {
             State = new Connecting { State = NetworkState.InitialRequest };
             world.EnqueueEvent<ConnectionInitiatedEvent>();
-            initBufferSystem.Update();
-            connectSystem.Update();
+            UpdateServerAndClient();
             Assert.AreEqual(NetworkState.ConnectingToServer, State.State);
         }
 
         [Test]
         public void WhenConnectionProgressesFromConnectingToServer_ShouldUpdateToGoingInGame()
         {
-            
+            State = new Connecting { State = NetworkState.ConnectingToServer };
+            world.GetNetworkStreamReceiveSystem().Connect(NetworkEndPoint.Parse("127.0.0.1", 21650));
+            UpdateServerAndClient();
+            UpdateServerAndClient();
+            Assert.AreEqual(NetworkState.GoingInGame, State.State);
+        }
+
+        public void UpdateServerAndClient()
+        {
+            world.GetExistingSystem<ClientInitializationSystemGroup>().Update();
+            world.GetExistingSystem<ClientSimulationSystemGroup>().Update();
+            testServer.World.GetExistingSystem<ServerInitializationSystemGroup>().Update();
+            testServer.World.GetExistingSystem<ServerSimulationSystemGroup>().Update();
         }
     }
 

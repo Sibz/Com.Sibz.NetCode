@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Sibz.NetCode.Server;
@@ -81,7 +81,7 @@ namespace Sibz.NetCode.Tests.Server
             wm2.Dispose();
             Assert.IsTrue(success);
         }
-        */
+        #1#
 
         [Test]
         public void Close_WhenWorldNotCreated_ShouldNotThrow()
@@ -149,4 +149,4 @@ namespace Sibz.NetCode.Tests.Server
             public Action Closed { get; set; }
         }
     }
-}
+}*/

@@ -10,6 +10,7 @@ namespace Sibz.NetCode.Tests.Base
 {
     public class WorldManagerBaseTests
     {
+        /*
         private MyWorldManagerOptions options;
         private MyWorldManager wm;
         private MyCallbackProvider cbp;
@@ -127,5 +128,6 @@ namespace Sibz.NetCode.Tests.Base
             {
             }
         }
+    */
     }
 }

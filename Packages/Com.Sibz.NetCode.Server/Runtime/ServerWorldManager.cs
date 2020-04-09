@@ -23,7 +23,7 @@ namespace Sibz.NetCode.Server
         protected Action<IEventComponentData> OnListenFailed;
         protected Action<IEventComponentData> OnDisconnect;
 
-        public ServerWorldManager(IWorldManagerOptions options, IServerWorldCallbackProvider callbackProvider = null) :
+        public ServerWorldManager(IWorldManagerOptions options) :
             base(options)
         {
             OnListen += (x) => IsListening = true;

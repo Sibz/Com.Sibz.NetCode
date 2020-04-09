@@ -46,6 +46,16 @@ namespace Sibz.NetCode.Tests.Server
             Assert.Catch<ArgumentNullException>(() => wm.Listen(null));
         }
 
+        [Test]
+        public void ShouldSetEndPoint()
+        {
+            wm.CreateWorld(new List<Type> { typeof(NetCodeEventComponentSystem) });
+            wm.Listen(serverOptions);
+            var listen = wm.World.EntityManager.CreateEntityQuery(typeof(Listen)).GetSingleton<Listen>();
+            NetworkEndPoint endPoint = NetworkEndPoint.Parse(serverOptions.Address, serverOptions.Port, serverOptions.NetworkFamily);
+            Assert.AreEqual(listen.EndPoint, endPoint);
+        }
+
         /*
         [Test]
         public void Listen_ShouldSetIsListeningToTrue()

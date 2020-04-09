@@ -19,11 +19,9 @@ namespace Sibz.NetCode
 
         protected IServerWorldManager ServerWorldManager => (IServerWorldManager)WorldManager;
 
-        public ServerWorld(ServerOptions options) : base(new ServerWorldManager(options))
+        public ServerWorld(ServerOptions options) : base(new ServerWorldManager(options.GetOptionsWithImportedSystems<ServerSystemAttribute>()))
         {
             Options = options;
-
-            //Systems.AppendTypesWithAttribute<ServerSystemAttribute>();
         }
 
         public void Listen()

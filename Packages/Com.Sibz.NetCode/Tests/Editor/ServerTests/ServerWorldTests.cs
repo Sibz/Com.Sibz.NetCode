@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace Sibz.NetCode.Tests.Server
 {
@@ -29,8 +31,11 @@ namespace Sibz.NetCode.Tests.Server
         public void ShouldHaveSystemsInCreatedWorld()
         {
             testWorld.CreateWorld();
-            Assert.IsNotNull(testWorld.World.GetExistingSystem<NetCodeEventComponentSystem>());
-            Assert.IsNotNull(testWorld.World.GetExistingSystem<NetCodeHookSystem>());
+            List<Type> systems = new List<Type>().AppendTypesWithAttribute<ServerSystemAttribute>();
+            foreach (Type system in systems)
+            {
+                Assert.IsNotNull(testWorld.World.GetExistingSystem(system), $"System: {system.Name}");
+            }
         }
 
         private class MyServerWorld : ServerWorld

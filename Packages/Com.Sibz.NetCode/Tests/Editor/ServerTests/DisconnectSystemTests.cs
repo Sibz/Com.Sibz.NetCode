@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using Sibz.EntityEvents;
+using Sibz.NetCode.Server;
+using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
 
 namespace Sibz.NetCode.Tests.Server
@@ -32,6 +34,14 @@ namespace Sibz.NetCode.Tests.Server
         {
             disconnectSystem.Update();
             Assert.IsFalse(disconnectSystem.DidUpdate);
+        }
+
+        [Test]
+        public void WhenSingletonExist_ShouldRun()
+        {
+            world.CreateSingleton<Disconnect>();
+            disconnectSystem.Update();
+            Assert.IsTrue(disconnectSystem.DidUpdate);
         }
     }
 

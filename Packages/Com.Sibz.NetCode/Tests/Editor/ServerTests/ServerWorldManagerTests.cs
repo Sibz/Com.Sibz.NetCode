@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using Sibz.NetCode.Server;
+using Unity.Entities;
 using Unity.Networking.Transport;
 
 namespace Sibz.NetCode.Tests.Server
@@ -28,6 +29,21 @@ namespace Sibz.NetCode.Tests.Server
         public void Listen_WhenWorldIsNotCreated_ShouldThrow()
         {
             Assert.Catch<InvalidOperationException>(() => wm.Listen(serverOptions));
+        }
+
+        [Test]
+        public void Listen_ShouldCreateSingleton()
+        {
+            wm.CreateWorld(new List<Type> { typeof(NetCodeEventComponentSystem) });
+            wm.Listen(serverOptions);
+            Assert.AreEqual(1, wm.World.EntityManager.CreateEntityQuery(typeof(Listen)).CalculateEntityCount());
+        }
+
+        [Test]
+        public void WhenSettingNull_ShouldThrow()
+        {
+            wm.CreateWorld(new List<Type> { typeof(NetCodeEventComponentSystem) });
+            Assert.Catch<ArgumentNullException>(() => wm.Listen(null));
         }
 
         /*

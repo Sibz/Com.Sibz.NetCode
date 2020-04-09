@@ -57,6 +57,7 @@ namespace Sibz.NetCode.Server
 
         public void Listen(INetworkEndpointSettings settings)
         {
+            settings = settings ?? throw new ArgumentNullException(nameof(settings));
             if (!WorldIsCreated)
             {
                 throw new InvalidOperationException(string.Format(

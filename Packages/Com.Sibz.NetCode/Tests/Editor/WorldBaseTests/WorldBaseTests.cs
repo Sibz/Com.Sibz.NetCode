@@ -89,42 +89,9 @@ namespace Sibz.NetCode.Tests.Base
 
     public class MyWorldBaseImpl : WorldBase
     {
-        //public BeginInitCommandBuffer Buffer => CommandBuffer;
-        //public new IWorldOptionsBase Options => base.WorldManager.;
-
         public MyWorldBaseImpl(IWorldOptions options, IWorldCreator worldCreator) : base(options, worldCreator)
         {
         }
-    }
-
-    /*public class MyClientWorld : MyWorldBaseImpl<ClientSimulationSystemGroup>
-    {
-        public MyClientWorld(string name = "TestClient") : base(new MyOptionsImpl
-            {
-                WorldName = name
-            },
-            ClientServerBootstrap.CreateClientWorld)
-        {
-        }
-    }
-
-    public class MyServerWorld : MyWorldBaseImpl<ServerSimulationSystemGroup>
-    {
-        public MyServerWorld() : base(new MyOptionsImpl(), ClientServerBootstrap.CreateServerWorld)
-        {
-        }
-    }*/
-
-    public class MyBaseOptionsImpl : INetworkEndpointSettings
-    {
-        public string WorldName { get; set; } = "Test";
-        public List<GameObject> SharedDataPrefabs { get; } = new List<GameObject> { new GameObject("Test") };
-        public List<Type> SystemImportAttributes { get; } = new List<Type>();
-        public bool ConnectOnSpawn { get; set; }
-        public int ConnectTimeout { get; set; } = 2;
-        public string Address { get; set; } = "0.0.0.0";
-        public ushort Port { get; set; } = 1000;
-        public NetworkFamily NetworkFamily { get; set; } = NetworkFamily.Ipv4;
     }
 
     [ClientAndServerSystem]

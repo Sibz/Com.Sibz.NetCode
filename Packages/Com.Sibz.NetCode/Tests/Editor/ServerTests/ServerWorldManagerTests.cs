@@ -14,7 +14,7 @@ namespace Sibz.NetCode.Tests.Server
         [SetUp]
         public void SetUp()
         {
-            wm = new ServerWorldManager(new MyWorldManagerOptions());
+            wm = new ServerWorldManager(new MyWorldManagerOptions(), new MyServerCallbackProvider());
             serverOptions = new ServerOptions();
         }
 
@@ -30,13 +30,7 @@ namespace Sibz.NetCode.Tests.Server
             Assert.Catch<InvalidOperationException>(() => wm.Listen(serverOptions));
         }
 
-        [Test]
-        public void Listen_WhenWorldIsCreated_ShouldReturnTrue()
-        {
-            wm.CreateWorld(new List<Type> { typeof(NetCodeEventComponentSystem) });
-            Assert.IsTrue(wm.Listen(serverOptions));
-        }
-
+        /*
         [Test]
         public void Listen_ShouldSetIsListeningToTrue()
         {
@@ -81,7 +75,7 @@ namespace Sibz.NetCode.Tests.Server
             wm2.Dispose();
             Assert.IsTrue(success);
         }
-        */
+        #1#
 
         [Test]
         public void Close_WhenWorldNotCreated_ShouldNotThrow()
@@ -134,7 +128,7 @@ namespace Sibz.NetCode.Tests.Server
             wm.Close();
 
             Assert.IsTrue(success);
-        }
+        }*/
 
 
         public class MyServerCallbackProvider : IServerWorldCallbackProvider

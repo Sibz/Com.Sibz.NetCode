@@ -13,15 +13,49 @@ namespace Sibz.NetCode.Server
     {
         private const string WorldNotCreatedError =
             "{0}.{1}: Can only listen after world is created.";
+
+        private const string NoCallbackProvider =
+            "{0}.{1}: Callback provider has not been set";
+
         public new IServerWorldCallbackProvider CallbackProvider { protected get; set; }
         public bool IsListening { get; protected set; }
 
-        public ServerWorldManager(IWorldManagerOptions options) : base(options)
-        {
+        protected Action<IEventComponentData> OnListen;
+        protected Action<IEventComponentData> OnListenFailed;
+        protected Action<IEventComponentData> OnDisconnect;
 
+        public ServerWorldManager(IWorldManagerOptions options, IServerWorldCallbackProvider callbackProvider = null) :
+            base(options)
+        {
+            OnListen += (x) => IsListening = true;
+            void OnStopListening(IEventComponentData data) => IsListening = false;
+            OnListenFailed += OnStopListening;
+            OnDisconnect += OnStopListening;
+
+
+            CallbackProvider = callbackProvider ?? (IServerWorldCallbackProvider)base.CallbackProvider;
+
+            if (CallbackProvider is null)
+            {
+                throw new InvalidOperationException(string.Format(
+                    NoCallbackProvider,
+                    nameof(ServerWorldManager),
+                    nameof(Listen)));
+            }
+
+            CallbackProvider.WorldCreated += () =>
+            {
+                World.GetHookSystem().RegisterHook<ListeningEvent>(OnListen);
+                World.GetHookSystem().RegisterHook<ListenFailedEvent>(OnListenFailed);
+                World.GetHookSystem().RegisterHook<DisconnectingEvent>(OnDisconnect);
+            };
+
+            OnDisconnect += (e) => CallbackProvider.Closed?.Invoke();
+            OnListenFailed += (e) => CallbackProvider.ListenFailed?.Invoke();
+            OnListen += (e) => CallbackProvider.ListenSuccess?.Invoke();
         }
 
-        public bool Listen(INetworkEndpointSettings settings)
+        public void Listen(INetworkEndpointSettings settings)
         {
             if (!WorldIsCreated)
             {
@@ -30,7 +64,13 @@ namespace Sibz.NetCode.Server
                     nameof(ServerWorldManager),
                     nameof(Listen)));
             }
-            IsListening = World.GetNetworkStreamReceiveSystem().Listen(
+
+            World.CreateSingleton(new Listen
+            {
+                EndPoint = NetworkEndPoint.Parse(settings.Address, settings.Port, settings.NetworkFamily)
+            });
+
+            /*IsListening = World.GetNetworkStreamReceiveSystem().Listen(
                 NetworkEndPoint.Parse(settings.Address, settings.Port, settings.NetworkFamily)
             );
             if (IsListening)
@@ -44,7 +84,7 @@ namespace Sibz.NetCode.Server
                 CallbackProvider?.ListenFailed?.Invoke();
                 DestroyWorld();
             }
-            return IsListening;
+            return IsListening;*/
         }
 
         public void DisconnectAllClients() => throw new NotImplementedException();

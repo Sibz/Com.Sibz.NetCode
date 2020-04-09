@@ -24,13 +24,13 @@ namespace Sibz.NetCode
             Options = options;
         }
 
-        public bool Listen()
+        public void Listen()
         {
             if (!WorldManager.WorldIsCreated)
             {
                 CreateWorld();
             }
-            return ServerWorldManager.Listen(Options);
+            ServerWorldManager.Listen(Options);
         }
 
         public void DisconnectAllClients() =>

@@ -8,7 +8,7 @@ using UnityEngine.TestTools;
 
 namespace Sibz.NetCode.Tests.Base
 {
-    public class WorldManagerBaseTests
+    public class WorldCreatorBaseTests
     {
         private MyWorldOptions options;
         private MyWorldCreator wm;

@@ -5,6 +5,5 @@
         void Listen(INetworkEndpointSettings settings);
         void DisconnectAllClients();
         void DisconnectClient(int networkConnectionId);
-        void Close();
     }
 }

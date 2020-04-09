@@ -16,7 +16,6 @@ namespace Sibz.NetCode.Server
 
         private const string HookSystemDoesNotExistError = "A HookSystem must exist";
 
-        public new IServerWorldCallbackProvider CallbackProvider { protected get; set; }
         public bool IsListening { get; protected set; }
 
         protected Action<IEventComponentData> OnListen;
@@ -41,10 +40,6 @@ namespace Sibz.NetCode.Server
                 hookSystem.RegisterHook<ListenFailedEvent>(OnListenFailed);
                 hookSystem.RegisterHook<DisconnectingEvent>(OnDisconnect);
             };
-
-            OnDisconnect += (e) => CallbackProvider.Closed?.Invoke();
-            OnListenFailed += (e) => CallbackProvider.ListenFailed?.Invoke();
-            OnListen += (e) => CallbackProvider.ListenSuccess?.Invoke();
         }
 
         public void Listen(INetworkEndpointSettings settings)
@@ -67,13 +62,6 @@ namespace Sibz.NetCode.Server
         public void DisconnectAllClients() => throw new NotImplementedException();
 
         public void DisconnectClient(int networkConnectionId) => throw new NotImplementedException();
-
-        public void Close()
-        {
-            DestroyWorld();
-            IsListening = false;
-            CallbackProvider?.Closed?.Invoke();
-        }
 
         protected override World BootStrapCreateWorld(string worldName) =>
             ClientServerBootstrap.CreateServerWorld(World.DefaultGameObjectInjectionWorld, worldName);

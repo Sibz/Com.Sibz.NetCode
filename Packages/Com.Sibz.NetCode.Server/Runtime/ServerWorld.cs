@@ -40,6 +40,6 @@ namespace Sibz.NetCode
             ServerWorldManager.DisconnectClient(networkConnectionId);
 
         public void Close() =>
-            ServerWorldManager.Close();
+            ServerWorldManager.DestroyWorld();
     }
 }

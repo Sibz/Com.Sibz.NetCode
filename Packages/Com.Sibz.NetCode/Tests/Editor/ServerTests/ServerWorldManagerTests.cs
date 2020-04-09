@@ -16,7 +16,7 @@ namespace Sibz.NetCode.Tests.Server
         [SetUp]
         public void SetUp()
         {
-            wm = new ServerWorldManager(new MyWorldManagerOptions(), new MyServerCallbackProvider());
+            wm = new ServerWorldManager(new MyWorldManagerOptions());
             serverOptions = new ServerOptions();
             systems.AppendTypesWithAttribute<ServerSystemAttribute>();
             systems.AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
@@ -158,18 +158,5 @@ namespace Sibz.NetCode.Tests.Server
 
             Assert.IsTrue(success);
         }*/
-
-
-        public class MyServerCallbackProvider : IServerWorldCallbackProvider
-        {
-            public Action WorldCreated { get; set; }
-            public Action WorldDestroyed { get; set; }
-            public Action PreWorldDestroy { get; set; }
-            public Action<NetworkConnection> ClientConnected { get; set; }
-            public Action<NetworkConnection> ClientDisconnected { get; set; }
-            public Action ListenSuccess { get; set; }
-            public Action ListenFailed { get; set; }
-            public Action Closed { get; set; }
-        }
     }
 }

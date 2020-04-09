@@ -48,10 +48,6 @@ namespace Sibz.NetCode.Server
             });
         }
 
-        public void DisconnectAllClients() => throw new NotImplementedException();
-
-        public void DisconnectClient(int networkConnectionId) => throw new NotImplementedException();
-
         protected override World BootStrapCreateWorld(string worldName) =>
             ClientServerBootstrap.CreateServerWorld(World.DefaultGameObjectInjectionWorld, worldName);
 

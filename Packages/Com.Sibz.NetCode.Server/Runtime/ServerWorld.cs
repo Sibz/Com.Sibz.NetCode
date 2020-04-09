@@ -47,10 +47,10 @@ namespace Sibz.NetCode
         }
 
         public void DisconnectAllClients() =>
-            ServerWorldCreator.DisconnectAllClients();
+            throw new NotImplementedException();
 
         public void DisconnectClient(int networkConnectionId) =>
-            ServerWorldCreator.DisconnectClient(networkConnectionId);
+            throw new NotImplementedException();
 
         public void Close() => DestroyWorld();
     }

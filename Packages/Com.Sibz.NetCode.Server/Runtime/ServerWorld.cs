@@ -52,6 +52,9 @@ namespace Sibz.NetCode
         public void DisconnectClient(int networkConnectionId) =>
             throw new NotImplementedException();
 
-        public void Close() => DestroyWorld();
+        public void Close()
+        {
+            World.CreateSingleton<Disconnect>();
+        }
     }
 }

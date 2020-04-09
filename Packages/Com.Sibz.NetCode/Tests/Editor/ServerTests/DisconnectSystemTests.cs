@@ -58,23 +58,11 @@ namespace Sibz.NetCode.Tests.Server
         }
 
         [Test]
-        public void WhenFirstRun_ShouldNotDisposeWorld()
+        public void WhenFirstRun_ShouldCreateDestroyWorldEntity()
         {
             world.CreateSingleton<Disconnect>();
             disconnectSystem.Update();
-            Assert.IsTrue(world.IsCreated);
-        }
-
-
-        [Test]
-        public void WhenRunTwice_ShouldDisposeWorld()
-        {
-            world.CreateSingleton<Disconnect>();
-            disconnectSystem.Update();
-            bufferSystem.Update();
-            disconnectSystem.Update();
-            Task.Delay(10).Wait();
-            Assert.IsFalse(world.IsCreated);
+            Assert.AreEqual(1, world.EntityManager.CreateEntityQuery(typeof(DestroyWorld)).CalculateEntityCount());
         }
 
         [Test]

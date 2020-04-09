@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Sibz.NetCode.Server;
 
 namespace Sibz.NetCode.Tests.Server
 {
@@ -36,6 +37,14 @@ namespace Sibz.NetCode.Tests.Server
             {
                 Assert.IsNotNull(testWorld.World.GetExistingSystem(system), $"System: {system.Name}");
             }
+        }
+
+        [Test]
+        public void Close_ShouldCreateSingleton()
+        {
+            testWorld.CreateWorld();
+            testWorld.Close();
+            Assert.AreEqual(1, testWorld.World.EntityManager.CreateEntityQuery(typeof(Disconnect)).CalculateEntityCount());
         }
 
         private class MyServerWorld : ServerWorld

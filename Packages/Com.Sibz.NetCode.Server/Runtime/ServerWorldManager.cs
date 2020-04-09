@@ -36,7 +36,7 @@ namespace Sibz.NetCode.Server
             if (IsListening)
             {
                 CallbackProvider?.ListenSuccess?.Invoke();
-                World.EnqueueEvent<ListenStartedEvent>();
+                World.EnqueueEvent<ListeningEvent>();
                 World.EntityManager.CreateEntity(typeof(Listening));
             }
             else

@@ -2,7 +2,8 @@
 
 namespace Sibz.NetCode.Server
 {
-    public struct ListenStartedEvent : IEventComponentData
+    public struct ListenFailedEvent : IEventComponentData
     {
+
     }
 }

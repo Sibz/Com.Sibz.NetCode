@@ -33,12 +33,19 @@ namespace Sibz.NetCode
 
             worldCreator.WorldCreated += () => WorldCreated?.Invoke();
 
-            WorldCreated += () => World.EnqueueEvent(new WorldCreatedEvent());
+            WorldCreated += OnWorldCreated;
 
             if (Options.CreateWorldOnInstantiate)
             {
                 CreateWorld();
             }
+        }
+
+        private void OnWorldCreated()
+        {
+            World.EnqueueEvent(new WorldCreatedEvent());
+            World.GetHookSystem().RegisterHook<DestroyWorldEvent>((e) => PreWorldDestroy?.Invoke());
+            World.GetExistingSystem<DestroyWorldSystem>().OnDestroyed += () => WorldDestroyed?.Invoke();
         }
 
         public void CreateWorld() => WorldCreator.CreateWorld();

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Sibz.EntityEvents;
 using Unity.Entities;
 
@@ -7,6 +8,7 @@ namespace Sibz.NetCode
     [ClientAndServerSystem]
     public class DestroyWorldSystem : ComponentSystem
     {
+        public Action OnDestroyed;
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<DestroyWorld>();
@@ -35,6 +37,12 @@ namespace Sibz.NetCode
 
                 World.Dispose();
             }).Start();
+        }
+
+        protected override void OnDestroy()
+        {
+            OnDestroyed?.Invoke();
+            base.OnDestroy();
         }
     }
 }

@@ -16,8 +16,8 @@ namespace Sibz.NetCode.Client
 
         public new IClientWorldCallbackProvider CallbackProvider { protected get; set; }
 
-        public ClientWorldManager(IWorldManagerOptions options, IWorldCallbackProvider callbackProvider = null) : base(
-            options, callbackProvider)
+        public ClientWorldManager(IWorldManagerOptions options) : base(
+            options)
         {
         }
 

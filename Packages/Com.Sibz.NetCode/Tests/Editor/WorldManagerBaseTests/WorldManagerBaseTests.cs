@@ -12,14 +12,12 @@ namespace Sibz.NetCode.Tests.Base
     {
         private MyWorldManagerOptions options;
         private MyWorldManager wm;
-        private MyCallbackProvider cbp;
 
         [SetUp]
         public void SetUp()
         {
             options = MyWorldManagerOptions.Defaults;
-            cbp = new MyCallbackProvider();
-            wm = new MyWorldManager(options, cbp);
+            wm = new MyWorldManager(options);
         }
 
         [TearDown]
@@ -48,7 +46,7 @@ namespace Sibz.NetCode.Tests.Base
         public void ShouldCallbackOnCreation()
         {
             var calledBack = false;
-            cbp.WorldCreated += () => calledBack = true;
+            wm.WorldCreated += () => calledBack = true;
             wm.CreateWorld(new List<Type>());
             Assert.IsTrue(calledBack);
         }
@@ -57,7 +55,7 @@ namespace Sibz.NetCode.Tests.Base
         public void ShouldCallBackPreWorldDestroy()
         {
             var calledBack = false;
-            cbp.PreWorldDestroy += () =>
+            wm.PreWorldDestroy += () =>
             {
                 calledBack = true;
                 Assert.IsTrue(wm.WorldIsCreated);
@@ -71,7 +69,7 @@ namespace Sibz.NetCode.Tests.Base
         public void ShouldCallBackPostWorldDestroy()
         {
             var calledBack = false;
-            cbp.WorldDestroyed += () =>
+            wm.WorldDestroyed += () =>
             {
                 calledBack = true;
                 Assert.IsFalse(wm.WorldIsCreated);
@@ -98,7 +96,7 @@ namespace Sibz.NetCode.Tests.Base
         [Test]
         public void CreateWorld_WithItemsInList_ShouldAddSystems()
         {
-            var wm = new MyWorldManager(options, cbp);
+            var wm = new MyWorldManager(options);
             wm.CreateWorld(new List<Type> { typeof(MySystem) });
             Assert.IsNotNull(wm.World.GetExistingSystem<MySystem>());
         }
@@ -112,13 +110,6 @@ namespace Sibz.NetCode.Tests.Base
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-        }
-
-        public class MyCallbackProvider : IWorldCallbackProvider
-        {
-            public Action WorldCreated { get; set; }
-            public Action WorldDestroyed { get; set; }
-            public Action PreWorldDestroy { get; set; }
         }
 
         public class MySystem : ComponentSystem

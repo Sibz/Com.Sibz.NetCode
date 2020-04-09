@@ -11,12 +11,15 @@ namespace Sibz.NetCode.Tests.Server
     {
         private ServerWorldManager wm;
         private ServerOptions serverOptions;
+        private readonly List<Type> systems = new List<Type>();
 
         [SetUp]
         public void SetUp()
         {
             wm = new ServerWorldManager(new MyWorldManagerOptions(), new MyServerCallbackProvider());
             serverOptions = new ServerOptions();
+            systems.AppendTypesWithAttribute<ServerSystemAttribute>();
+            systems.AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
         }
 
         [TearDown]
@@ -34,7 +37,7 @@ namespace Sibz.NetCode.Tests.Server
         [Test]
         public void Listen_ShouldCreateSingleton()
         {
-            wm.CreateWorld(new List<Type> { typeof(NetCodeEventComponentSystem) });
+            wm.CreateWorld(systems);
             wm.Listen(serverOptions);
             Assert.AreEqual(1, wm.World.EntityManager.CreateEntityQuery(typeof(Listen)).CalculateEntityCount());
         }
@@ -42,14 +45,14 @@ namespace Sibz.NetCode.Tests.Server
         [Test]
         public void WhenSettingNull_ShouldThrow()
         {
-            wm.CreateWorld(new List<Type> { typeof(NetCodeEventComponentSystem) });
+            wm.CreateWorld(systems);
             Assert.Catch<ArgumentNullException>(() => wm.Listen(null));
         }
 
         [Test]
         public void ShouldSetEndPoint()
         {
-            wm.CreateWorld(new List<Type> { typeof(NetCodeEventComponentSystem) });
+            wm.CreateWorld(systems);
             wm.Listen(serverOptions);
             var listen = wm.World.EntityManager.CreateEntityQuery(typeof(Listen)).GetSingleton<Listen>();
             NetworkEndPoint endPoint = NetworkEndPoint.Parse(serverOptions.Address, serverOptions.Port, serverOptions.NetworkFamily);

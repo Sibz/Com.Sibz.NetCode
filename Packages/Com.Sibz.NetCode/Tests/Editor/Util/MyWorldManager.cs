@@ -11,8 +11,8 @@ namespace Sibz.NetCode.Tests
         public bool CalledBootStrapCreateWorld;
         public bool CalledImportPrefabs;
 
-        public MyWorldManager(IWorldManagerOptions options, IWorldCallbackProvider callbackProvider = null) : base(
-            options, callbackProvider)
+        public MyWorldManager(IWorldManagerOptions options) : base(
+            options)
         {
         }
 
@@ -33,9 +33,9 @@ namespace Sibz.NetCode.Tests
 
         public void InvokeAllCallbacks()
         {
-            CallbackProvider?.WorldCreated?.Invoke();
-            CallbackProvider?.WorldDestroyed?.Invoke();
-            CallbackProvider?.PreWorldDestroy?.Invoke();
+            WorldCreated?.Invoke();
+            WorldDestroyed?.Invoke();
+            PreWorldDestroy?.Invoke();
         }
     }
 }

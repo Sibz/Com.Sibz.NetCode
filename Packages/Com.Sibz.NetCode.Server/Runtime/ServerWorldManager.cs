@@ -9,13 +9,12 @@ using Unity.Networking.Transport;
 
 namespace Sibz.NetCode.Server
 {
-    public class ServerWorldManager : WorldManagerBase, IServerWorldManager
+    public class ServerWorldManager : WorldManagerBase, IServerWorldManager, IServerWorldCallbackProvider
     {
         private const string WorldNotCreatedError =
             "{0}.{1}: Can only listen after world is created.";
 
-        private const string NoCallbackProvider =
-            "{0}.{1}: Callback provider has not been set";
+        private const string HookSystemDoesNotExistError = "A HookSystem must exist";
 
         public new IServerWorldCallbackProvider CallbackProvider { protected get; set; }
         public bool IsListening { get; protected set; }
@@ -32,22 +31,15 @@ namespace Sibz.NetCode.Server
             OnListenFailed += OnStopListening;
             OnDisconnect += OnStopListening;
 
-
-            CallbackProvider = callbackProvider ?? (IServerWorldCallbackProvider)base.CallbackProvider;
-
-            if (CallbackProvider is null)
+            WorldCreated += () =>
             {
-                throw new InvalidOperationException(string.Format(
-                    NoCallbackProvider,
-                    nameof(ServerWorldManager),
-                    nameof(Listen)));
-            }
+                NetCodeHookSystem hookSystem =
+                    World.GetHookSystem()
+                    ?? throw new InvalidOperationException(HookSystemDoesNotExistError);
 
-            CallbackProvider.WorldCreated += () =>
-            {
-                World.GetHookSystem().RegisterHook<ListeningEvent>(OnListen);
-                World.GetHookSystem().RegisterHook<ListenFailedEvent>(OnListenFailed);
-                World.GetHookSystem().RegisterHook<DisconnectingEvent>(OnDisconnect);
+                hookSystem.RegisterHook<ListeningEvent>(OnListen);
+                hookSystem.RegisterHook<ListenFailedEvent>(OnListenFailed);
+                hookSystem.RegisterHook<DisconnectingEvent>(OnDisconnect);
             };
 
             OnDisconnect += (e) => CallbackProvider.Closed?.Invoke();
@@ -70,22 +62,6 @@ namespace Sibz.NetCode.Server
             {
                 EndPoint = NetworkEndPoint.Parse(settings.Address, settings.Port, settings.NetworkFamily)
             });
-
-            /*IsListening = World.GetNetworkStreamReceiveSystem().Listen(
-                NetworkEndPoint.Parse(settings.Address, settings.Port, settings.NetworkFamily)
-            );
-            if (IsListening)
-            {
-                CallbackProvider?.ListenSuccess?.Invoke();
-                World.EnqueueEvent<ListeningEvent>();
-                World.EntityManager.CreateEntity(typeof(Listening));
-            }
-            else
-            {
-                CallbackProvider?.ListenFailed?.Invoke();
-                DestroyWorld();
-            }
-            return IsListening;*/
         }
 
         public void DisconnectAllClients() => throw new NotImplementedException();
@@ -104,5 +80,11 @@ namespace Sibz.NetCode.Server
 
         protected override void InjectSystems(List<Type> systems) =>
             World.ImportSystemsFromList<ServerSimulationSystemGroup>(systems);
+
+        public Action<NetworkConnection> ClientConnected { get; set; }
+        public Action<NetworkConnection> ClientDisconnected { get; set; }
+        public Action ListenSuccess { get; set; }
+        public Action ListenFailed { get; set; }
+        public Action Closed { get; set; }
     }
 }

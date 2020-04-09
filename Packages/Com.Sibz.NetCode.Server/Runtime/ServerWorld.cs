@@ -22,6 +22,8 @@ namespace Sibz.NetCode
         public ServerWorld(ServerOptions options) : base(new ServerWorldManager(options))
         {
             Options = options;
+
+            //Systems.AppendTypesWithAttribute<ServerSystemAttribute>();
         }
 
         public void Listen()

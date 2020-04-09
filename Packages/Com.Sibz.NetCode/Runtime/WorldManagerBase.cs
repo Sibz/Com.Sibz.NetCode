@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sibz.EntityEvents;
 using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
 using UnityEngine;
 
 namespace Sibz.NetCode
 {
-    public abstract class WorldManagerBase : IWorldManager
+    public abstract class WorldManagerBase : IWorldManager, IWorldCallbackProvider
     {
         private const string WorldAlreadyCreatedError = "Can not create world as world is already created.";
 
@@ -15,10 +16,9 @@ namespace Sibz.NetCode
 
         public World World { get; protected set; }
         public bool WorldIsCreated => World?.IsCreated ?? false;
-        public IWorldCallbackProvider CallbackProvider { protected get; set; }
         public IWorldManagerOptions Options { get; }
 
-        public WorldManagerBase(IWorldManagerOptions options, IWorldCallbackProvider callbackProvider = null)
+        public WorldManagerBase(IWorldManagerOptions options)
         {
             if (options is null)
             {
@@ -26,8 +26,6 @@ namespace Sibz.NetCode
             }
 
             Options = options;
-
-            CallbackProvider = callbackProvider;
         }
 
         /// <summary>
@@ -57,7 +55,7 @@ namespace Sibz.NetCode
 
             ImportPrefabs();
 
-            CallbackProvider?.WorldCreated?.Invoke();
+            WorldCreated?.Invoke();
         }
 
         public virtual void ImportPrefabs()
@@ -78,13 +76,16 @@ namespace Sibz.NetCode
                 return;
             }
 
-            CallbackProvider?.PreWorldDestroy?.Invoke();
+            PreWorldDestroy?.Invoke();
 
             World.Dispose();
 
-            CallbackProvider?.WorldDestroyed?.Invoke();
+            WorldDestroyed?.Invoke();
         }
 
         public void Dispose() => DestroyWorld();
+        public Action WorldCreated { get; set; }
+        public Action WorldDestroyed { get; set; }
+        public Action PreWorldDestroy { get; set; }
     }
 }

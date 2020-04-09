@@ -27,7 +27,9 @@ namespace Sibz.NetCode
 
             WorldManager = worldManager;
 
-            worldManager.CallbackProvider = this;
+            worldManager.WorldCreated += () => WorldCreated?.Invoke();
+            worldManager.WorldDestroyed += () => WorldDestroyed?.Invoke();
+            worldManager.PreWorldDestroy += () => PreWorldDestroy?.Invoke();
 
             WorldCreated += () => World.EnqueueEvent(new WorldCreatedEvent());
 

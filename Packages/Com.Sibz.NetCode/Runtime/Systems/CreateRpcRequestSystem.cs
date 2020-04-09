@@ -19,6 +19,7 @@ namespace Sibz.NetCode
         public static Entity CreateRpcRequest<T>(World world)
             where T : struct, IRpcCommand =>
             CreateRpcRequest<T>(world, default);
+
         public static Entity CreateRpcRequest<T>(World world, T rpcCommand)
             where T : struct, IRpcCommand
         {
@@ -31,6 +32,17 @@ namespace Sibz.NetCode
             world.EntityManager.AddComponentData(e, rpcCommand);
             world.EntityManager.AddComponentData(e,
                 new SendRpcCommandRequestComponent { TargetConnection = GetTargetConnection(world) });
+            return e;
+        }
+
+        public static Entity CreateRpcRequest<T>(EntityCommandBuffer.Concurrent buffer, int index, T rpcCommand,
+            Entity targetConnection)
+            where T : struct, IRpcCommand
+        {
+            Entity e = buffer.CreateEntity(index);
+            buffer.AddComponent(index, e, rpcCommand);
+            buffer.AddComponent(index, e,
+                new SendRpcCommandRequestComponent { TargetConnection = targetConnection });
             return e;
         }
 

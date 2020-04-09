@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace Sibz.NetCode
 {
+    [ServerSystem]
     public class ListenSystem : ComponentSystem
     {
         public IServerNetworkStreamProxy NetworkStreamProxy { get; set; }

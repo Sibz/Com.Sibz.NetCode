@@ -2,9 +2,8 @@
 
 namespace Sibz.NetCode
 {
-    public interface IWorldCallbackProvider
+    public interface IWorldCallbackProvider : IWorldCreatorCallbackProvider
     {
-        Action WorldCreated { get; set; }
         Action WorldDestroyed { get; set; }
         Action PreWorldDestroy { get; set; }
     }

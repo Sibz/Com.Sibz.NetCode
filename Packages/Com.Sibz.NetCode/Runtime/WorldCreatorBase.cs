@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Sibz.NetCode
 {
-    public abstract class WorldManagerBase : IWorldManager, IWorldCallbackProvider
+    public abstract class WorldCreatorBase : IWorldCreator
     {
         private const string WorldAlreadyCreatedError = "Can not create world as world is already created.";
 
@@ -16,9 +16,10 @@ namespace Sibz.NetCode
 
         public World World { get; protected set; }
         public bool WorldIsCreated => World?.IsCreated ?? false;
-        public IWorldManagerOptions Options { get; }
+        public IWorldCreatorOptions Options { get; }
+        public Action WorldCreated { get; set; }
 
-        public WorldManagerBase(IWorldManagerOptions options)
+        public WorldCreatorBase(IWorldCreatorOptions options)
         {
             if (options is null)
             {
@@ -37,13 +38,8 @@ namespace Sibz.NetCode
 
         protected abstract void InjectSystems(List<Type> systems);
 
-        public void CreateWorld(List<Type> systems)
+        public void CreateWorld()
         {
-            if (systems is null)
-            {
-                throw new ArgumentNullException(nameof(systems));
-            }
-
             if (WorldIsCreated)
             {
                 throw new InvalidOperationException(WorldAlreadyCreatedError);
@@ -51,7 +47,7 @@ namespace Sibz.NetCode
 
             World = BootStrapCreateWorld(Options.WorldName);
 
-            InjectSystems(systems);
+            InjectSystems(Options.Systems);
 
             ImportPrefabs();
 
@@ -69,23 +65,12 @@ namespace Sibz.NetCode
             World.ImportGhostCollection(Options.GhostCollectionPrefabs);
         }
 
-        public void DestroyWorld()
+        public void Dispose()
         {
-            if (!WorldIsCreated)
+            if (WorldIsCreated)
             {
-                return;
+                World.Dispose();
             }
-
-            PreWorldDestroy?.Invoke();
-
-            World.Dispose();
-
-            WorldDestroyed?.Invoke();
         }
-
-        public void Dispose() => DestroyWorld();
-        public Action WorldCreated { get; set; }
-        public Action WorldDestroyed { get; set; }
-        public Action PreWorldDestroy { get; set; }
     }
 }

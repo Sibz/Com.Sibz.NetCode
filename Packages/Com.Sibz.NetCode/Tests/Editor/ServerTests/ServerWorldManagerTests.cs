@@ -2,21 +2,20 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using Sibz.NetCode.Server;
-using Unity.Entities;
 using Unity.Networking.Transport;
 
 namespace Sibz.NetCode.Tests.Server
 {
     public class ServerWorldManagerTests
     {
-        private ServerWorldManager wm;
+        private ServerWorldCreator wm;
         private ServerOptions serverOptions;
         private readonly List<Type> systems = new List<Type>();
 
         [SetUp]
         public void SetUp()
         {
-            wm = new ServerWorldManager(new MyWorldManagerOptions());
+            wm = new ServerWorldCreator(new MyServerOptions());
             serverOptions = new ServerOptions();
             systems.AppendTypesWithAttribute<ServerSystemAttribute>();
             systems.AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
@@ -37,7 +36,7 @@ namespace Sibz.NetCode.Tests.Server
         [Test]
         public void Listen_ShouldCreateSingleton()
         {
-            wm.CreateWorld(systems);
+            wm.CreateWorld();
             wm.Listen(serverOptions);
             Assert.AreEqual(1, wm.World.EntityManager.CreateEntityQuery(typeof(Listen)).CalculateEntityCount());
         }
@@ -45,20 +44,25 @@ namespace Sibz.NetCode.Tests.Server
         [Test]
         public void WhenSettingNull_ShouldThrow()
         {
-            wm.CreateWorld(systems);
+            wm.CreateWorld();
             Assert.Catch<ArgumentNullException>(() => wm.Listen(null));
         }
 
         [Test]
         public void ShouldSetEndPoint()
         {
-            wm.CreateWorld(systems);
+            wm.CreateWorld();
             wm.Listen(serverOptions);
             var listen = wm.World.EntityManager.CreateEntityQuery(typeof(Listen)).GetSingleton<Listen>();
             NetworkEndPoint endPoint = NetworkEndPoint.Parse(serverOptions.Address, serverOptions.Port, serverOptions.NetworkFamily);
             Assert.AreEqual(listen.EndPoint, endPoint);
         }
 
+        public class MyServerOptions : MyWorldOptions
+        {
+            public new List<Type> Systems => base.Systems.AppendTypesWithAttribute<ServerSystemAttribute>();
+
+        }
         /*
         [Test]
         public void Listen_ShouldSetIsListeningToTrue()

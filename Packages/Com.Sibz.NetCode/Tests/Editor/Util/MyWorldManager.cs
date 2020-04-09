@@ -6,12 +6,12 @@ using Unity.NetCode;
 
 namespace Sibz.NetCode.Tests
 {
-    public class MyWorldManager : WorldManagerBase
+    public class MyWorldCreator : WorldCreatorBase
     {
         public bool CalledBootStrapCreateWorld;
         public bool CalledImportPrefabs;
 
-        public MyWorldManager(IWorldManagerOptions options) : base(
+        public MyWorldCreator(IWorldCreatorOptions options) : base(
             options)
         {
         }
@@ -34,8 +34,6 @@ namespace Sibz.NetCode.Tests
         public void InvokeAllCallbacks()
         {
             WorldCreated?.Invoke();
-            WorldDestroyed?.Invoke();
-            PreWorldDestroy?.Invoke();
         }
     }
 }

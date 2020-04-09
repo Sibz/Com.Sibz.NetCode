@@ -10,7 +10,7 @@ namespace Sibz.NetCode.Tests.Client
 {
     public class ClientWorldManagerTests
     {
-        private ClientWorldManager worldManager;
+        private ClientWorldCreator worldCreator;
         private ClientOptions options;
         private int testCount;
         private EntityQuery connectingQuery;
@@ -25,46 +25,46 @@ namespace Sibz.NetCode.Tests.Client
         public void SetUp()
         {
             options = new ClientOptions() { WorldName = $"TestClient{testCount++}" };
-            worldManager = new ClientWorldManager(options);
-            worldManager.CreateWorld(systems);
-            connectingQuery = worldManager.World.EntityManager.CreateEntityQuery(typeof(Connecting));
-            connectingEventQuery = worldManager.World.EntityManager.CreateEntityQuery(typeof(ConnectionInitiatedEvent));
+            worldCreator = new ClientWorldCreator(options);
+            worldCreator.CreateWorld();
+            connectingQuery = worldCreator.World.EntityManager.CreateEntityQuery(typeof(Connecting));
+            connectingEventQuery = worldCreator.World.EntityManager.CreateEntityQuery(typeof(ConnectionInitiatedEvent));
         }
 
         [TearDown]
-        public void TearDown() => worldManager.Dispose();
+        public void TearDown() => worldCreator.Dispose();
 
         [Test]
         public void Connect_WhenSettingIsNull_ShouldThrow()
         {
-            Assert.Catch<ArgumentNullException>(() => worldManager.Connect(null));
+            Assert.Catch<ArgumentNullException>(() => worldCreator.Connect(null));
         }
 
         [Test]
         public void Connect_WhenWorldInSotCreated_ShouldThrow()
         {
-            worldManager.DestroyWorld();
-            Assert.Catch<InvalidOperationException>(() => worldManager.Connect(options));
+            worldCreator.Dispose();
+            Assert.Catch<InvalidOperationException>(() => worldCreator.Connect(options));
         }
 
         [Test]
         public void Connect_ShouldCreateConnectingEntity()
         {
-            worldManager.Connect(options);
+            worldCreator.Connect(options);
             Assert.AreEqual(1, connectingQuery.CalculateEntityCount());
         }
 
         [Test]
         public void Connect_WhenCreatingConnectingEntity_ShouldSetStateToInitiating()
         {
-            worldManager.Connect(options);
+            worldCreator.Connect(options);
             Assert.AreEqual(NetworkState.InitialRequest, connectingQuery.GetSingleton<Connecting>().State);
         }
 
         [Test]
         public void Connect_ShouldCreateConnectionInitiatedEvent()
         {
-            worldManager.Connect(options);
+            worldCreator.Connect(options);
             UpdateWorld();
             Assert.AreEqual(1, connectingEventQuery.CalculateEntityCount());
         }
@@ -79,15 +79,15 @@ namespace Sibz.NetCode.Tests.Client
                 success = true;
             }
 
-            worldManager.CallbackProvider = new MyClientCallbackProvider { Connecting = OnConnecting };
-            worldManager.Connect(options);
+            worldCreator.CallbackProvider = new MyClientCallbackProvider { Connecting = OnConnecting };
+            worldCreator.Connect(options);
             Assert.IsTrue(success);
         }
 
         private void UpdateWorld()
         {
-            worldManager.World.GetExistingSystem<ClientInitializationSystemGroup>().Update();
-            worldManager.World.GetExistingSystem<ClientSimulationSystemGroup>().Update();
+            worldCreator.World.GetExistingSystem<ClientInitializationSystemGroup>().Update();
+            worldCreator.World.GetExistingSystem<ClientSimulationSystemGroup>().Update();
         }
 
         private class MyClientCallbackProvider : IClientWorldCallbackProvider

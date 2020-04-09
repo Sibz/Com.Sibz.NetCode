@@ -9,14 +9,14 @@ using Unity.Networking.Transport;
 
 namespace Sibz.NetCode.Client
 {
-    public class ClientWorldManager : WorldManagerBase, IClientWorldManager
+    public class ClientWorldCreator : WorldCreatorBase, IClientWorldManager
     {
         private const string WorldNotCreatedError =
             "{0}: Unable to connect, world is not created.";
 
         public new IClientWorldCallbackProvider CallbackProvider { protected get; set; }
 
-        public ClientWorldManager(IWorldManagerOptions options) : base(
+        public ClientWorldCreator(IWorldCreatorOptions options) : base(
             options)
         {
         }

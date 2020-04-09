@@ -1,6 +1,6 @@
 ﻿namespace Sibz.NetCode
 {
-    public interface IServerWorldManager : IWorldManager
+    public interface IServerWorldCreator : IWorldCreator
     {
         void Listen(INetworkEndpointSettings settings);
         void DisconnectAllClients();

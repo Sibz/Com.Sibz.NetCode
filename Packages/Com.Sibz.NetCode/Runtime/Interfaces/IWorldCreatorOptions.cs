@@ -4,10 +4,9 @@ using UnityEngine;
 
 namespace Sibz.NetCode
 {
-    public interface IWorldManagerOptions
+    public interface IWorldCreatorOptions
     {
         string WorldName { get; }
-        bool CreateWorldOnInstantiate { get; }
         List<Type> Systems { get; }
         List<GameObject> GhostCollectionPrefabs { get; }
     }

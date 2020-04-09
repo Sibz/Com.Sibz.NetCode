@@ -8,15 +8,15 @@ using UnityEngine;
 
 namespace Sibz.NetCode.Tests.Base
 {
-    public class Constructor
+    public class WorldBaseTests
     {
         private Func<World, string, World> creationMethod;
         private MyWorldBaseImpl current;
-        private MyWorldManagerOptions worldManagerOptions;
+        private MyWorldOptions worldOptions;
         public World Create(World world, string str) => World.DefaultGameObjectInjectionWorld;
 
         [SetUp]
-        public void SetUp() => worldManagerOptions = MyWorldManagerOptions.Defaults;
+        public void SetUp() => worldOptions = MyWorldOptions.Defaults;
 
         [TearDown]
         public void TearDown_Constructor()
@@ -28,67 +28,61 @@ namespace Sibz.NetCode.Tests.Base
         public void ShouldBindCallbacksToWorldManager()
         {
             var calledCount = 0;
-            var wm = new MyWorldManager(worldManagerOptions);
-            current = new MyWorldBaseImpl(wm);
-            wm.CreateWorld(current.Systems);
+            var wm = new MyWorldCreator(worldOptions);
+            current = new MyWorldBaseImpl(worldOptions, wm);
+            wm.CreateWorld();
             current.WorldCreated += () => calledCount++;
             current.WorldDestroyed += () => calledCount++;
             current.PreWorldDestroy += () => calledCount++;
             wm.InvokeAllCallbacks();
-            Assert.AreEqual(3, calledCount);
+            Assert.AreEqual(1, calledCount);
         }
 
         [Test]
         public void ShouldHaveCorrectSystems()
         {
-            var wm = new MyWorldManager(worldManagerOptions);
-            current = new MyWorldBaseImpl(wm);
-            wm.CreateWorld(current.Systems);
+            var wm = new MyWorldCreator(worldOptions);
+            current = new MyWorldBaseImpl(worldOptions, wm);
+            wm.CreateWorld();
             Assert.IsNotNull(current.World.GetExistingSystem<EventComponentSystem>());
         }
 
         [Test]
         public void WhenWorldManagerIsNull_ShouldThrow() =>
-            Assert.Catch<ArgumentNullException>(() => new MyWorldBaseImpl(null));
+            Assert.Catch<ArgumentNullException>(() => new MyWorldBaseImpl(worldOptions, null));
 
         [Test]
-        public void ShouldSetSystems()
+        public void WhenOptionsIsNull_ShouldTrow()
         {
-            current = new MyWorldBaseImpl(new MyWorldManager(worldManagerOptions));
-            Assert.IsNotNull(current.Systems);
-        }
-
-        [Test]
-        public void ShouldAddMySystemToSystemsList()
-        {
-            current = new MyWorldBaseImpl(new MyWorldManager(worldManagerOptions));
-            Assert.Contains(typeof(MySystem), current.Systems);
-        }
-
-        [Test]
-        public void ShouldAddMySystem2ToSystemsList()
-        {
-            worldManagerOptions.Systems.Add(typeof(MySystem2));
-            current = new MyWorldBaseImpl(new MyWorldManager(worldManagerOptions));
-            Assert.Contains(typeof(MySystem2), current.Systems);
+            Assert.Catch<ArgumentNullException>(() => new MyWorldBaseImpl(null, new MyWorldCreator(worldOptions)));
         }
 
         [Test]
         public void WhenOptionSpecified_ShouldCreateWorldFromConstructor()
         {
-            worldManagerOptions.CreateWorldOnInstantiate = true;
-            var worldManager = new MyWorldManager(worldManagerOptions);
-            current = new MyWorldBaseImpl(worldManager);
+            worldOptions.CreateWorldOnInstantiate = true;
+            var worldManager = new MyWorldCreator(worldOptions);
+            current = new MyWorldBaseImpl(worldOptions, worldManager);
             Assert.IsTrue(worldManager.CalledBootStrapCreateWorld);
         }
 
         [Test]
         public void WhenOptionNotSpecified_ShouldNotCreateWorldFromConstructor()
         {
-            worldManagerOptions.CreateWorldOnInstantiate = false;
-            var worldManager = new MyWorldManager(worldManagerOptions);
-            current = new MyWorldBaseImpl(worldManager);
+            worldOptions.CreateWorldOnInstantiate = false;
+            var worldManager = new MyWorldCreator(worldOptions);
+            current = new MyWorldBaseImpl(worldOptions, worldManager);
             Assert.IsFalse(worldManager.CalledBootStrapCreateWorld);
+        }
+
+        [Test]
+        public void DestroyWorld_ShouldCreateSingleton()
+        {
+            worldOptions.CreateWorldOnInstantiate = true;
+            var worldManager = new MyWorldCreator(worldOptions);
+            current = new MyWorldBaseImpl(worldOptions, worldManager);
+            current.DestroyWorld();
+            Assert.AreEqual(1, current.World.EntityManager.CreateEntityQuery(typeof(DestroyWorld)).CalculateEntityCount());
         }
     }
 
@@ -97,9 +91,8 @@ namespace Sibz.NetCode.Tests.Base
     {
         //public BeginInitCommandBuffer Buffer => CommandBuffer;
         //public new IWorldOptionsBase Options => base.WorldManager.;
-        public new List<Type> Systems => base.Systems;
 
-        public MyWorldBaseImpl(IWorldManager worldManager) : base(worldManager)
+        public MyWorldBaseImpl(IWorldOptions options, IWorldCreator worldCreator) : base(options, worldCreator)
         {
         }
     }

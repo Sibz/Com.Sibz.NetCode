@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Sibz.EntityEvents;
+using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
 
 [assembly: DisableAutoCreation]
@@ -9,42 +10,49 @@ namespace Sibz.NetCode
 {
     public abstract class WorldBase : IWorldBase, IWorldCallbackProvider
     {
-        protected readonly List<Type> Systems;
-        protected readonly IWorldManager WorldManager;
-        public World World => WorldManager.World;
+        protected readonly IWorldCreator WorldCreator;
+        protected IWorldOptions Options { get; }
+        public World World => WorldCreator.World;
         public Action WorldCreated { get; set; }
         public Action WorldDestroyed { get; set; }
         public Action PreWorldDestroy { get; set; }
 
-        protected WorldBase(IWorldManager worldManager)
+        public static List<Type> DefaultSystems => new List<Type>()
+            .AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
+
+        protected WorldBase(IWorldOptions options, IWorldCreator worldCreator)
         {
-            if (worldManager is null)
+            if (worldCreator is null)
             {
-                throw new ArgumentNullException(nameof(worldManager));
+                throw new ArgumentNullException(nameof(worldCreator));
             }
 
-            Systems = worldManager.Options.Systems.AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
+            Options = options ?? throw new ArgumentNullException(nameof(options));
 
-            WorldManager = worldManager;
+            WorldCreator = worldCreator;
 
-            worldManager.WorldCreated += () => WorldCreated?.Invoke();
-            worldManager.WorldDestroyed += () => WorldDestroyed?.Invoke();
-            worldManager.PreWorldDestroy += () => PreWorldDestroy?.Invoke();
+            worldCreator.WorldCreated += () => WorldCreated?.Invoke();
 
             WorldCreated += () => World.EnqueueEvent(new WorldCreatedEvent());
 
-            if (worldManager.Options.CreateWorldOnInstantiate)
+            if (Options.CreateWorldOnInstantiate)
             {
                 CreateWorld();
             }
         }
 
-        protected void CreateWorld() => WorldManager.CreateWorld(Systems);
+        public void CreateWorld() => WorldCreator.CreateWorld();
 
+        public void DestroyWorld()
+        {
+            if (!WorldCreator.WorldIsCreated)
+            {
+                return;
+            }
 
-        protected void DestroyWorld() => WorldManager.DestroyWorld();
+            World.CreateSingleton<DestroyWorld>();
+        }
 
-
-        public void Dispose() => WorldManager.DestroyWorld();
+        public void Dispose() => WorldCreator.Dispose();
     }
 }

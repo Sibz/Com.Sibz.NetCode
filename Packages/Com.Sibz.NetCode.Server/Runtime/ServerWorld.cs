@@ -1,7 +1,7 @@
 ﻿using System;
 using Sibz.NetCode.Server;
+using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
-using Unity.NetCode;
 using Unity.Networking.Transport;
 
 [assembly: DisableAutoCreation]
@@ -10,6 +10,8 @@ namespace Sibz.NetCode
 {
     public class ServerWorld : WorldBase, IServerWorldCallbackProvider
     {
+        private const string HookSystemDoesNotExistError = "A HookSystem must exist";
+
         public Action<NetworkConnection> ClientConnected { get; set; }
         public Action<NetworkConnection> ClientDisconnected { get; set; }
         public Action ListenSuccess { get; set; }
@@ -17,29 +19,39 @@ namespace Sibz.NetCode
         public Action Closed { get; set; }
         protected ServerOptions Options { get; }
 
-        protected IServerWorldManager ServerWorldManager => (IServerWorldManager)WorldManager;
+        protected IServerWorldCreator ServerWorldCreator => (IServerWorldCreator)WorldCreator;
 
-        public ServerWorld(ServerOptions options) : base(new ServerWorldManager(options.GetOptionsWithImportedSystems<ServerSystemAttribute>()))
+        public ServerWorld(ServerOptions options) : base(options, new ServerWorldCreator(options))
         {
             Options = options;
+
+            WorldCreated += () =>
+            {
+                NetCodeHookSystem hookSystem =
+                    World.GetHookSystem()
+                    ?? throw new InvalidOperationException(HookSystemDoesNotExistError);
+
+                hookSystem.RegisterHook<ListeningEvent>((e) => { ListenSuccess?.Invoke(); });
+                hookSystem.RegisterHook<ListenFailedEvent>((e) => { ListenFailed?.Invoke(); });
+                hookSystem.RegisterHook<DisconnectingEvent>((e) => { Closed?.Invoke(); });
+            };
         }
 
         public void Listen()
         {
-            if (!WorldManager.WorldIsCreated)
+            if (!WorldCreator.WorldIsCreated)
             {
                 CreateWorld();
             }
-            ServerWorldManager.Listen(Options);
+            ServerWorldCreator.Listen(Options);
         }
 
         public void DisconnectAllClients() =>
-            ServerWorldManager.DisconnectAllClients();
+            ServerWorldCreator.DisconnectAllClients();
 
         public void DisconnectClient(int networkConnectionId) =>
-            ServerWorldManager.DisconnectClient(networkConnectionId);
+            ServerWorldCreator.DisconnectClient(networkConnectionId);
 
-        public void Close() =>
-            ServerWorldManager.DestroyWorld();
+        public void Close() => DestroyWorld();
     }
 }

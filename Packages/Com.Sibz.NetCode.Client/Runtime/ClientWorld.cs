@@ -1,4 +1,5 @@
-﻿using Unity.Entities;
+﻿using Sibz.NetCode.Client;
+using Unity.Entities;
 using Unity.Networking.Transport;
 
 [assembly: DisableAutoCreation]
@@ -9,7 +10,7 @@ namespace Sibz.NetCode
     {
         protected ClientOptions Options { get; }
 
-        public ClientWorld(IWorldManager worldManager) : base(worldManager)
+        public ClientWorld(ClientOptions options) : base(options, new ClientWorldCreator(options))
         {
         }
 

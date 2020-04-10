@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NUnit.Framework;
 using Sibz.NetCode.Client;
 using Sibz.NetCode.WorldExtensions;
@@ -21,12 +21,6 @@ namespace Sibz.NetCode.Tests.Client
             world = clientWorld.World;
             world.GetExistingSystem<ClientConnectSystem>().Enabled = false;
             connectingQuery = clientWorld.World.EntityManager.CreateEntityQuery(typeof(Connecting));
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            clientWorld.Dispose();
         }
 
         [Test]

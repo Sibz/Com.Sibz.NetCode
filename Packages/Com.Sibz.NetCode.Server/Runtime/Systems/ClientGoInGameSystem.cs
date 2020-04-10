@@ -24,10 +24,11 @@ namespace Sibz.NetCode.Server
                 EnqueueClientConnectedEventJobPart = World.GetEnqueueEventJobPart<ClientConnectedEvent>()
             };
             inputDeps = Entities
-                .WithNone<ReceiveRpcCommandRequestComponent>()
+                .WithNone<SendRpcCommandRequestComponent>()
+                .WithoutBurst()
                 .WithAll<GoInGameRequest>()
                 .ForEach(
-                    (Entity reqEnt, int entityInQueryIndex, ref GoInGameRequest req,
+                    (Entity reqEnt, int entityInQueryIndex,
                         ref ReceiveRpcCommandRequestComponent reqSrc) =>
                     {
                         job.Execute(entityInQueryIndex, reqEnt, ref reqSrc);

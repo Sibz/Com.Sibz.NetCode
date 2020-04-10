@@ -12,8 +12,8 @@ namespace Sibz.NetCode
     {
         private const string HookSystemDoesNotExistError = "A HookSystem must exist";
 
-        public Action<NetworkConnection> ClientConnected { get; set; }
-        public Action<NetworkConnection> ClientDisconnected { get; set; }
+        public Action<Entity> ClientConnected { get; set; }
+        public Action<int> ClientDisconnected { get; set; }
         public Action ListenSuccess { get; set; }
         public Action ListenFailed { get; set; }
         public Action Closed { get; set; }
@@ -34,6 +34,8 @@ namespace Sibz.NetCode
                 hookSystem.RegisterHook<ListeningEvent>((e) => { ListenSuccess?.Invoke(); });
                 hookSystem.RegisterHook<ListenFailedEvent>((e) => { ListenFailed?.Invoke(); });
                 hookSystem.RegisterHook<DisconnectingEvent>((e) => { Closed?.Invoke(); });
+                hookSystem.RegisterHook<ClientConnectedEvent>((e) => { ClientConnected?.Invoke(((ClientConnectedEvent)e).ConnectionEntity);});
+                hookSystem.RegisterHook<ClientDisconnectedEvent>((e) => { ClientDisconnected?.Invoke(((ClientDisconnectedEvent)e).NetworkId);});
             };
         }
 

@@ -1,6 +1,6 @@
 ﻿using Unity.Networking.Transport;
 
-namespace Sibz.NetCode
+namespace Sibz.NetCode.Server
 {
     public interface IServerNetworkStreamProxy
     {

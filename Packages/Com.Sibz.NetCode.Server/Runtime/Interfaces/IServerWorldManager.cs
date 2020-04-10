@@ -1,4 +1,4 @@
-﻿namespace Sibz.NetCode
+﻿namespace Sibz.NetCode.Server
 {
     public interface IServerWorldCreator : IWorldCreator
     {

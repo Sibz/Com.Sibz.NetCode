@@ -5,7 +5,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.NetCode;
 
-namespace Sibz.NetCode
+namespace Sibz.NetCode.Server
 {
     [ServerSystem]
     public class ClientGoInGameSystem : JobComponentSystem

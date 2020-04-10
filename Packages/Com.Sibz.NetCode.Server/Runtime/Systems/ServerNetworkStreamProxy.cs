@@ -2,7 +2,7 @@
 using Unity.Entities;
 using Unity.Networking.Transport;
 
-namespace Sibz.NetCode
+namespace Sibz.NetCode.Server
 {
     public class ServerNetworkStreamProxy : IServerNetworkStreamProxy
     {

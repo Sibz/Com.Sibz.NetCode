@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Networking.Transport;
 using UnityEngine;
 
-namespace Sibz.NetCode
+namespace Sibz.NetCode.Server
 {
     [ServerSystem]
     public class ListenSystem : ComponentSystem

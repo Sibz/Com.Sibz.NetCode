@@ -19,6 +19,7 @@ namespace Sibz.NetCode.Tests.Client
         {
             clientWorld = new MyClientWorld();
             world = clientWorld.World;
+            world.GetExistingSystem<ClientConnectSystem>().Enabled = false;
             connectingQuery = clientWorld.World.EntityManager.CreateEntityQuery(typeof(Connecting));
         }
 

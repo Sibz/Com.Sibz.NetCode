@@ -46,7 +46,8 @@ namespace Sibz.NetCode.Tests.Server
         {
             //testWorld.CreateWorld();
             testWorld.Close();
-            Assert.AreEqual(1, testWorld.World.EntityManager.CreateEntityQuery(typeof(Disconnect)).CalculateEntityCount());
+            Assert.AreEqual(1,
+                testWorld.World.EntityManager.CreateEntityQuery(typeof(Disconnect)).CalculateEntityCount());
         }
 
         [Test]
@@ -56,6 +57,7 @@ namespace Sibz.NetCode.Tests.Server
             testWorld.World.GetHookSystem().Update();
             Assert.AreEqual(MyServerWorld.CallbackName.ClientConnected, testWorld.LastCallbackName);
         }
+
         [Test]
         public void WhenClientDisconnectedEventRaised_ShouldCallback()
         {
@@ -63,6 +65,7 @@ namespace Sibz.NetCode.Tests.Server
             testWorld.World.GetHookSystem().Update();
             Assert.AreEqual(MyServerWorld.CallbackName.ClientDisconnected, testWorld.LastCallbackName);
         }
+
         [Test]
         public void WhenListeningEventRaised_ShouldCallback()
         {
@@ -70,6 +73,7 @@ namespace Sibz.NetCode.Tests.Server
             testWorld.World.GetHookSystem().Update();
             Assert.AreEqual(MyServerWorld.CallbackName.ListenSuccess, testWorld.LastCallbackName);
         }
+
         [Test]
         public void WhenListenFailedEventRaised_ShouldCallback()
         {
@@ -77,6 +81,7 @@ namespace Sibz.NetCode.Tests.Server
             testWorld.World.GetHookSystem().Update();
             Assert.AreEqual(MyServerWorld.CallbackName.ListenFailed, testWorld.LastCallbackName);
         }
+
         [Test]
         public void WhenDisconnectingEventRaised_ShouldCallback()
         {
@@ -86,10 +91,10 @@ namespace Sibz.NetCode.Tests.Server
         }
 
 
-
         private class MyServerWorld : ServerWorld
         {
-            public CallbackName LastCallbackName= CallbackName.None;
+            public CallbackName LastCallbackName = CallbackName.None;
+
             public enum CallbackName
             {
                 None,
@@ -99,6 +104,7 @@ namespace Sibz.NetCode.Tests.Server
                 ListenFailed,
                 Closed
             }
+
             public MyServerWorld(ServerOptions options) : base(options)
             {
                 ClientConnected += (ent) => LastCallbackName = CallbackName.ClientConnected;
@@ -111,6 +117,4 @@ namespace Sibz.NetCode.Tests.Server
             public new void CreateWorld() => base.CreateWorld();
         }
     }
-
-
 }

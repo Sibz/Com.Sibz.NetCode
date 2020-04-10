@@ -22,6 +22,12 @@ namespace Sibz.NetCode.Tests.Client
             connectingQuery = clientWorld.World.EntityManager.CreateEntityQuery(typeof(Connecting));
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            clientWorld.Dispose();
+        }
+
         [Test]
         public void Disconnect_ShouldCreateSingleton()
         {
@@ -54,6 +60,7 @@ namespace Sibz.NetCode.Tests.Client
         public void Connect_ShouldCreateConnectionInitiatedEvent()
         {
             clientWorld.Connect();
+            UpdateWorld();
             UpdateWorld();
             Assert.AreEqual(1, world.EntityManager.CreateEntityQuery(typeof(ConnectionInitiatedEvent)).CalculateEntityCount());
         }

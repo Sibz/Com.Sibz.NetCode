@@ -1,6 +1,7 @@
 ﻿using Sibz.EntityEvents;
 using Unity.Entities;
 using Unity.NetCode;
+using UnityEngine;
 
 namespace Sibz.NetCode.Client
 {

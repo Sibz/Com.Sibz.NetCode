@@ -15,6 +15,6 @@ namespace Sibz.NetCode
         public List<Type> Systems { get; set; } = WorldBase.DefaultSystems
             .AppendTypesWithAttribute<ClientSystemAttribute>();
         public List<GameObject> GhostCollectionPrefabs { get; set; } = new List<GameObject>();
-        public int TimeOut { get; set; }
+        public int TimeOut { get; set; } = 10;
     }
 }

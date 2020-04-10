@@ -23,14 +23,14 @@ namespace Sibz.NetCode.Tests.Base
             destroyWorldSystem = world.GetOrCreateSystem<MyDestroyWorldSystem>();
         }
 
-        /*[TearDown]
+        [TearDown]
         public void TearDown()
         {
-            if (world != null && world.IsCreated)
+            if (world.IsCreated)
             {
                 world.Dispose();
             }
-        }*/
+        }
 
         [Test]
         public void WhenSingletonDoesNotExist_ShouldNotRun()

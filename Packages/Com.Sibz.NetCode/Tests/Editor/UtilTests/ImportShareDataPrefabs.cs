@@ -41,7 +41,6 @@ namespace Sibz.NetCode.Tests.UtilTests
                             ImportGhostCollectionWorldExtension.ImportGhostCollection(testWorld, new List<GameObject>(){ new GameObject() } ));
         }
 
-        /*
         [Test]
         public void ShouldImportPrefabIntoWorld()
         {
@@ -58,7 +57,7 @@ namespace Sibz.NetCode.Tests.UtilTests
             entities.Dispose();
 
             Assert.AreEqual(5, len);
-        }*/
+        }
 
         // ReSharper disable ExpressionIsAlwaysNull
         [Test]

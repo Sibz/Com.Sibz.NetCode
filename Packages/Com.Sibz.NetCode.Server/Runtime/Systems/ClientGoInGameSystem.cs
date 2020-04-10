@@ -1,6 +1,5 @@
 ﻿using Sibz.CommandBufferHelpers;
 using Sibz.EntityEvents;
-using Sibz.NetCode.Server;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.NetCode;
@@ -24,12 +23,15 @@ namespace Sibz.NetCode.Server
                 CommandBuffer = commandBuffer.Concurrent,
                 EnqueueClientConnectedEventJobPart = World.GetEnqueueEventJobPart<ClientConnectedEvent>()
             };
-            inputDeps = Entities.WithNone<SendRpcCommandRequestComponent>().ForEach(
-                (Entity reqEnt, int entityInQueryIndex, ref GoInGameRequest req,
-                    ref ReceiveRpcCommandRequestComponent reqSrc) =>
-                {
-                    job.Execute(entityInQueryIndex, reqEnt, ref reqSrc);
-                }).Schedule(inputDeps);
+            inputDeps = Entities
+                .WithNone<ReceiveRpcCommandRequestComponent>()
+                .WithAll<GoInGameRequest>()
+                .ForEach(
+                    (Entity reqEnt, int entityInQueryIndex, ref GoInGameRequest req,
+                        ref ReceiveRpcCommandRequestComponent reqSrc) =>
+                    {
+                        job.Execute(entityInQueryIndex, reqEnt, ref reqSrc);
+                    }).Schedule(inputDeps);
 
             commandBuffer.AddJobDependency(inputDeps);
             World.EventSystemAddJobDependency(inputDeps);

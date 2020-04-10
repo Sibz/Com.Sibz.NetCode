@@ -90,7 +90,6 @@ namespace Sibz.NetCode.Tests.Server
             Assert.AreEqual(MyServerWorld.CallbackName.Closed, testWorld.LastCallbackName);
         }
 
-
         private class MyServerWorld : ServerWorld
         {
             public CallbackName LastCallbackName = CallbackName.None;

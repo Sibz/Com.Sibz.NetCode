@@ -1,4 +1,7 @@
+﻿using System;
+using Sibz.EntityEvents;
 using Sibz.NetCode.Client;
+using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
 using Unity.Networking.Transport;
 
@@ -17,12 +20,20 @@ namespace Sibz.NetCode
         public ClientWorld(ClientOptions options) : base(options, new ClientWorldCreator(options))
         {
             Options = options ?? throw new ArgumentNullException(nameof(options));
+
+            HookSystem hookSystem = World.GetHookSystem();
+            WorldCreated += () => { hookSystem.RegisterHook<DisconnectedEvent>((e) => Disconnected?.Invoke()); };
         }
 
 
         private void Connect()
         {
             NetworkEndPoint endPoint = NetworkEndPoint.Parse(Options.Address, Options.Port, Options.NetworkFamily);
+        }
+
+        public void Disconnect()
+        {
+            World.CreateSingleton<Disconnect>();
         }
     }
 }

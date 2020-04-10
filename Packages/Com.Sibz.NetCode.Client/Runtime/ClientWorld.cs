@@ -11,9 +11,12 @@ namespace Sibz.NetCode
 {
     public class ClientWorld : WorldBase, IClientWorldCallbackProvider
     {
+        private const string WorldNotCreatedError =
+            "{0}: Unable to connect, world is not created.";
+
         public Action Connecting { get; set; }
-        public Action Connected { get; set; }
-        public Action ConnectionFailed { get; set; }
+        public Action<int> Connected { get; set; }
+        public Action<string> ConnectionFailed { get; set; }
         public Action Disconnected { get; set; }
         protected new ClientOptions Options { get; }
 
@@ -21,14 +24,30 @@ namespace Sibz.NetCode
         {
             Options = options ?? throw new ArgumentNullException(nameof(options));
 
-            HookSystem hookSystem = World.GetHookSystem();
-            WorldCreated += () => { hookSystem.RegisterHook<DisconnectedEvent>((e) => Disconnected?.Invoke()); };
+            WorldCreated += () =>
+            {
+                HookSystem hookSystem = World.GetHookSystem();
+                hookSystem.RegisterHook<DisconnectedEvent>((e) => Disconnected?.Invoke());
+                hookSystem.RegisterHook<ConnectionInitiatedEvent>((e) => Connecting?.Invoke());
+                hookSystem.RegisterHook<ConnectionCompleteEvent>((e) => Connected?.Invoke(0));
+                hookSystem.RegisterHook<ConnectionFailedEvent>((e) =>
+                    ConnectionFailed?.Invoke(((ConnectionFailedEvent) e).Message.ToString()));
+            };
         }
 
-
-        private void Connect()
+        public void Connect()
         {
-            NetworkEndPoint endPoint = NetworkEndPoint.Parse(Options.Address, Options.Port, Options.NetworkFamily);
+            if (!WorldCreator.WorldIsCreated)
+            {
+                throw new InvalidOperationException(string.Format(WorldNotCreatedError, nameof(Connect)));
+            }
+
+            World.CreateSingleton(new Connecting
+            {
+                EndPoint = NetworkEndPoint.Parse(Options.Address, Options.Port, Options.NetworkFamily),
+                TimeoutTime = (float) World.Time.ElapsedTime + Options.TimeOut,
+                State = NetworkState.InitialRequest
+            });
         }
 
         public void Disconnect()

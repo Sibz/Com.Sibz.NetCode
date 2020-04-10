@@ -24,7 +24,7 @@ namespace Sibz.NetCode
         {
             Options = options ?? throw new ArgumentNullException(nameof(options));
 
-            WorldCreated += () =>
+            void OnWorldCreate()
             {
                 HookSystem hookSystem = World.GetHookSystem();
                 hookSystem.RegisterHook<DisconnectedEvent>((e) => Disconnected?.Invoke());
@@ -32,7 +32,16 @@ namespace Sibz.NetCode
                 hookSystem.RegisterHook<ConnectionCompleteEvent>((e) => Connected?.Invoke(0));
                 hookSystem.RegisterHook<ConnectionFailedEvent>((e) =>
                     ConnectionFailed?.Invoke(((ConnectionFailedEvent) e).Message.ToString()));
-            };
+            }
+
+            if (WorldCreator.WorldIsCreated)
+            {
+                OnWorldCreate();
+            }
+            else
+            {
+                WorldCreated += OnWorldCreate;
+            }
         }
 
         public void Connect()

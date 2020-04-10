@@ -11,9 +11,6 @@ namespace Sibz.NetCode.Tests.Server
         private MyServerWorld testWorld;
         private ServerOptions serverOptions;
 
-        /*private EntityQuery StatusQuery =>
-            testWorld.World.EntityManager.CreateEntityQuery(typeof(NetworkStatus));*/
-
         private int testCount;
 
         [SetUp]

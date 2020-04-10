@@ -56,6 +56,34 @@ namespace Sibz.NetCode.Tests.Server
             testWorld.World.GetHookSystem().Update();
             Assert.AreEqual(MyServerWorld.CallbackName.ClientConnected, testWorld.LastCallbackName);
         }
+        [Test]
+        public void WhenClientDisconnectedEventRaised_ShouldCallback()
+        {
+            testWorld.World.CreateSingleton<ClientDisconnectedEvent>();
+            testWorld.World.GetHookSystem().Update();
+            Assert.AreEqual(MyServerWorld.CallbackName.ClientDisconnected, testWorld.LastCallbackName);
+        }
+        [Test]
+        public void WhenListeningEventRaised_ShouldCallback()
+        {
+            testWorld.World.CreateSingleton<ListeningEvent>();
+            testWorld.World.GetHookSystem().Update();
+            Assert.AreEqual(MyServerWorld.CallbackName.ListenSuccess, testWorld.LastCallbackName);
+        }
+        [Test]
+        public void WhenListenFailedEventRaised_ShouldCallback()
+        {
+            testWorld.World.CreateSingleton<ListenFailedEvent>();
+            testWorld.World.GetHookSystem().Update();
+            Assert.AreEqual(MyServerWorld.CallbackName.ListenFailed, testWorld.LastCallbackName);
+        }
+        [Test]
+        public void WhenDisconnectingEventRaised_ShouldCallback()
+        {
+            testWorld.World.CreateSingleton<DisconnectingEvent>();
+            testWorld.World.GetHookSystem().Update();
+            Assert.AreEqual(MyServerWorld.CallbackName.Closed, testWorld.LastCallbackName);
+        }
 
 
 

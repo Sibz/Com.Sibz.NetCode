@@ -19,8 +19,6 @@ namespace Sibz.NetCode
         public Action Closed { get; set; }
         protected ServerOptions Options { get; }
 
-        protected IServerWorldCreator ServerWorldCreator => (IServerWorldCreator)WorldCreator;
-
         public ServerWorld(ServerOptions options) : base(options, new ServerWorldCreator(options))
         {
             Options = options;
@@ -45,7 +43,11 @@ namespace Sibz.NetCode
             {
                 CreateWorld();
             }
-            ServerWorldCreator.Listen(Options);
+
+            World.CreateSingleton(new Listen
+            {
+                EndPoint = NetworkEndPoint.Parse(Options.Address, Options.Port, Options.NetworkFamily)
+            });
         }
 
         public void DisconnectAllClients() =>

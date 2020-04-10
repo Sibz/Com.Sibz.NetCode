@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using Sibz.NetCode.Server;
 using Sibz.NetCode.WorldExtensions;
+using Unity.Networking.Transport;
 
 namespace Sibz.NetCode.Tests.Server
 {
@@ -85,6 +86,31 @@ namespace Sibz.NetCode.Tests.Server
             testWorld.World.CreateSingleton<DisconnectingEvent>();
             testWorld.World.GetHookSystem().Update();
             Assert.AreEqual(MyServerWorld.CallbackName.Closed, testWorld.LastCallbackName);
+        }
+
+        [Test]
+        public void Listen_WhenWorldIsNotCreated_ShouldCreateWorld()
+        {
+            testWorld.Dispose();
+            testWorld.Listen();
+            Assert.IsNotNull(testWorld.World);
+            Assert.IsTrue(testWorld.World.IsCreated);
+        }
+
+        [Test]
+        public void Listen_ShouldCreateSingleton()
+        {
+            testWorld.Listen();
+            Assert.AreEqual(1, testWorld.World.EntityManager.CreateEntityQuery(typeof(Listen)).CalculateEntityCount());
+        }
+
+        [Test]
+        public void Listen_ShouldSetEndPoint()
+        {
+            testWorld.Listen();
+            var listen = testWorld.World.EntityManager.CreateEntityQuery(typeof(Listen)).GetSingleton<Listen>();
+            NetworkEndPoint endPoint = NetworkEndPoint.Parse(serverOptions.Address, serverOptions.Port, serverOptions.NetworkFamily);
+            Assert.AreEqual(listen.EndPoint, endPoint);
         }
 
         private class MyServerWorld : ServerWorld

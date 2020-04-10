@@ -114,6 +114,16 @@ namespace Sibz.NetCode.Tests.Client
         }
 
         [Test]
+        public void WhenInitialRequest_ShouldCreateEvent()
+        {
+            State = new Connecting { State = NetworkState.InitialRequest };
+            connectSystem.NetworkStreamSystemProxy = new MyClientNetworkStreamSystemProxy();
+            UpdateClient();
+            UpdateClient();
+            Assert.AreEqual(1, world.EntityManager.CreateEntityQuery(typeof(ConnectionInitiatedEvent)).CalculateEntityCount());
+        }
+
+        [Test]
         public void WhenConnectionProgressesFromInitialRequest_ShouldUpdateStateToConnectingToServer()
         {
             State = new Connecting { State = NetworkState.InitialRequest };

@@ -1,9 +1,6 @@
-﻿using System;
-using Sibz.EntityEvents;
-using Sibz.NetCode.WorldExtensions;
+﻿using Sibz.EntityEvents;
 using Unity.Entities;
 using Unity.NetCode;
-using UnityEngine;
 
 namespace Sibz.NetCode.Client
 {
@@ -58,8 +55,14 @@ namespace Sibz.NetCode.Client
 
         private void ProcessConnectionInitiatedEvent(ref Connecting connecting)
         {
+            if (connecting.State != NetworkState.InitialRequest)
+            {
+                return;
+            }
+
             if (!HasSingleton<ConnectionInitiatedEvent>())
             {
+                World.EnqueueEvent<ConnectionInitiatedEvent>();
                 return;
             }
 

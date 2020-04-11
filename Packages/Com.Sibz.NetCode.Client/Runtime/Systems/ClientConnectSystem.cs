@@ -63,7 +63,6 @@ namespace Sibz.NetCode.Client
             if (!HasSingleton<ConnectionInitiatedEvent>())
             {
                 World.EnqueueEvent<ConnectionInitiatedEvent>();
-                return;
             }
 
             NetworkStreamSystemProxy.Connect(connecting.EndPoint);

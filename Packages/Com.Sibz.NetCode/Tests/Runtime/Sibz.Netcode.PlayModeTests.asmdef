@@ -1,0 +1,30 @@
+{
+    "name": "Sibz.Netcode.PlayModeTests",
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Com.Sibz.NetCode.Client",
+        "Com.Sibz.NetCode.Server",
+        "Com.Sibz.NetCode",
+        "Unity.Entities",
+        "Unity.NetCode",
+        "Unity.Burst",
+        "Unity.Transforms",
+        "Unity.Collections",
+        "Unity.Networking.Transport",
+        "Unity.Mathematics"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

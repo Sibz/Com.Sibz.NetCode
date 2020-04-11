@@ -20,7 +20,7 @@ namespace Sibz.NetCode.Tests.Client
         {
             clientWorld = new MyClientWorld();
             world = clientWorld.World;
-            world.GetExistingSystem<ClientConnectSystem>().Enabled = false;
+            //world.GetExistingSystem<ClientConnectSystem>().Enabled = false;
             connectingQuery = clientWorld.World.EntityManager.CreateEntityQuery(typeof(Connecting));
         }
 
@@ -56,8 +56,12 @@ namespace Sibz.NetCode.Tests.Client
         public void Connect_ShouldCreateConnectionInitiatedEvent()
         {
             clientWorld.Connect();
+            world.GetExistingSystem<ClientConnectSystem>().Update();
+            world.GetExistingSystem<BeginInitializationEntityCommandBufferSystem>().Update();
+            /*
             UpdateWorld();
             UpdateWorld();
+            */
             Assert.AreEqual(1,
                 world.EntityManager.CreateEntityQuery(typeof(ConnectionInitiatedEvent)).CalculateEntityCount());
         }
@@ -106,6 +110,7 @@ namespace Sibz.NetCode.Tests.Client
 
         private void UpdateWorld()
         {
+            //clientWorld.World.GetExistingSystem<BeginInitializationEntityCommandBufferSystem>().Update();
             clientWorld.World.GetExistingSystem<ClientInitializationSystemGroup>().Update();
             clientWorld.World.GetExistingSystem<ClientSimulationSystemGroup>().Update();
         }

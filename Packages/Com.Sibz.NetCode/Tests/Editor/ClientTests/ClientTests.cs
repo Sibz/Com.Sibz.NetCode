@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using Sibz.NetCode.Client;
 using Sibz.NetCode.WorldExtensions;
@@ -90,6 +91,16 @@ namespace Sibz.NetCode.Tests.Client
             world.CreateSingleton<DisconnectedEvent>();
             world.GetHookSystem().Update();
             Assert.AreEqual(CallbackName.Disconnected, clientWorld.CallbackName);
+        }
+
+        [Test]
+        public void ShouldHaveSystemsInCreatedWorld()
+        {
+            List<Type> systems = new List<Type>().AppendTypesWithAttribute<ClientSystemAttribute>();
+            foreach (Type system in systems)
+            {
+                Assert.IsNotNull(world.GetExistingSystem(system), $"System: {system.Name}");
+            }
         }
 
         private void UpdateWorld()

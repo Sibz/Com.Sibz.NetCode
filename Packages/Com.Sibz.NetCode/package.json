@@ -5,7 +5,7 @@
     "com.sibz.world-system-helpers": "1.0.4",
     "com.sibz.entity-events": "0.0.6",
     "com.unity.netcode": "0.1.0-preview.6",
-    "com.unity.entities": "0.8.0-preview.8"
+    "com.unity.entities": "0.9.0-preview.6"
   },
   "deprecated": false,
   "description": "Base code to aid in creating client and server worlds on the fly",

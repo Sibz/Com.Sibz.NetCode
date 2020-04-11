@@ -10,9 +10,9 @@ namespace Sibz.NetCode.Tests.Client
 {
     public class ClientTests
     {
+        private static int testCount;
         private World world;
         private MyClientWorld clientWorld;
-        private static int testCount;
         private EntityQuery connectingQuery;
 
         [SetUp]
@@ -58,7 +58,8 @@ namespace Sibz.NetCode.Tests.Client
             clientWorld.Connect();
             UpdateWorld();
             UpdateWorld();
-            Assert.AreEqual(1, world.EntityManager.CreateEntityQuery(typeof(ConnectionInitiatedEvent)).CalculateEntityCount());
+            Assert.AreEqual(1,
+                world.EntityManager.CreateEntityQuery(typeof(ConnectionInitiatedEvent)).CalculateEntityCount());
         }
 
         [Test]
@@ -109,16 +110,25 @@ namespace Sibz.NetCode.Tests.Client
             clientWorld.World.GetExistingSystem<ClientSimulationSystemGroup>().Update();
         }
 
+        private static ClientOptions GetOptions()
+        {
+            return new ClientOptions
+            {
+                WorldName = $"TestClientWorld{testCount++}"
+            };
+        }
+
         private class MyClientWorld : ClientWorld
         {
             public CallbackName CallbackName;
 
             public new IWorldCreator WorldCreator => base.WorldCreator;
+
             public MyClientWorld() : base(GetOptions())
             {
                 Connecting += () => CallbackName = CallbackName.Connecting;
-                Connected += (i) => CallbackName = CallbackName.Connected;
-                ConnectionFailed += (s) => CallbackName = CallbackName.ConnectionFailed;
+                Connected += i => CallbackName = CallbackName.Connected;
+                ConnectionFailed += s => CallbackName = CallbackName.ConnectionFailed;
                 Disconnected += () => CallbackName = CallbackName.Disconnected;
             }
         }
@@ -130,14 +140,6 @@ namespace Sibz.NetCode.Tests.Client
             Connected,
             ConnectionFailed,
             Disconnected
-        }
-
-        private static ClientOptions GetOptions()
-        {
-            return new ClientOptions
-            {
-                WorldName = $"TestClientWorld{testCount++}"
-            };
         }
     }
 }

@@ -16,7 +16,6 @@ namespace Sibz.NetCode.Tests
                 return;
             }
 
-            //DefaultWorldInitialization.Initialize("DefaultTestWorld", true);
             new ClientServerBootstrap().Initialize("DefaultNetWorld");
             foreach (World world in World.All)
             {
@@ -32,7 +31,10 @@ namespace Sibz.NetCode.Tests
 
 
         [OneTimeSetUp]
-        public void OneTimeSetup() => SetUpDefaultWorld();
+        public void OneTimeSetup()
+        {
+            SetUpDefaultWorld();
+        }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()

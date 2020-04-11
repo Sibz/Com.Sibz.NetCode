@@ -9,7 +9,7 @@ public struct NetCodeGhostDeserializerCollection : IGhostDeserializerCollection
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     public string[] CreateSerializerNameList()
     {
-        var arr = new[]
+        string[] arr = new[]
         {
             "NetCodeTestGhostObjectGhostSerializer"
         };
@@ -20,15 +20,18 @@ public struct NetCodeGhostDeserializerCollection : IGhostDeserializerCollection
 #endif
     public void Initialize(World world)
     {
-        var curNetCodeTestGhostObjectGhostSpawnSystem =
+        NetCodeTestGhostObjectGhostSpawnSystem curNetCodeTestGhostObjectGhostSpawnSystem =
             world.GetOrCreateSystem<NetCodeTestGhostObjectGhostSpawnSystem>();
         m_NetCodeTestGhostObjectSnapshotDataNewGhostIds = curNetCodeTestGhostObjectGhostSpawnSystem.NewGhostIds;
         m_NetCodeTestGhostObjectSnapshotDataNewGhosts = curNetCodeTestGhostObjectGhostSpawnSystem.NewGhosts;
         curNetCodeTestGhostObjectGhostSpawnSystem.GhostType = 0;
     }
 
-    public void BeginDeserialize(JobComponentSystem system) => m_NetCodeTestGhostObjectSnapshotDataFromEntity =
-        system.GetBufferFromEntity<NetCodeTestGhostObjectSnapshotData>();
+    public void BeginDeserialize(JobComponentSystem system)
+    {
+        m_NetCodeTestGhostObjectSnapshotDataFromEntity =
+            system.GetBufferFromEntity<NetCodeTestGhostObjectSnapshotData>();
+    }
 
     public bool Deserialize(int serializer, Entity entity, uint snapshot, uint baseline, uint baseline2, uint baseline3,
         ref DataStreamReader reader, NetworkCompressionModel compressionModel)

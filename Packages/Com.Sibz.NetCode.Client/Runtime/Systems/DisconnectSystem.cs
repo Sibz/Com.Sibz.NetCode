@@ -11,6 +11,7 @@ namespace Sibz.NetCode.Client
     {
         private EndSimCommandBuffer commandBuffer;
         private EntityQuery networkStreamInGameQuery;
+
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<Disconnect>();
@@ -26,7 +27,7 @@ namespace Sibz.NetCode.Client
                 return inputDeps;
             }
 
-            var job = new DisconnectJob
+            DisconnectJob job = new DisconnectJob
             {
                 CommandBuffer = commandBuffer.Concurrent,
                 Disconnect = GetSingletonEntity<Disconnect>(),
@@ -64,7 +65,6 @@ namespace Sibz.NetCode.Client
                 CommandBuffer.DestroyEntity(index, Disconnect);
                 CommandBuffer.AddComponent<NetworkStreamDisconnected>(index, networkStreamEntity);
             }
-
         }
     }
 }

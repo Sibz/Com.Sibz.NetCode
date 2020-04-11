@@ -8,7 +8,7 @@ public struct NetCodeGhostSerializerCollection : IGhostSerializerCollection
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     public string[] CreateSerializerNameList()
     {
-        var arr = new[]
+        string[] arr = new[]
         {
             "NetCodeTestGhostObjectGhostSerializer"
         };
@@ -28,8 +28,10 @@ public struct NetCodeGhostSerializerCollection : IGhostSerializerCollection
         return -1;
     }
 
-    public void BeginSerialize(ComponentSystemBase system) =>
+    public void BeginSerialize(ComponentSystemBase system)
+    {
         m_NetCodeTestGhostObjectGhostSerializer.BeginSerialize(system);
+    }
 
     public int CalculateImportance(int serializer, ArchetypeChunk chunk)
     {

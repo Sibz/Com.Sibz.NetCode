@@ -11,7 +11,6 @@ namespace Sibz.NetCode
     public abstract class WorldBase : IWorldBase, IWorldCallbackProvider
     {
         protected readonly IWorldCreator WorldCreator;
-        protected IWorldOptions Options { get; }
         public World World => WorldCreator.World;
         public Action WorldCreated { get; set; }
         public Action WorldDestroyed { get; set; }
@@ -19,6 +18,8 @@ namespace Sibz.NetCode
 
         public static List<Type> DefaultSystems => new List<Type>()
             .AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
+
+        protected IWorldOptions Options { get; }
 
         protected WorldBase(IWorldOptions options, IWorldCreator worldCreator)
         {
@@ -44,11 +45,14 @@ namespace Sibz.NetCode
         private void OnWorldCreated()
         {
             World.EnqueueEvent(new WorldCreatedEvent());
-            World.GetHookSystem().RegisterHook<DestroyWorldEvent>((e) => PreWorldDestroy?.Invoke());
+            World.GetHookSystem().RegisterHook<DestroyWorldEvent>(e => PreWorldDestroy?.Invoke());
             World.GetExistingSystem<DestroyWorldSystem>().OnDestroyed += () => WorldDestroyed?.Invoke();
         }
 
-        public void CreateWorld() => WorldCreator.CreateWorld();
+        public void CreateWorld()
+        {
+            WorldCreator.CreateWorld();
+        }
 
         public void DestroyWorld()
         {
@@ -60,6 +64,9 @@ namespace Sibz.NetCode
             World.CreateSingleton<DestroyWorld>();
         }
 
-        public void Dispose() => WorldCreator.Dispose();
+        public void Dispose()
+        {
+            WorldCreator.Dispose();
+        }
     }
 }

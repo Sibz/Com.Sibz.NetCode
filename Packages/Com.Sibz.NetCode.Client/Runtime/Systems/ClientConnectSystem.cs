@@ -1,7 +1,6 @@
 ﻿using Sibz.EntityEvents;
 using Unity.Entities;
 using Unity.NetCode;
-using UnityEngine;
 
 namespace Sibz.NetCode.Client
 {
@@ -23,7 +22,7 @@ namespace Sibz.NetCode.Client
 
         protected override void OnUpdate()
         {
-            var connecting = GetSingleton<Connecting>();
+            Connecting connecting = GetSingleton<Connecting>();
 
             if (ProcessTimeout(ref connecting))
             {

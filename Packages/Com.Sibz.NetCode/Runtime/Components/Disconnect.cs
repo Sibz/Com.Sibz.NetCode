@@ -1,9 +1,8 @@
 ﻿using Unity.Entities;
 
-namespace Sibz.NetCode.Client
+namespace Sibz.NetCode
 {
     public struct Disconnect : IComponentData
     {
-
     }
 }

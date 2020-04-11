@@ -18,7 +18,7 @@ namespace Sibz.NetCode.Server
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            var job = new GoInGameJob
+            GoInGameJob job = new GoInGameJob
             {
                 CommandBuffer = commandBuffer.Concurrent,
                 EnqueueClientConnectedEventJobPart = World.GetEnqueueEventJobPart<ClientConnectedEvent>()

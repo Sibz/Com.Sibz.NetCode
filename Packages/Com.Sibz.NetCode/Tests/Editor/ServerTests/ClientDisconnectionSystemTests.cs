@@ -66,7 +66,7 @@ namespace Sibz.NetCode.Tests.Server
             CreateFakeDisconnectionEntity();
             UpdateWorld();
             UpdateWorld();
-            var ev = world.EntityManager
+            ClientDisconnectedEvent ev = world.EntityManager
                 .CreateEntityQuery(typeof(ClientDisconnectedEvent)).GetSingleton<ClientDisconnectedEvent>();
             Assert.AreEqual(42, ev.NetworkId);
         }
@@ -88,7 +88,7 @@ namespace Sibz.NetCode.Tests.Server
 
         private class MyClientDisconnectSystem : ClientDisconnectSystem
         {
-            public bool DidUpdate = false;
+            public bool DidUpdate;
 
             protected override JobHandle OnUpdate(JobHandle inputDeps)
             {

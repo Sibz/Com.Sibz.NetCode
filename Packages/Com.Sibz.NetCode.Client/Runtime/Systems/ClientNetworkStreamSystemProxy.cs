@@ -6,13 +6,16 @@ namespace Sibz.NetCode.Client
 {
     public class ClientNetworkStreamSystemProxy : IClientNetworkStreamSystemProxy
     {
-        private World world;
+        private readonly World world;
 
         public ClientNetworkStreamSystemProxy(World world)
         {
             this.world = world;
         }
 
-        public Entity Connect(NetworkEndPoint endPoint) => world.GetNetworkStreamReceiveSystem().Connect(endPoint);
+        public Entity Connect(NetworkEndPoint endPoint)
+        {
+            return world.GetNetworkStreamReceiveSystem().Connect(endPoint);
+        }
     }
 }

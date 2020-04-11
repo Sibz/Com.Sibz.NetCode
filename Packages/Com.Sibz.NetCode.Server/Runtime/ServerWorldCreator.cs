@@ -13,10 +13,14 @@ namespace Sibz.NetCode.Server
         {
         }
 
-        protected override World BootStrapCreateWorld(string worldName) =>
-            ClientServerBootstrap.CreateServerWorld(World.DefaultGameObjectInjectionWorld, worldName);
+        protected override World BootStrapCreateWorld(string worldName)
+        {
+            return ClientServerBootstrap.CreateServerWorld(World.DefaultGameObjectInjectionWorld, worldName);
+        }
 
-        protected override void InjectSystems(List<Type> systems) =>
+        protected override void InjectSystems(List<Type> systems)
+        {
             World.ImportSystemsFromList<ServerSimulationSystemGroup>(systems);
+        }
     }
 }

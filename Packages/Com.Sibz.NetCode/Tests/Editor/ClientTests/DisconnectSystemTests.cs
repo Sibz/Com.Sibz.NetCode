@@ -40,7 +40,7 @@ namespace Sibz.NetCode.Tests.Client
         [Test]
         public void WhenRunAndNotInGame_ShouldDestroySingleton()
         {
-            var singleton = world.CreateSingleton<Disconnect>();
+            Entity singleton = world.CreateSingleton<Disconnect>();
             UpdateWorld();
             Assert.IsFalse(world.EntityManager.Exists(singleton));
         }
@@ -68,7 +68,6 @@ namespace Sibz.NetCode.Tests.Client
         [Test]
         public void WhenRunTwice_ShouldAddComponentToStreamEntity()
         {
-
             world.CreateSingleton<Disconnect>();
             Entity entity = world.CreateSingleton<NetworkStreamInGame>();
             UpdateWorld();
@@ -85,7 +84,7 @@ namespace Sibz.NetCode.Tests.Client
 
         private class MyDisconnectSystem : DisconnectSystem
         {
-            public bool DidUpdate = false;
+            public bool DidUpdate;
 
             protected override JobHandle OnUpdate(JobHandle inputDeps)
             {

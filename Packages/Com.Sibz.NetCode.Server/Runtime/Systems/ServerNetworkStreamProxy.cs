@@ -12,6 +12,7 @@ namespace Sibz.NetCode.Server
         {
             this.world = world;
         }
+
         public bool Listen(NetworkEndPoint endPoint)
         {
             return world.GetNetworkStreamReceiveSystem().Listen(endPoint);

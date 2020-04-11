@@ -13,12 +13,16 @@ namespace Sibz.NetCode
         public Entity CommandTargetComponentEntity =>
             networkIdEntityQuery.GetSingletonEntity();
 
-        private static Entity GetTargetConnection(World world) =>
-            world.GetOrCreateSystem<CreateRpcRequestSystem>().CommandTargetComponentEntity;
+        private static Entity GetTargetConnection(World world)
+        {
+            return world.GetOrCreateSystem<CreateRpcRequestSystem>().CommandTargetComponentEntity;
+        }
 
         public static Entity CreateRpcRequest<T>(World world)
-            where T : struct, IRpcCommand =>
-            CreateRpcRequest<T>(world, default);
+            where T : struct, IRpcCommand
+        {
+            return CreateRpcRequest<T>(world, default);
+        }
 
         public static Entity CreateRpcRequest<T>(World world, T rpcCommand)
             where T : struct, IRpcCommand
@@ -52,7 +56,9 @@ namespace Sibz.NetCode
             Enabled = false;
         }
 
-        protected override JobHandle OnUpdate(JobHandle inputDeps) =>
+        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        {
             throw new InvalidOperationException($"{nameof(CreateRpcRequestSystem)} should not update");
+        }
     }
 }

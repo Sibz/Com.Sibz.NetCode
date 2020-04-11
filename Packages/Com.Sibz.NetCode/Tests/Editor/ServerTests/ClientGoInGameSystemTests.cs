@@ -3,7 +3,6 @@ using Sibz.NetCode.Server;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.NetCode;
-using Unity.Networking.Transport;
 
 namespace Sibz.NetCode.Tests.Server
 {
@@ -107,7 +106,7 @@ namespace Sibz.NetCode.Tests.Server
 
         public class MyGoInGameSystem : ClientGoInGameSystem
         {
-            public bool DidUpdate = false;
+            public bool DidUpdate;
 
             protected override JobHandle OnUpdate(JobHandle inputDeps)
             {

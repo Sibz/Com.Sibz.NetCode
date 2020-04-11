@@ -16,12 +16,16 @@ namespace Sibz.NetCode.Client
         {
         }
 
-        protected override World BootStrapCreateWorld(string worldName) =>
-            ClientServerBootstrap.CreateClientWorld(
+        protected override World BootStrapCreateWorld(string worldName)
+        {
+            return ClientServerBootstrap.CreateClientWorld(
                 World.DefaultGameObjectInjectionWorld,
                 worldName);
+        }
 
-        protected override void InjectSystems(List<Type> systems) =>
+        protected override void InjectSystems(List<Type> systems)
+        {
             World.ImportSystemsFromList<ClientSimulationSystemGroup>(systems);
+        }
     }
 }

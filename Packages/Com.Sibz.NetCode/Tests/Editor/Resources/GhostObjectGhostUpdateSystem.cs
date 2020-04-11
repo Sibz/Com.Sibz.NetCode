@@ -61,7 +61,7 @@ public class NetCodeTestGhostObjectGhostUpdateSystem : JobComponentSystem
     {
         if (!m_predictedQuery.IsEmptyIgnoreFilter)
         {
-            var updatePredictedJob = new UpdatePredictedJob
+            UpdatePredictedJob updatePredictedJob = new UpdatePredictedJob
             {
                 GhostMap = m_ghostEntityMap,
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -90,7 +90,7 @@ public class NetCodeTestGhostObjectGhostUpdateSystem : JobComponentSystem
 
         if (!m_interpolatedQuery.IsEmptyIgnoreFilter)
         {
-            var updateInterpolatedJob = new UpdateInterpolatedJob
+            UpdateInterpolatedJob updateInterpolatedJob = new UpdateInterpolatedJob
             {
                 GhostMap = m_ghostEntityMap,
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -131,7 +131,7 @@ public class NetCodeTestGhostObjectGhostUpdateSystem : JobComponentSystem
 
         public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
         {
-            var deserializerState = new GhostDeserializerState
+            GhostDeserializerState deserializerState = new GhostDeserializerState
             {
                 GhostMap = GhostMap
             };
@@ -143,7 +143,7 @@ public class NetCodeTestGhostObjectGhostUpdateSystem : JobComponentSystem
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             int minMaxOffset = ThreadIndex * (JobsUtility.CacheLineSize / 4);
 #endif
-            for (var entityIndex = 0; entityIndex < ghostEntityArray.Length; ++entityIndex)
+            for (int entityIndex = 0; entityIndex < ghostEntityArray.Length; ++entityIndex)
             {
                 DynamicBuffer<NetCodeTestGhostObjectSnapshotData> snapshot = ghostSnapshotDataArray[entityIndex];
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -198,7 +198,7 @@ public class NetCodeTestGhostObjectGhostUpdateSystem : JobComponentSystem
 
         public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
         {
-            var deserializerState = new GhostDeserializerState
+            GhostDeserializerState deserializerState = new GhostDeserializerState
             {
                 GhostMap = GhostMap
             };
@@ -212,7 +212,7 @@ public class NetCodeTestGhostObjectGhostUpdateSystem : JobComponentSystem
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             int minMaxOffset = ThreadIndex * (JobsUtility.CacheLineSize / 4);
 #endif
-            for (var entityIndex = 0; entityIndex < ghostEntityArray.Length; ++entityIndex)
+            for (int entityIndex = 0; entityIndex < ghostEntityArray.Length; ++entityIndex)
             {
                 DynamicBuffer<NetCodeTestGhostObjectSnapshotData> snapshot = ghostSnapshotDataArray[entityIndex];
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

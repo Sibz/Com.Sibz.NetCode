@@ -26,7 +26,10 @@ namespace Sibz.NetCode.Tests.Server
         }
 
         [TearDown]
-        public void TearDown() => testWorld?.Dispose();
+        public void TearDown()
+        {
+            testWorld?.Dispose();
+        }
 
         [Test]
         public void WhenCreatedWithOptionsNull_ShouldThrow()
@@ -37,7 +40,6 @@ namespace Sibz.NetCode.Tests.Server
         [Test]
         public void ShouldHaveSystemsInCreatedWorld()
         {
-            //testWorld.CreateWorld();
             List<Type> systems = new List<Type>().AppendTypesWithAttribute<ServerSystemAttribute>();
             foreach (Type system in systems)
             {
@@ -48,7 +50,6 @@ namespace Sibz.NetCode.Tests.Server
         [Test]
         public void Close_ShouldCreateSingleton()
         {
-            //testWorld.CreateWorld();
             testWorld.Close();
             Assert.AreEqual(1,
                 testWorld.World.EntityManager.CreateEntityQuery(typeof(Disconnect)).CalculateEntityCount());
@@ -93,6 +94,7 @@ namespace Sibz.NetCode.Tests.Server
             testWorld.World.GetHookSystem().Update();
             Assert.AreEqual(MyServerWorld.CallbackName.Closed, testWorld.LastCallbackName);
         }
+
         [Test]
         public void WhenWorldCreatedOnInitiate_ShouldStillCallCallbacks()
         {
@@ -102,21 +104,11 @@ namespace Sibz.NetCode.Tests.Server
                 WorldName = $"TestServerCreatedOnInitiate{testCount++}",
                 CreateWorldOnInstantiate = true
             });
-            testWorld.World.CreateSingleton<DisconnectingEvent>();
-            testWorld.World.GetHookSystem().Update();
-            Assert.AreEqual(MyServerWorld.CallbackName.Closed, testWorld.LastCallbackName);
-            testWorld.World.CreateSingleton<ListenFailedEvent>();
-            testWorld.World.GetHookSystem().Update();
-            Assert.AreEqual(MyServerWorld.CallbackName.ListenFailed, testWorld.LastCallbackName);
-            testWorld.World.CreateSingleton<ClientDisconnectedEvent>();
-            testWorld.World.GetHookSystem().Update();
-            Assert.AreEqual(MyServerWorld.CallbackName.ClientDisconnected, testWorld.LastCallbackName);
-            testWorld.World.CreateSingleton<ClientConnectedEvent>();
-            testWorld.World.GetHookSystem().Update();
-            Assert.AreEqual(MyServerWorld.CallbackName.ClientConnected, testWorld.LastCallbackName);
-            testWorld.World.CreateSingleton<ListeningEvent>();
-            testWorld.World.GetHookSystem().Update();
-            Assert.AreEqual(MyServerWorld.CallbackName.ListenSuccess, testWorld.LastCallbackName);
+            WhenClientConnectedEventRaised_ShouldCallback();
+            WhenClientDisconnectedEventRaised_ShouldCallback();
+            WhenListeningEventRaised_ShouldCallback();
+            WhenListenFailedEventRaised_ShouldCallback();
+            WhenDisconnectingEventRaised_ShouldCallback();
         }
 
         [Test]
@@ -139,15 +131,14 @@ namespace Sibz.NetCode.Tests.Server
         public void Listen_ShouldSetEndPoint()
         {
             testWorld.Listen();
-            var listen = testWorld.World.EntityManager.CreateEntityQuery(typeof(Listen)).GetSingleton<Listen>();
-            NetworkEndPoint endPoint = NetworkEndPoint.Parse(serverOptions.Address, serverOptions.Port, serverOptions.NetworkFamily);
+            Listen listen = testWorld.World.EntityManager.CreateEntityQuery(typeof(Listen)).GetSingleton<Listen>();
+            NetworkEndPoint endPoint =
+                NetworkEndPoint.Parse(serverOptions.Address, serverOptions.Port, serverOptions.NetworkFamily);
             Assert.AreEqual(listen.EndPoint, endPoint);
         }
 
         private class MyServerWorld : ServerWorld
         {
-            public CallbackName LastCallbackName = CallbackName.None;
-
             public enum CallbackName
             {
                 None,
@@ -158,16 +149,21 @@ namespace Sibz.NetCode.Tests.Server
                 Closed
             }
 
+            public CallbackName LastCallbackName = CallbackName.None;
+
             public MyServerWorld(ServerOptions options) : base(options)
             {
-                ClientConnected += (ent) => LastCallbackName = CallbackName.ClientConnected;
-                ClientDisconnected += (i) => LastCallbackName = CallbackName.ClientDisconnected;
+                ClientConnected += ent => LastCallbackName = CallbackName.ClientConnected;
+                ClientDisconnected += i => LastCallbackName = CallbackName.ClientDisconnected;
                 ListenSuccess += () => LastCallbackName = CallbackName.ListenSuccess;
                 ListenFailed += () => LastCallbackName = CallbackName.ListenFailed;
                 Closed += () => LastCallbackName = CallbackName.Closed;
             }
 
-            public new void CreateWorld() => base.CreateWorld();
+            public new void CreateWorld()
+            {
+                base.CreateWorld();
+            }
         }
     }
 }

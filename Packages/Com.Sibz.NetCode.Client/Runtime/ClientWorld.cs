@@ -27,10 +27,10 @@ namespace Sibz.NetCode
             void OnWorldCreate()
             {
                 HookSystem hookSystem = World.GetHookSystem();
-                hookSystem.RegisterHook<DisconnectedEvent>((e) => Disconnected?.Invoke());
-                hookSystem.RegisterHook<ConnectionInitiatedEvent>((e) => Connecting?.Invoke());
-                hookSystem.RegisterHook<ConnectionCompleteEvent>((e) => Connected?.Invoke(0));
-                hookSystem.RegisterHook<ConnectionFailedEvent>((e) =>
+                hookSystem.RegisterHook<DisconnectedEvent>(e => Disconnected?.Invoke());
+                hookSystem.RegisterHook<ConnectionInitiatedEvent>(e => Connecting?.Invoke());
+                hookSystem.RegisterHook<ConnectionCompleteEvent>(e => Connected?.Invoke(0));
+                hookSystem.RegisterHook<ConnectionFailedEvent>(e =>
                     ConnectionFailed?.Invoke(((ConnectionFailedEvent) e).Message.ToString()));
             }
 

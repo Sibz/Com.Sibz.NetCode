@@ -12,7 +12,6 @@ namespace Sibz.NetCode.Tests.Server
         private World world;
         private MyListenSystem system;
         private MyNetworkStreamProxy proxy;
-        private EventComponentSystem eventSystem;
         private BeginInitializationEntityCommandBufferSystem bufferSystem;
         private int testCount;
 
@@ -27,7 +26,7 @@ namespace Sibz.NetCode.Tests.Server
             proxy = new MyNetworkStreamProxy();
             system.NetworkStreamProxy = proxy;
             bufferSystem = world.GetOrCreateSystem<BeginInitializationEntityCommandBufferSystem>();
-            eventSystem = world.GetOrCreateSystem<EventComponentSystem>();
+            world.GetOrCreateSystem<EventComponentSystem>();
         }
 
         [Test]
@@ -91,7 +90,7 @@ namespace Sibz.NetCode.Tests.Server
 
     public class MyListenSystem : ListenSystem
     {
-        public bool DidUpdate = false;
+        public bool DidUpdate;
 
         protected override void OnUpdate()
         {
@@ -102,7 +101,7 @@ namespace Sibz.NetCode.Tests.Server
 
     public class MyNetworkStreamProxy : IServerNetworkStreamProxy
     {
-        public bool DidListen = false;
+        public bool DidListen;
         public bool ReturnVal = true;
 
         public bool Listen(NetworkEndPoint endPoint)

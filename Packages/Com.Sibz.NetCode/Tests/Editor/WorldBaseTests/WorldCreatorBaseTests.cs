@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using NUnit.Framework;
 using Unity.Entities;
 using UnityEngine;
@@ -20,16 +18,10 @@ namespace Sibz.NetCode.Tests.Base
             wm = new MyWorldCreator(options);
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            //wm.Dispose();
-        }
-
         [Test]
         public void WhenImportPrefabsIsNull_ShouldLogWarning()
         {
-            wm = new MyWorldCreator(new MyWorldOptions() { GhostCollectionPrefabs = null });
+            wm = new MyWorldCreator(new MyWorldOptions { GhostCollectionPrefabs = null });
             wm.ImportPrefabs();
             LogAssert.Expect(LogType.Warning, new Regex(".*"));
         }
@@ -37,7 +29,7 @@ namespace Sibz.NetCode.Tests.Base
         [Test]
         public void ShouldCallbackOnCreation()
         {
-            var calledBack = false;
+            bool calledBack = false;
             wm.WorldCreated += () => calledBack = true;
             wm.CreateWorld();
             Assert.IsTrue(calledBack);

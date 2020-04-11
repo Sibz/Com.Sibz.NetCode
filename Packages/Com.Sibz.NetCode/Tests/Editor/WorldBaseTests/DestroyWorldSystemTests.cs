@@ -11,7 +11,6 @@ namespace Sibz.NetCode.Tests.Base
         private World world;
         private MyDestroyWorldSystem destroyWorldSystem;
         private BeginInitializationEntityCommandBufferSystem bufferSystem;
-        private EventComponentSystem eventComponentSystem;
         private int testCount;
 
         [SetUp]
@@ -19,7 +18,7 @@ namespace Sibz.NetCode.Tests.Base
         {
             world = new World($"Test_DisconnectSystem_{testCount++}");
             bufferSystem = world.GetOrCreateSystem<BeginInitializationEntityCommandBufferSystem>();
-            eventComponentSystem = world.GetOrCreateSystem<EventComponentSystem>();
+            world.GetOrCreateSystem<EventComponentSystem>();
             destroyWorldSystem = world.GetOrCreateSystem<MyDestroyWorldSystem>();
         }
 
@@ -90,6 +89,7 @@ namespace Sibz.NetCode.Tests.Base
     public class MyDestroyWorldSystem : DestroyWorldSystem
     {
         public bool DidUpdate;
+
         protected override void OnUpdate()
         {
             DidUpdate = true;

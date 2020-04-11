@@ -93,6 +93,31 @@ namespace Sibz.NetCode.Tests.Server
             testWorld.World.GetHookSystem().Update();
             Assert.AreEqual(MyServerWorld.CallbackName.Closed, testWorld.LastCallbackName);
         }
+        [Test]
+        public void WhenWorldCreatedOnInitiate_ShouldStillCallCallbacks()
+        {
+            testWorld.Dispose();
+            testWorld = new MyServerWorld(new ServerOptions
+            {
+                WorldName = $"TestServerCreatedOnInitiate{testCount++}",
+                CreateWorldOnInstantiate = true
+            });
+            testWorld.World.CreateSingleton<DisconnectingEvent>();
+            testWorld.World.GetHookSystem().Update();
+            Assert.AreEqual(MyServerWorld.CallbackName.Closed, testWorld.LastCallbackName);
+            testWorld.World.CreateSingleton<ListenFailedEvent>();
+            testWorld.World.GetHookSystem().Update();
+            Assert.AreEqual(MyServerWorld.CallbackName.ListenFailed, testWorld.LastCallbackName);
+            testWorld.World.CreateSingleton<ClientDisconnectedEvent>();
+            testWorld.World.GetHookSystem().Update();
+            Assert.AreEqual(MyServerWorld.CallbackName.ClientDisconnected, testWorld.LastCallbackName);
+            testWorld.World.CreateSingleton<ClientConnectedEvent>();
+            testWorld.World.GetHookSystem().Update();
+            Assert.AreEqual(MyServerWorld.CallbackName.ClientConnected, testWorld.LastCallbackName);
+            testWorld.World.CreateSingleton<ListeningEvent>();
+            testWorld.World.GetHookSystem().Update();
+            Assert.AreEqual(MyServerWorld.CallbackName.ListenSuccess, testWorld.LastCallbackName);
+        }
 
         [Test]
         public void Listen_WhenWorldIsNotCreated_ShouldCreateWorld()

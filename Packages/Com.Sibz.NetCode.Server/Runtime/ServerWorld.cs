@@ -23,7 +23,7 @@ namespace Sibz.NetCode
         {
             Options = options ?? throw new ArgumentNullException(nameof(options));
 
-            WorldCreated += () =>
+            void OnWorldCreated()
             {
                 NetCodeHookSystem hookSystem =
                     World.GetHookSystem()
@@ -34,7 +34,13 @@ namespace Sibz.NetCode
                 hookSystem.RegisterHook<DisconnectingEvent>((e) => { Closed?.Invoke(); });
                 hookSystem.RegisterHook<ClientConnectedEvent>((e) => { ClientConnected?.Invoke(((ClientConnectedEvent)e).ConnectionEntity);});
                 hookSystem.RegisterHook<ClientDisconnectedEvent>((e) => { ClientDisconnected?.Invoke(((ClientDisconnectedEvent)e).NetworkId);});
-            };
+            }
+
+            WorldCreated += OnWorldCreated;
+            if (WorldCreator.WorldIsCreated)
+            {
+                OnWorldCreated();
+            }
         }
 
         public void Listen()

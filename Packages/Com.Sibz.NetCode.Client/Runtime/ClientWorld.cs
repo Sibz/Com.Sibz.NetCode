@@ -38,10 +38,8 @@ namespace Sibz.NetCode
             {
                 OnWorldCreate();
             }
-            else
-            {
-                WorldCreated += OnWorldCreate;
-            }
+
+            WorldCreated += OnWorldCreate;
         }
 
         public void Connect()

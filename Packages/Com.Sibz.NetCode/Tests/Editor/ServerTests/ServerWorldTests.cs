@@ -29,6 +29,12 @@ namespace Sibz.NetCode.Tests.Server
         public void TearDown() => testWorld?.Dispose();
 
         [Test]
+        public void WhenCreatedWithOptionsNull_ShouldThrow()
+        {
+            Assert.Catch<ArgumentNullException>(() => new ServerWorld(null));
+        }
+
+        [Test]
         public void ShouldHaveSystemsInCreatedWorld()
         {
             //testWorld.CreateWorld();

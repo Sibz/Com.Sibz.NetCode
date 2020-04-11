@@ -21,7 +21,7 @@ namespace Sibz.NetCode
 
         public ServerWorld(ServerOptions options) : base(options, new ServerWorldCreator(options))
         {
-            Options = options;
+            Options = options ?? throw new ArgumentNullException(nameof(options));
 
             WorldCreated += () =>
             {

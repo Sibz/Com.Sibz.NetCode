@@ -26,8 +26,10 @@ namespace Sibz.NetCode.PlayModeTests
         [UnityTest]
         public IEnumerator ShouldConnect()
         {
-            List<GameObject> prefabs = new List<GameObject>();
-                //{ Resources.Load<GameObject>("NetCodePlayModeTestCollection") };
+            List<GameObject> prefabs = new List<GameObject>
+            {
+                Resources.Load<GameObject>("NetCodePlayModeTestCollection")
+            };
 
             ServerOptions serverOptions = new ServerOptions
             {
@@ -70,6 +72,7 @@ namespace Sibz.NetCode.PlayModeTests
 
 
             serverWorld.Listen();
+            yield return new WaitForSeconds(0.5f);
             //UpdateWorlds();
             clientWorld.Connect();
             //UpdateWorlds();

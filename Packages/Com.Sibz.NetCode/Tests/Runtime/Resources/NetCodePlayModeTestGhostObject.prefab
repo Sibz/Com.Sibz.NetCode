@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1230766143909214697}
   - component: {fileID: 4562971831305356095}
   m_Layer: 0
-  m_Name: GhostObject
+  m_Name: NetCodePlayModeTestGhostObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,13 +43,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c79d771cedb4794bf100ce60df5f764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabId: 
+  prefabId: c63185fb612f3364f81d9d907f1a378b
   DefaultClientInstantiationType: 0
   RootPath: 
-  SnapshotDataPath: GhostObjectSnapshotData.cs
-  UpdateSystemPath: GhostObjectGhostUpdateSystem.cs
-  SerializerPath: GhostObjectGhostSerializer.cs
+  SnapshotDataPath: NetCodePlayModeTestGhostObjectSnapshotData.cs
+  UpdateSystemPath: NetCodePlayModeTestGhostObjectGhostUpdateSystem.cs
+  SerializerPath: NetCodePlayModeTestGhostObjectGhostSerializer.cs
   Importance: 1
   PredictingPlayerNetworkId: 
-  Components: []
+  Components:
+  - name: Unity.Transforms.LocalToWorld
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Transforms.Rotation
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields:
+    - name: Value
+      quantization: 1000
+      interpolate: 1
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Transforms.Translation
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields:
+    - name: Value
+      quantization: 100
+      interpolate: 1
+    manualFieldList: 0
+    entityIndex: 0
   doNotStrip: 0

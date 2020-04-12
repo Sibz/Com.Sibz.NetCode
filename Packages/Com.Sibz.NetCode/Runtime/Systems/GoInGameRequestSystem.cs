@@ -3,7 +3,7 @@ using Unity.NetCode;
 
 namespace Packages.Com.Sibz.NetCode.Client.Runtime.Systems
 {
-    [ClientSystem]
+    [ClientAndServerSystem]
     public class GoInGameRequestSystem : RpcCommandRequestSystem<GoInGameRequest>
     {
     }

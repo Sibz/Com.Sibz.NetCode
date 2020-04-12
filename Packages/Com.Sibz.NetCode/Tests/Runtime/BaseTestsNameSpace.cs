@@ -20,12 +20,6 @@ namespace Sibz.NetCode.PlayModeTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-
-        }
-
-        [UnityTest]
-        public IEnumerator ShouldConnect()
-        {
             List<GameObject> prefabs = new List<GameObject>
             {
                 Resources.Load<GameObject>("NetCodePlayModeTestCollection")
@@ -36,7 +30,7 @@ namespace Sibz.NetCode.PlayModeTests
                 Address = "0.0.0.0",
                 Port = 21650,
                 WorldName = "Test_Connection_Server",
-                GhostCollectionPrefabs =prefabs,
+                GhostCollectionPrefabs = prefabs,
             };
             ClientOptions clientOptions = new ClientOptions
             {
@@ -69,31 +63,23 @@ namespace Sibz.NetCode.PlayModeTests
                 Debug.Log("Connect Failed: " + x);
                 clientConnectFailed = true;
             };
+        }
 
-
+        [UnityTest]
+        public IEnumerator ShouldConnect()
+        {
             serverWorld.Listen();
             yield return new WaitForSeconds(0.5f);
-            //UpdateWorlds();
             clientWorld.Connect();
-            //UpdateWorlds();
 
             int maxCount = 120;
             while (maxCount >= 0 && !clientConnected && !clientConnectFailed)
             {
                 yield return new WaitForSeconds(0.05f);
-                //UpdateWorlds();
                 maxCount--;
             }
+
             Assert.IsTrue(clientConnected);
         }
-
-        /*private void UpdateWorlds()
-        {
-            serverWorld.World.GetExistingSystem<ServerInitializationSystemGroup>().Update();
-            clientWorld.World.GetExistingSystem<ClientInitializationSystemGroup>().Update();
-            serverWorld.World.GetExistingSystem<ServerInitializationSystemGroup>().Update();
-            clientWorld.World.GetExistingSystem<ClientSimulationSystemGroup>().Update();
-        }*/
-
     }
 }

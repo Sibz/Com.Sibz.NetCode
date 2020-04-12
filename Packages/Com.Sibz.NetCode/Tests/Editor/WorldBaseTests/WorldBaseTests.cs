@@ -88,19 +88,4 @@ namespace Sibz.NetCode.Tests.Base
         {
         }
     }
-
-    [ClientAndServerSystem]
-    public class MySystem : ComponentSystem
-    {
-        protected override void OnUpdate()
-        {
-        }
-    }
-
-    public class MySystem2 : ComponentSystem
-    {
-        protected override void OnUpdate()
-        {
-        }
-    }
 }

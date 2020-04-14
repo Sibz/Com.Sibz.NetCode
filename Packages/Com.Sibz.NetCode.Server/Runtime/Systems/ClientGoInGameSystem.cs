@@ -25,7 +25,6 @@ namespace Sibz.NetCode.Server
             };
             inputDeps = Entities
                 .WithNone<SendRpcCommandRequestComponent>()
-                .WithoutBurst()
                 .WithAll<GoInGameRequest>()
                 .ForEach(
                     (Entity reqEnt, int entityInQueryIndex,

@@ -6,6 +6,7 @@ using Unity.Entities;
 namespace Sibz.NetCode
 {
     [ClientAndServerSystem]
+    [UpdateInGroup(typeof(InitializationSystemGroup))]
     public class DestroyWorldSystem : ComponentSystem
     {
         public Action OnDestroyed;

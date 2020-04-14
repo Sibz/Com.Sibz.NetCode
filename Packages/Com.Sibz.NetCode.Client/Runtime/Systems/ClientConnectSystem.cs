@@ -5,6 +5,7 @@ using Unity.NetCode;
 namespace Sibz.NetCode.Client
 {
     [ClientSystem]
+    [UpdateInGroup(typeof(InitializationSystemGroup))]
     public class ClientConnectSystem : ComponentSystem
     {
         private EntityQuery incomingConfirmRequestQuery;

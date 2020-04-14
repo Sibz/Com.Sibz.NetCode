@@ -7,6 +7,7 @@ using Unity.NetCode;
 namespace Sibz.NetCode.Client
 {
     [ClientSystem]
+    [UpdateInGroup(typeof(InitializationSystemGroup))]
     public class DisconnectSystem : JobComponentSystem
     {
         private EndSimCommandBuffer commandBuffer;

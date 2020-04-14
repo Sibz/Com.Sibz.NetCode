@@ -15,6 +15,8 @@ namespace Sibz.NetCode
         private const string NoPrefabsWarning = "Option {0} is null, or list is empty. World can only communicate " +
                                                 "if ghost collections are present.";
 
+        private readonly List<Type> systemsCache = new List<Type>();
+
         public World World { get; protected set; }
         public bool WorldIsCreated => World?.IsCreated ?? false;
         public IWorldCreatorOptions Options { get; }
@@ -28,6 +30,18 @@ namespace Sibz.NetCode
             }
 
             Options = options;
+
+            CacheSystems();
+        }
+
+        private void CacheSystems()
+        {
+            systemsCache.AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
+            foreach (Type attributeType in Options.SystemAttributes)
+            {
+                systemsCache.AppendTypesWithAttribute(attributeType);
+            }
+            systemsCache.AddRange(Options.Systems);
         }
 
         /// <summary>
@@ -37,17 +51,13 @@ namespace Sibz.NetCode
         /// <returns></returns>
         protected abstract World BootStrapCreateWorld(string worldName);
 
-        private void InjectSystems(List<Type> systems)
+        private void InjectSystems()
         {
-            foreach (Type attributeType in Options.SystemAttributes)
+            World.ImportSystemsFromList(systemsCache, DefaultSystemGroup, new Dictionary<Type, Type>()
             {
-                systems.AppendTypesWithAttribute(attributeType);
-            }
-            World.ImportSystemsFromList(systems.AppendTypesWithAttribute<ClientAndServerSystemAttribute>(), DefaultSystemGroup, new Dictionary<Type, Type>()
-            {
-                { typeof(InitializationSystemGroup), InitSystemGroup},
-                { typeof(SimulationSystemGroup), SimSystemGroup},
-                { typeof(PresentationSystemGroup), PresSystemGroup}
+                { typeof(InitializationSystemGroup), InitSystemGroup },
+                { typeof(SimulationSystemGroup), SimSystemGroup },
+                { typeof(PresentationSystemGroup), PresSystemGroup }
             });
         }
 
@@ -60,7 +70,7 @@ namespace Sibz.NetCode
 
             World = BootStrapCreateWorld(Options.WorldName);
 
-            InjectSystems(Options.Systems);
+            InjectSystems();
 
             ImportPrefabs();
 

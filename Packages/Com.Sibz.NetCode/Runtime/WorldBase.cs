@@ -16,9 +16,6 @@ namespace Sibz.NetCode
         public Action WorldDestroyed { get; set; }
         public Action PreWorldDestroy { get; set; }
 
-        public static List<Type> DefaultSystems => new List<Type>()
-            .AppendTypesWithAttribute<ClientAndServerSystemAttribute>();
-
         protected IWorldOptions Options { get; }
 
         protected WorldBase(IWorldOptions options, IWorldCreator worldCreator)

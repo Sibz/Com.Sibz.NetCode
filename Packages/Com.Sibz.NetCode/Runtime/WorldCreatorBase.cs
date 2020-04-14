@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Sibz.NetCode.WorldExtensions;
+using Sibz.WorldSystemHelpers;
 using Unity.Entities;
+using Unity.NetCode;
 using UnityEngine;
 
 namespace Sibz.NetCode
@@ -35,7 +37,19 @@ namespace Sibz.NetCode
         /// <returns></returns>
         protected abstract World BootStrapCreateWorld(string worldName);
 
-        protected abstract void InjectSystems(List<Type> systems);
+        private void InjectSystems(List<Type> systems)
+        {
+            foreach (Type attributeType in Options.SystemAttributes)
+            {
+                systems.AppendTypesWithAttribute(attributeType);
+            }
+            World.ImportSystemsFromList(systems.AppendTypesWithAttribute<ClientAndServerSystemAttribute>(), DefaultSystemGroup, new Dictionary<Type, Type>()
+            {
+                { typeof(InitializationSystemGroup), InitSystemGroup},
+                { typeof(SimulationSystemGroup), SimSystemGroup},
+                { typeof(PresentationSystemGroup), PresSystemGroup}
+            });
+        }
 
         public void CreateWorld()
         {
@@ -52,6 +66,11 @@ namespace Sibz.NetCode
 
             WorldCreated?.Invoke();
         }
+
+        public virtual Type DefaultSystemGroup => SimSystemGroup;
+        public virtual Type InitSystemGroup => typeof(ClientInitializationSystemGroup);
+        public virtual Type SimSystemGroup => typeof(ClientSimulationSystemGroup);
+        public virtual Type PresSystemGroup => typeof(ClientPresentationSystemGroup);
 
         public virtual void ImportPrefabs()
         {

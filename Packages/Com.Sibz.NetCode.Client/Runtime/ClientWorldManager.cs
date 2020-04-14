@@ -22,10 +22,5 @@ namespace Sibz.NetCode.Client
                 World.DefaultGameObjectInjectionWorld,
                 worldName);
         }
-
-        protected override void InjectSystems(List<Type> systems)
-        {
-            World.ImportSystemsFromList<ClientSimulationSystemGroup>(systems);
-        }
     }
 }

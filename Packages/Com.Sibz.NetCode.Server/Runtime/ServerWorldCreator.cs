@@ -17,10 +17,5 @@ namespace Sibz.NetCode.Server
         {
             return ClientServerBootstrap.CreateServerWorld(World.DefaultGameObjectInjectionWorld, worldName);
         }
-
-        protected override void InjectSystems(List<Type> systems)
-        {
-            World.ImportSystemsFromList<ServerSimulationSystemGroup>(systems);
-        }
     }
 }

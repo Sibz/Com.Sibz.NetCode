@@ -13,8 +13,9 @@ namespace Sibz.NetCode
         public string WorldName { get; set; } = "Client";
         public bool CreateWorldOnInstantiate { get; set; } = true;
 
-        public List<Type> Systems { get; set; } = WorldBase.DefaultSystems
-            .AppendTypesWithAttribute<ClientSystemAttribute>();
+        public List<Type> Systems { get; set; } = new List<Type>();
+
+        public List<Type> SystemAttributes { get; } = new List<Type> { typeof(ClientSystemAttribute)};
 
         public List<GameObject> GhostCollectionPrefabs { get; set; } = new List<GameObject>();
         public int TimeOut { get; set; } = 10;

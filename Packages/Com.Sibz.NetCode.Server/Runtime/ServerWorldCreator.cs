@@ -8,6 +8,10 @@ namespace Sibz.NetCode.Server
 {
     public class ServerWorldCreator : WorldCreatorBase
     {
+        public override Type InitSystemGroup => typeof(ServerInitializationSystemGroup);
+        public override Type SimSystemGroup => typeof(ServerSimulationSystemGroup);
+        public override Type PresSystemGroup => null;
+
         public ServerWorldCreator(IWorldCreatorOptions options) :
             base(options)
         {

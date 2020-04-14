@@ -16,6 +16,21 @@ namespace Sibz.NetCode.Tests
                 return;
             }
 
+            foreach (World world in World.All)
+            {
+                if (world.Name != "DefaultNetWorld")
+                {
+                    continue;
+                }
+
+                DefaultWorld = world;
+                break;
+            }
+
+            if (!(DefaultWorld is null))
+            {
+                return;
+            }
             new ClientServerBootstrap().Initialize("DefaultNetWorld");
             foreach (World world in World.All)
             {

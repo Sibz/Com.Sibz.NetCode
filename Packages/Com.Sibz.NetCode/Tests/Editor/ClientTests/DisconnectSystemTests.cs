@@ -72,7 +72,7 @@ namespace Sibz.NetCode.Tests.Client
             Entity entity = world.CreateSingleton<NetworkStreamInGame>();
             UpdateWorld();
             UpdateWorld();
-            Assert.IsTrue(world.EntityManager.HasComponent<NetworkStreamDisconnected>(entity));
+            Assert.IsTrue(world.EntityManager.HasComponent<NetworkStreamRequestDisconnect>(entity));
         }
 
         private void UpdateWorld()

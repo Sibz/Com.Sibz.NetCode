@@ -9,7 +9,7 @@ namespace Sibz.NetCode.Tests.Server
     public class ClientDisconnectionSystemTests
     {
         private World world;
-        private MyClientDisconnectSystem disconnectSystem;
+        private MyClientDisconnectedSystem disconnectedSystem;
         private int testCount;
         private EntityArchetype disconnectArchetype;
 
@@ -17,11 +17,11 @@ namespace Sibz.NetCode.Tests.Server
         [SetUp]
         public void SetUp()
         {
-            world = new World($"Test{nameof(ClientDisconnectSystem)}{testCount++}");
+            world = new World($"Test{nameof(ClientDisconnectedSystem)}{testCount++}");
             world.CreateSystem<EndSimulationEntityCommandBufferSystem>();
             world.CreateSystem<BeginInitializationEntityCommandBufferSystem>();
             world.CreateSystem<NetCodeEventComponentSystem>();
-            disconnectSystem = world.CreateSystem<MyClientDisconnectSystem>();
+            disconnectedSystem = world.CreateSystem<MyClientDisconnectedSystem>();
             disconnectArchetype = world.EntityManager.CreateArchetype(typeof(NetworkStreamDisconnected),
                 typeof(NetworkIdComponent), typeof(CommandTargetComponent));
         }
@@ -30,7 +30,7 @@ namespace Sibz.NetCode.Tests.Server
         public void WhenConnectionWithDisconnectDoesNotExist_ShouldNotRun()
         {
             UpdateWorld();
-            Assert.IsFalse(disconnectSystem.DidUpdate);
+            Assert.IsFalse(disconnectedSystem.DidUpdate);
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace Sibz.NetCode.Tests.Server
         {
             CreateFakeDisconnectionEntity();
             UpdateWorld();
-            Assert.IsTrue(disconnectSystem.DidUpdate);
+            Assert.IsTrue(disconnectedSystem.DidUpdate);
         }
 
         [Test]
@@ -82,11 +82,11 @@ namespace Sibz.NetCode.Tests.Server
         private void UpdateWorld()
         {
             world.GetExistingSystem<BeginInitializationEntityCommandBufferSystem>().Update();
-            disconnectSystem.Update();
+            disconnectedSystem.Update();
             world.GetExistingSystem<EndSimulationEntityCommandBufferSystem>().Update();
         }
 
-        private class MyClientDisconnectSystem : ClientDisconnectSystem
+        private class MyClientDisconnectedSystem : ClientDisconnectedSystem
         {
             public bool DidUpdate;
 

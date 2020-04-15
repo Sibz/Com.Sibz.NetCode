@@ -8,7 +8,7 @@ namespace Sibz.NetCode.Server
 {
     [ServerSystem]
     [UpdateInGroup(typeof(InitializationSystemGroup))]
-    public class ClientDisconnectSystem : JobComponentSystem
+    public class ClientDisconnectedSystem : JobComponentSystem
     {
         private EndSimCommandBuffer commandBuffer;
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.NetCode;
@@ -10,17 +11,40 @@ namespace Sibz.NetCode
     {
         private EntityQuery networkIdEntityQuery;
 
-        public Entity CommandTargetComponentEntity =>
-            networkIdEntityQuery.GetSingletonEntity();
+        public Entity CommandTargetComponentEntity
+        {
+            get
+            {
+                if (networkIdEntityQuery.CalculateEntityCount() == 0)
+                {
+                    throw new InvalidOperationException("No active network connection for Rpc request");
+                }
 
-        private static Entity GetTargetConnection(World world) =>
-            world.GetOrCreateSystem<CreateRpcRequestSystem>().CommandTargetComponentEntity;
+                Entity result;
+                using (NativeArray<Entity> entities =
+                    networkIdEntityQuery.ToEntityArrayAsync(Allocator.TempJob, out JobHandle jh))
+                {
+                    jh.Complete();
+                    result = entities[0];
+                }
+                return result;
+            }
+        }
 
-        public static Entity CreateRpcRequest<T>(World world)
-            where T : struct, IRpcCommand =>
-            CreateRpcRequest<T>(world, default);
 
-        public static Entity CreateRpcRequest<T>(World world, T rpcCommand)
+
+        private static Entity GetTargetConnection(World world)
+        {
+            return world.GetOrCreateSystem<CreateRpcRequestSystem>().CommandTargetComponentEntity;
+        }
+
+        public static Entity CreateRpcRequest<T>(World world, Entity targetConnection = default)
+            where T : struct, IRpcCommand
+        {
+            return CreateRpcRequest<T>(world, default, targetConnection);
+        }
+
+        public static Entity CreateRpcRequest<T>(World world, T rpcCommand, Entity targetConnection = default)
             where T : struct, IRpcCommand
         {
             if (world is null)
@@ -31,7 +55,23 @@ namespace Sibz.NetCode
             Entity e = world.EntityManager.CreateEntity();
             world.EntityManager.AddComponentData(e, rpcCommand);
             world.EntityManager.AddComponentData(e,
-                new SendRpcCommandRequestComponent { TargetConnection = GetTargetConnection(world) });
+                new SendRpcCommandRequestComponent
+                {
+                    TargetConnection = targetConnection.Equals(Entity.Null) ?
+                        GetTargetConnection(world)
+                        : targetConnection
+                });
+            return e;
+        }
+
+        public static Entity CreateRpcRequest<T>(EntityCommandBuffer buffer, T rpcCommand,
+            Entity targetConnection)
+            where T : struct, IRpcCommand
+        {
+            Entity e = buffer.CreateEntity();
+            buffer.AddComponent(e, rpcCommand);
+            buffer.AddComponent(e,
+                new SendRpcCommandRequestComponent { TargetConnection = targetConnection });
             return e;
         }
 
@@ -52,7 +92,9 @@ namespace Sibz.NetCode
             Enabled = false;
         }
 
-        protected override JobHandle OnUpdate(JobHandle inputDeps) =>
+        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        {
             throw new InvalidOperationException($"{nameof(CreateRpcRequestSystem)} should not update");
+        }
     }
 }

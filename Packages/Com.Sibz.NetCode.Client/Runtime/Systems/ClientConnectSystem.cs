@@ -1,13 +1,11 @@
-﻿using System;
-using Sibz.EntityEvents;
-using Sibz.NetCode.WorldExtensions;
+﻿using Sibz.EntityEvents;
 using Unity.Entities;
 using Unity.NetCode;
-using UnityEngine;
 
 namespace Sibz.NetCode.Client
 {
     [ClientSystem]
+    [UpdateInGroup(typeof(InitializationSystemGroup))]
     public class ClientConnectSystem : ComponentSystem
     {
         private EntityQuery incomingConfirmRequestQuery;
@@ -25,7 +23,7 @@ namespace Sibz.NetCode.Client
 
         protected override void OnUpdate()
         {
-            var connecting = GetSingleton<Connecting>();
+            Connecting connecting = GetSingleton<Connecting>();
 
             if (ProcessTimeout(ref connecting))
             {
@@ -58,9 +56,14 @@ namespace Sibz.NetCode.Client
 
         private void ProcessConnectionInitiatedEvent(ref Connecting connecting)
         {
-            if (!HasSingleton<ConnectionInitiatedEvent>())
+            if (connecting.State != NetworkState.InitialRequest)
             {
                 return;
+            }
+
+            if (!HasSingleton<ConnectionInitiatedEvent>())
+            {
+                World.EnqueueEvent<ConnectionInitiatedEvent>();
             }
 
             NetworkStreamSystemProxy.Connect(connecting.EndPoint);

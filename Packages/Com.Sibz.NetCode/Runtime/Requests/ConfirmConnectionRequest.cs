@@ -18,10 +18,15 @@ namespace Sibz.NetCode
         private static readonly PortableFunctionPointer<RpcExecutor.ExecuteDelegate> InvokeExecuteFunctionPointer =
             new PortableFunctionPointer<RpcExecutor.ExecuteDelegate>(InvokeExecute);
 
-        public PortableFunctionPointer<RpcExecutor.ExecuteDelegate> CompileExecute() => InvokeExecuteFunctionPointer;
+        public PortableFunctionPointer<RpcExecutor.ExecuteDelegate> CompileExecute()
+        {
+            return InvokeExecuteFunctionPointer;
+        }
 
         [BurstCompile]
-        private static void InvokeExecute(ref RpcExecutor.Parameters parameters) =>
+        private static void InvokeExecute(ref RpcExecutor.Parameters parameters)
+        {
             RpcExecutor.ExecuteCreateRequestComponent<ConfirmConnectionRequest>(ref parameters);
+        }
     }
 }

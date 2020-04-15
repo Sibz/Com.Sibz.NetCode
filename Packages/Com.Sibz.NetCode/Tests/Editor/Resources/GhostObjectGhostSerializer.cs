@@ -19,7 +19,10 @@ public struct NetCodeTestGhostObjectGhostSerializer : IGhostSerializer<NetCodeTe
     private ArchetypeChunkComponentType<Translation> ghostTranslationType;
 
 
-    public int CalculateImportance(ArchetypeChunk chunk) => 1;
+    public int CalculateImportance(ArchetypeChunk chunk)
+    {
+        return 1;
+    }
 
     public int SnapshotSize => UnsafeUtility.SizeOf<NetCodeTestGhostObjectSnapshotData>();
 

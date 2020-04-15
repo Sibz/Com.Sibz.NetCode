@@ -1,3 +1,3 @@
-# Com.Sibz.NetCode
+# NetCode
 
-Initial ReadMe
+Initial read me.

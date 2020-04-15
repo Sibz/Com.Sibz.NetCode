@@ -1,11 +1,10 @@
 ﻿using Sibz.CommandBufferHelpers;
 using Sibz.EntityEvents;
-using Sibz.NetCode.Server;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.NetCode;
 
-namespace Sibz.NetCode
+namespace Sibz.NetCode.Server
 {
     [ServerSystem]
     public class ClientGoInGameSystem : JobComponentSystem
@@ -19,17 +18,20 @@ namespace Sibz.NetCode
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            var job = new GoInGameJob
+            GoInGameJob job = new GoInGameJob
             {
                 CommandBuffer = commandBuffer.Concurrent,
                 EnqueueClientConnectedEventJobPart = World.GetEnqueueEventJobPart<ClientConnectedEvent>()
             };
-            inputDeps = Entities.WithNone<SendRpcCommandRequestComponent>().ForEach(
-                (Entity reqEnt, int entityInQueryIndex, ref GoInGameRequest req,
-                    ref ReceiveRpcCommandRequestComponent reqSrc) =>
-                {
-                    job.Execute(entityInQueryIndex, reqEnt, ref reqSrc);
-                }).Schedule(inputDeps);
+            inputDeps = Entities
+                .WithNone<SendRpcCommandRequestComponent>()
+                .WithAll<GoInGameRequest>()
+                .ForEach(
+                    (Entity reqEnt, int entityInQueryIndex,
+                        ref ReceiveRpcCommandRequestComponent reqSrc) =>
+                    {
+                        job.Execute(entityInQueryIndex, reqEnt, ref reqSrc);
+                    }).Schedule(inputDeps);
 
             commandBuffer.AddJobDependency(inputDeps);
             World.EventSystemAddJobDependency(inputDeps);

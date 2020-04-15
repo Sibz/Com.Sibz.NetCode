@@ -15,12 +15,22 @@ public struct NetCodeTestGhostObjectSnapshotData : ISnapshotData<NetCodeTestGhos
     private uint changeMask0;
 
     public uint Tick => tick;
-    public quaternion GetRotationValue(GhostDeserializerState deserializerState) => GetRotationValue();
 
-    public quaternion GetRotationValue() => new quaternion(RotationValueX * 0.001f, RotationValueY * 0.001f,
-        RotationValueZ * 0.001f, RotationValueW * 0.001f);
+    public quaternion GetRotationValue(GhostDeserializerState deserializerState)
+    {
+        return GetRotationValue();
+    }
 
-    public void SetRotationValue(quaternion q, GhostSerializerState serializerState) => SetRotationValue(q);
+    public quaternion GetRotationValue()
+    {
+        return new quaternion(RotationValueX * 0.001f, RotationValueY * 0.001f,
+            RotationValueZ * 0.001f, RotationValueW * 0.001f);
+    }
+
+    public void SetRotationValue(quaternion q, GhostSerializerState serializerState)
+    {
+        SetRotationValue(q);
+    }
 
     public void SetRotationValue(quaternion q)
     {
@@ -30,12 +40,20 @@ public struct NetCodeTestGhostObjectSnapshotData : ISnapshotData<NetCodeTestGhos
         RotationValueW = (int) (q.value.w * 1000);
     }
 
-    public float3 GetTranslationValue(GhostDeserializerState deserializerState) => GetTranslationValue();
+    public float3 GetTranslationValue(GhostDeserializerState deserializerState)
+    {
+        return GetTranslationValue();
+    }
 
-    public float3 GetTranslationValue() =>
-        new float3(TranslationValueX * 0.01f, TranslationValueY * 0.01f, TranslationValueZ * 0.01f);
+    public float3 GetTranslationValue()
+    {
+        return new float3(TranslationValueX * 0.01f, TranslationValueY * 0.01f, TranslationValueZ * 0.01f);
+    }
 
-    public void SetTranslationValue(float3 val, GhostSerializerState serializerState) => SetTranslationValue(val);
+    public void SetTranslationValue(float3 val, GhostSerializerState serializerState)
+    {
+        SetTranslationValue(val);
+    }
 
     public void SetTranslationValue(float3 val)
     {
@@ -47,7 +65,7 @@ public struct NetCodeTestGhostObjectSnapshotData : ISnapshotData<NetCodeTestGhos
     public void PredictDelta(uint tick, ref NetCodeTestGhostObjectSnapshotData baseline1,
         ref NetCodeTestGhostObjectSnapshotData baseline2)
     {
-        var predictor = new GhostDeltaPredictor(tick, this.tick, baseline1.tick, baseline2.tick);
+        GhostDeltaPredictor predictor = new GhostDeltaPredictor(tick, this.tick, baseline1.tick, baseline2.tick);
         RotationValueX = predictor.PredictInt(RotationValueX, baseline1.RotationValueX, baseline2.RotationValueX);
         RotationValueY = predictor.PredictInt(RotationValueY, baseline1.RotationValueY, baseline2.RotationValueY);
         RotationValueZ = predictor.PredictInt(RotationValueZ, baseline1.RotationValueZ, baseline2.RotationValueZ);

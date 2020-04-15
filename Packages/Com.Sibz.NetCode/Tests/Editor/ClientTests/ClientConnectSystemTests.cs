@@ -1,12 +1,9 @@
-﻿using System;
-using NUnit.Framework;
-using Packages.Com.Sibz.NetCode.Client.Runtime.Systems;
+﻿using NUnit.Framework;
 using Sibz.EntityEvents;
 using Sibz.NetCode.Client;
 using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
 using Unity.NetCode;
-using Unity.Networking.Transport;
 
 namespace Sibz.NetCode.Tests.Client
 {
@@ -18,7 +15,6 @@ namespace Sibz.NetCode.Tests.Client
         private EventComponentSystem eventSystem;
 
         private BeginInitializationEntityCommandBufferSystem initBufferSystem;
-        //private ServerWorld testServer;
 
         private EntityQuery ConnectingSingletonQuery =>
             world.EntityManager.CreateEntityQuery(typeof(Connecting));
@@ -44,25 +40,16 @@ namespace Sibz.NetCode.Tests.Client
             set => world.EntityManager.SetComponentData(ConnectingSingletonQuery.GetSingletonEntity(), value);
         }
 
-        /*[OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            testServer = new ServerWorld(new ServerOptions { WorldName = "ClientConnectTestServerWorld" });
-            testServer.Listen();
-        }*/
-
         [SetUp]
         public void SetUp()
         {
             world = new World(
-                $"TestClientConnectSystem{testCount++}"); /*ClientServerBootstrap.CreateClientWorld(World.DefaultGameObjectInjectionWorld,
-                $"TestClientConnectSystem{testCount++}");*/
+                $"TestClientConnectSystem{testCount++}");
             connectSystem = world.CreateSystem<ClientConnectSystemTest>();
             initBufferSystem = world.GetOrCreateSystem<BeginInitializationEntityCommandBufferSystem>();
             eventSystem = world.CreateSystem<EventComponentSystem>();
             world.GetOrCreateSystem<ClientSimulationSystemGroup>().AddSystemToUpdateList(connectSystem);
             world.GetOrCreateSystem<ClientSimulationSystemGroup>().AddSystemToUpdateList(eventSystem);
-            //world.GetOrCreateSystem<ClientSimulationSystemGroup>().AddSystemToUpdateList(world.CreateSystem<GoInGameRequestSystem>());
             world.GetOrCreateSystem<ClientSimulationSystemGroup>().SortSystemUpdateList();
 
             world.CreateSingleton<Connecting>();
@@ -73,12 +60,6 @@ namespace Sibz.NetCode.Tests.Client
         {
             world.Dispose();
         }
-
-        /*[OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            testServer.Dispose();
-        }*/
 
         [Test]
         public void WhenSingletonDoesNotExist_ShouldNotRun()
@@ -111,6 +92,17 @@ namespace Sibz.NetCode.Tests.Client
             State = new Connecting { TimeoutTime = -1 };
             UpdateClient();
             Assert.AreEqual(0, ConnectingSingletonQuery.CalculateEntityCount());
+        }
+
+        [Test]
+        public void WhenInitialRequest_ShouldCreateEvent()
+        {
+            State = new Connecting { State = NetworkState.InitialRequest };
+            connectSystem.NetworkStreamSystemProxy = new MyClientNetworkStreamSystemProxy();
+            UpdateClient();
+            UpdateClient();
+            Assert.AreEqual(1,
+                world.EntityManager.CreateEntityQuery(typeof(ConnectionInitiatedEvent)).CalculateEntityCount());
         }
 
         [Test]
@@ -180,7 +172,7 @@ namespace Sibz.NetCode.Tests.Client
         public void WhenReceivedConnectConfirmation_ShouldDestroyRequestEntity()
         {
             State = new Connecting { State = NetworkState.GoingInGame };
-            var entity = world.EntityManager.CreateEntity(typeof(ConfirmConnectionRequest),
+            Entity entity = world.EntityManager.CreateEntity(typeof(ConfirmConnectionRequest),
                 typeof(ReceiveRpcCommandRequestComponent));
             UpdateClient();
             UpdateClient();
@@ -192,14 +184,6 @@ namespace Sibz.NetCode.Tests.Client
             initBufferSystem.Update();
             world.GetExistingSystem<ClientSimulationSystemGroup>().Update();
         }
-
-        /*public void UpdateServerAndClient()
-        {
-            world.GetExistingSystem<ClientInitializationSystemGroup>().Update();
-            world.GetExistingSystem<ClientSimulationSystemGroup>().Update();
-            testServer.World.GetExistingSystem<ServerInitializationSystemGroup>().Update();
-            testServer.World.GetExistingSystem<ServerSimulationSystemGroup>().Update();
-        }*/
     }
 
     public class ClientConnectSystemTest : ClientConnectSystem

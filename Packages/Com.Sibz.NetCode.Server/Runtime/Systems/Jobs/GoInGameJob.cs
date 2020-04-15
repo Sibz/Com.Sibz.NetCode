@@ -1,9 +1,8 @@
 ﻿using Sibz.EntityEvents;
-using Sibz.NetCode.Server;
 using Unity.Entities;
 using Unity.NetCode;
 
-namespace Sibz.NetCode
+namespace Sibz.NetCode.Server
 {
     public struct GoInGameJob
     {

@@ -12,8 +12,10 @@ namespace Sibz.NetCode.WorldExtensions
         private const string NoSystemError = "{0}: {1} does not exist.";
         private const string InvalidPrefabError = "{0}: Prefab should have {1} attached.";
 
-        public static void ImportGhostCollection(this World world, GameObject prefab) =>
+        public static void ImportGhostCollection(this World world, GameObject prefab)
+        {
             ImportGhostCollection(world, GetConversionSettings(world), prefab);
+        }
 
         public static void ImportGhostCollection(this World world, IEnumerable<GameObject> prefabs)
         {
@@ -52,9 +54,9 @@ namespace Sibz.NetCode.WorldExtensions
         private static void RemovePrefabComponentFromEntityAndDirectChildren(World world, Entity entity)
         {
             DynamicBuffer<LinkedEntityGroup> buff = world.EntityManager.GetBuffer<LinkedEntityGroup>(entity);
-            var commandBuffer = new EntityCommandBuffer(Allocator.TempJob);
+            EntityCommandBuffer commandBuffer = new EntityCommandBuffer(Allocator.TempJob);
 
-            for (var i = 0; i < buff.Length; i++)
+            for (int i = 0; i < buff.Length; i++)
             {
                 commandBuffer.RemoveComponent<Prefab>(buff[i].Value);
             }
@@ -64,13 +66,15 @@ namespace Sibz.NetCode.WorldExtensions
             commandBuffer.Dispose();
         }
 
-        private static GameObjectConversionSettings GetConversionSettings(World world) =>
-            new GameObjectConversionSettings(
+        private static GameObjectConversionSettings GetConversionSettings(World world)
+        {
+            return new GameObjectConversionSettings(
                 world,
                 GameObjectConversionUtility.ConversionFlags.AssignName,
                 (World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<ConvertToEntitySystem>()
                  ?? throw new InvalidOperationException(
                      string.Format(NoSystemError, nameof(ImportGhostCollection), nameof(ConvertToEntitySystem))
                  )).BlobAssetStore);
+        }
     }
 }

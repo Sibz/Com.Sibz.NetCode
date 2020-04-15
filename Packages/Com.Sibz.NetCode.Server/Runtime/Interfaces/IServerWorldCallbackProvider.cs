@@ -1,12 +1,12 @@
 ﻿using System;
-using Unity.Networking.Transport;
+using Unity.Entities;
 
-namespace Sibz.NetCode
+namespace Sibz.NetCode.Server
 {
     public interface IServerWorldCallbackProvider : IWorldCallbackProvider
     {
-        Action<NetworkConnection> ClientConnected { get; set; }
-        Action<NetworkConnection> ClientDisconnected { get; set; }
+        Action<Entity> ClientConnected { get; set; }
+        Action<int> ClientDisconnected { get; set; }
         Action ListenSuccess { get; set; }
         Action ListenFailed { get; set; }
         Action Closed { get; set; }

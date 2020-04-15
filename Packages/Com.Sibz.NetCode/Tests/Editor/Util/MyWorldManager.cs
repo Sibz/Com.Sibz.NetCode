@@ -22,9 +22,6 @@ namespace Sibz.NetCode.Tests
             return ClientServerBootstrap.CreateClientWorld(NetCodeFixture.DefaultWorld, name);
         }
 
-        protected override void InjectSystems(List<Type> systems) =>
-            World.ImportSystemsFromList<ClientSimulationSystemGroup>(systems);
-
         public override void ImportPrefabs()
         {
             CalledImportPrefabs = true;

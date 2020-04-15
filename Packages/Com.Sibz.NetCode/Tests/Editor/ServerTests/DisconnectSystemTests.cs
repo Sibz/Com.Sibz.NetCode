@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Sibz.EntityEvents;
 using Sibz.NetCode.Server;
 using Sibz.NetCode.WorldExtensions;
@@ -12,7 +11,6 @@ namespace Sibz.NetCode.Tests.Server
         private World world;
         private MyDisconnectSystem disconnectSystem;
         private BeginInitializationEntityCommandBufferSystem bufferSystem;
-        private EventComponentSystem eventComponentSystem;
         private int testCount;
 
         [SetUp]
@@ -20,7 +18,7 @@ namespace Sibz.NetCode.Tests.Server
         {
             world = new World($"Test_DisconnectSystem_{testCount++}");
             bufferSystem = world.GetOrCreateSystem<BeginInitializationEntityCommandBufferSystem>();
-            eventComponentSystem = world.GetOrCreateSystem<EventComponentSystem>();
+            world.GetOrCreateSystem<EventComponentSystem>();
             disconnectSystem = world.GetOrCreateSystem<MyDisconnectSystem>();
         }
 
@@ -54,7 +52,8 @@ namespace Sibz.NetCode.Tests.Server
             world.CreateSingleton<Disconnect>();
             disconnectSystem.Update();
             bufferSystem.Update();
-            Assert.AreEqual(1, world.EntityManager.CreateEntityQuery(typeof(DisconnectingEvent)).CalculateEntityCount());
+            Assert.AreEqual(1,
+                world.EntityManager.CreateEntityQuery(typeof(DisconnectingEvent)).CalculateEntityCount());
         }
 
         [Test]
@@ -79,6 +78,7 @@ namespace Sibz.NetCode.Tests.Server
     public class MyDisconnectSystem : DisconnectSystem
     {
         public bool DidUpdate;
+
         protected override void OnUpdate()
         {
             DidUpdate = true;

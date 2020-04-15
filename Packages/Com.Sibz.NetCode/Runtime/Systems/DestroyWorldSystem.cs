@@ -6,9 +6,11 @@ using Unity.Entities;
 namespace Sibz.NetCode
 {
     [ClientAndServerSystem]
+    [UpdateInGroup(typeof(InitializationSystemGroup))]
     public class DestroyWorldSystem : ComponentSystem
     {
         public Action OnDestroyed;
+
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<DestroyWorld>();
@@ -27,7 +29,7 @@ namespace Sibz.NetCode
             // After OnUpdate runs, last system version is updated
             // so need to wait for that otherwise it will throw
             // a null ref error.
-            var oldSystemVersion = LastSystemVersion;
+            uint oldSystemVersion = LastSystemVersion;
             new Task(() =>
             {
                 while (oldSystemVersion == LastSystemVersion)

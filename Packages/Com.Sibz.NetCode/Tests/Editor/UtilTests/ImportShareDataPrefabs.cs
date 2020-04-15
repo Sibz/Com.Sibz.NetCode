@@ -22,23 +22,31 @@ namespace Sibz.NetCode.Tests.UtilTests
         }
 
         [TearDown]
-        public void TearDown() => testWorld.Dispose();
+        public void TearDown()
+        {
+            testWorld.Dispose();
+        }
 
         [Test]
-        public void WhenWorldIsNull_ShouldThrow() =>
+        public void WhenWorldIsNull_ShouldThrow()
+        {
             Assert.Catch<ArgumentNullException>(() =>
-                ImportGhostCollectionWorldExtension.ImportGhostCollection(null, new List<GameObject>(){ Resources.Load<GameObject>("NetCodeTestCollection")  } ));
+                ImportGhostCollectionWorldExtension.ImportGhostCollection(null,
+                    new List<GameObject> { Resources.Load<GameObject>("NetCodeTestCollection") }));
+        }
 
         [Test]
-        public void WhenPrefabInListIsNull_ShouldThrow() =>
+        public void WhenPrefabInListIsNull_ShouldThrow()
+        {
             Assert.Catch<ArgumentNullException>(() =>
-                ImportGhostCollectionWorldExtension.ImportGhostCollection(testWorld, new List<GameObject>(){ null } ));
+                testWorld.ImportGhostCollection(new List<GameObject> { null }));
+        }
 
         [Test]
         public void WhenPrefabDoesNotHaveGhostAuthComponent_ShouldThrow()
         {
-             Assert.Catch<ArgumentException>(() =>
-                            ImportGhostCollectionWorldExtension.ImportGhostCollection(testWorld, new List<GameObject>(){ new GameObject() } ));
+            Assert.Catch<ArgumentException>(() =>
+                testWorld.ImportGhostCollection(new List<GameObject> { new GameObject() }));
         }
 
         [Test]
@@ -47,7 +55,7 @@ namespace Sibz.NetCode.Tests.UtilTests
             testWorld.ImportGhostCollection(new List<GameObject>
                 { Resources.Load<GameObject>("NetCodeTestCollection") });
             NativeArray<Entity> entities = testWorld.EntityManager.GetAllEntities(Allocator.TempJob);
-            for (var i = 0; i < entities.Length; i++)
+            for (int i = 0; i < entities.Length; i++)
             {
                 Debug.Log(testWorld.EntityManager.GetName(entities[i]) + " prefab:" +
                           testWorld.EntityManager.HasComponent<Prefab>(entities[i]));

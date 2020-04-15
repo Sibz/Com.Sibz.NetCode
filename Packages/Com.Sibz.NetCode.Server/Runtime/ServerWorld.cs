@@ -12,29 +12,41 @@ namespace Sibz.NetCode
     {
         private const string HookSystemDoesNotExistError = "A HookSystem must exist";
 
-        public Action<NetworkConnection> ClientConnected { get; set; }
-        public Action<NetworkConnection> ClientDisconnected { get; set; }
+        public Action<Entity> ClientConnected { get; set; }
+        public Action<int> ClientDisconnected { get; set; }
         public Action ListenSuccess { get; set; }
         public Action ListenFailed { get; set; }
         public Action Closed { get; set; }
         protected ServerOptions Options { get; }
 
-        protected IServerWorldCreator ServerWorldCreator => (IServerWorldCreator)WorldCreator;
-
         public ServerWorld(ServerOptions options) : base(options, new ServerWorldCreator(options))
         {
-            Options = options;
+            Options = options ?? throw new ArgumentNullException(nameof(options));
 
-            WorldCreated += () =>
+            void OnWorldCreated()
             {
                 NetCodeHookSystem hookSystem =
                     World.GetHookSystem()
                     ?? throw new InvalidOperationException(HookSystemDoesNotExistError);
 
-                hookSystem.RegisterHook<ListeningEvent>((e) => { ListenSuccess?.Invoke(); });
-                hookSystem.RegisterHook<ListenFailedEvent>((e) => { ListenFailed?.Invoke(); });
-                hookSystem.RegisterHook<DisconnectingEvent>((e) => { Closed?.Invoke(); });
-            };
+                hookSystem.RegisterHook<ListeningEvent>(e => { ListenSuccess?.Invoke(); });
+                hookSystem.RegisterHook<ListenFailedEvent>(e => { ListenFailed?.Invoke(); });
+                hookSystem.RegisterHook<DisconnectingEvent>(e => { Closed?.Invoke(); });
+                hookSystem.RegisterHook<ClientConnectedEvent>(e =>
+                {
+                    ClientConnected?.Invoke(((ClientConnectedEvent) e).ConnectionEntity);
+                });
+                hookSystem.RegisterHook<ClientDisconnectedEvent>(e =>
+                {
+                    ClientDisconnected?.Invoke(((ClientDisconnectedEvent) e).NetworkId);
+                });
+            }
+
+            WorldCreated += OnWorldCreated;
+            if (WorldCreator.WorldIsCreated)
+            {
+                OnWorldCreated();
+            }
         }
 
         public void Listen()
@@ -43,14 +55,22 @@ namespace Sibz.NetCode
             {
                 CreateWorld();
             }
-            ServerWorldCreator.Listen(Options);
+
+            World.CreateSingleton(new Listen
+            {
+                EndPoint = NetworkEndPoint.Parse(Options.Address, Options.Port, Options.NetworkFamily)
+            });
         }
 
-        public void DisconnectAllClients() =>
+        public void DisconnectAllClients()
+        {
             throw new NotImplementedException();
+        }
 
-        public void DisconnectClient(int networkConnectionId) =>
+        public void DisconnectClient(int networkConnectionId)
+        {
             throw new NotImplementedException();
+        }
 
         public void Close()
         {

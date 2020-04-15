@@ -2,7 +2,7 @@
 using Unity.Entities;
 using Unity.Networking.Transport;
 
-namespace Sibz.NetCode
+namespace Sibz.NetCode.Server
 {
     public class ServerNetworkStreamProxy : IServerNetworkStreamProxy
     {
@@ -12,6 +12,7 @@ namespace Sibz.NetCode
         {
             this.world = world;
         }
+
         public bool Listen(NetworkEndPoint endPoint)
         {
             return world.GetNetworkStreamReceiveSystem().Listen(endPoint);

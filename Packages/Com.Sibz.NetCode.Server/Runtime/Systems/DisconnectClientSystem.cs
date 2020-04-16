@@ -8,7 +8,7 @@ namespace Packages.Com.Sibz.NetCode.Server.Runtime.Systems
     {
         protected override void OnUpdate()
         {
-            throw new System.NotImplementedException();
+
         }
     }
 }

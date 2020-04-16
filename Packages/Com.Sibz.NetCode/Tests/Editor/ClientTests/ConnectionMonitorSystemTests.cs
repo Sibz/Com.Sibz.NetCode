@@ -24,6 +24,15 @@ namespace Sibz.NetCode.Tests.Client
         public void WhenConnectionExist_ShouldRun()
         {
             world.EntityManager.CreateEntity(typeof(NetworkIdComponent), typeof(NetworkStreamConnection));
+            system.Update();
+            Assert.IsTrue(system.DidUpdate);
+        }
+
+        [Test]
+        public void WhenConnectionDoesNotExist_ShouldNotRun()
+        {
+            system.Update();
+            Assert.IsFalse(system.DidUpdate);
         }
 
 

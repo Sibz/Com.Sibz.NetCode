@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sibz.NetCode.Server;
+using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
 
 namespace Sibz.NetCode.Tests.Server

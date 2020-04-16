@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using Sibz.NetCode.Server;
 using Unity.Entities;
 
@@ -27,6 +27,7 @@ namespace Sibz.NetCode.Tests.Server
         [Test]
         public void WhenDisconnectClientEntityExist_ShouldRun()
         {
+            world.CreateSingleton<DisconnectClient>();
             system.Update();
             Assert.IsTrue(system.DidUpdate);
         }

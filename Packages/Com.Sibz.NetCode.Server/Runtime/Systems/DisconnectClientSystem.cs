@@ -1,11 +1,17 @@
-﻿using Sibz.NetCode;
-using Unity.Entities;
+﻿using Unity.Entities;
 
-namespace Packages.Com.Sibz.NetCode.Server.Runtime.Systems
+namespace Sibz.NetCode.Server
 {
     [ServerSystem]
     public class DisconnectClientSystem : SystemBase
     {
+        private EntityQuery disconnectClientQuery;
+        protected override void OnCreate()
+        {
+            disconnectClientQuery = GetEntityQuery(typeof(DisconnectClient));
+            RequireForUpdate(disconnectClientQuery);
+        }
+
         protected override void OnUpdate()
         {
 

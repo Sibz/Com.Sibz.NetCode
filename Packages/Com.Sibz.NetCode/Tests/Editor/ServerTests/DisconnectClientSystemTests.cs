@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using Packages.Com.Sibz.NetCode.Server.Runtime.Systems;
+using Sibz.NetCode.Server;
 using Unity.Entities;
 
 namespace Sibz.NetCode.Tests.Server
@@ -14,9 +14,22 @@ namespace Sibz.NetCode.Tests.Server
         public void SetUp()
         {
             world = new World($"TestDisconnectClientSystem{testCount++}");
-            world.CreateSystem<DisconnectClientSystem>();
+            system = world.CreateSystem<MyDisconnectClientSystem>();
         }
 
+        [Test]
+        public void WhenDisconnectClientEntityDoesNotExist_ShouldNotRun()
+        {
+            system.Update();
+            Assert.IsFalse(system.DidUpdate);
+        }
+
+        [Test]
+        public void WhenDisconnectClientEntityExist_ShouldRun()
+        {
+            system.Update();
+            Assert.IsTrue(system.DidUpdate);
+        }
 
         public class MyDisconnectClientSystem : DisconnectClientSystem
         {

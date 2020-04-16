@@ -1,4 +1,6 @@
 ﻿using Sibz.CommandBufferHelpers;
+using Sibz.EntityEvents;
+using Sibz.NetCode.Client;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -31,11 +33,17 @@ namespace Sibz.NetCode.Server
             };
             Dependency = Entities
                 .WithNone<NetworkStreamDisconnected, NetworkStreamRequestDisconnect>()
-                .WithDeallocateOnJobCompletion(ids)
+                .WithAll<NetworkStreamInGame>()
                 .ForEach((Entity entity, int entityInQueryIndex, ref NetworkIdComponent idComponent) =>
             {
-                job.Execute(entity, entityInQueryIndex, ref idComponent, ids);
+                job.Execute(entity, entityInQueryIndex, ref idComponent, ref ids);
             }).Schedule(handle);
+
+            Dependency = new DisconnectClientErrorJob
+            {
+                DisconnectClients = ids,
+                EnqueueEventJobPart = World.GetEnqueueEventJobPart<DisconnectClientFailedEvent>()
+            }.Schedule(ids.Length, 8, Dependency);
 
             endInitCommandBuffer.AddJobDependency(Dependency);
         }

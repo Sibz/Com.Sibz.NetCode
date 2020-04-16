@@ -31,9 +31,7 @@ namespace Sibz.NetCode.Client
             DisconnectJob job = new DisconnectJob
             {
                 CommandBuffer = commandBuffer.Concurrent,
-                Disconnect = GetSingletonEntity<Disconnect>(),
-                EventExists = HasSingleton<DisconnectedEvent>(),
-                EnqueueEventJobPart = World.GetEnqueueEventJobPart<DisconnectedEvent>()
+                Disconnect = GetSingletonEntity<Disconnect>()
             };
 
             inputDeps = Entities.WithAll<NetworkStreamInGame>().ForEach(

@@ -1,7 +1,8 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Sibz.NetCode.Server;
 using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
+using Unity.NetCode;
 
 namespace Sibz.NetCode.Tests.Server
 {
@@ -15,6 +16,7 @@ namespace Sibz.NetCode.Tests.Server
         public void SetUp()
         {
             world = new World($"TestDisconnectClientSystem{testCount++}");
+            world.CreateSystem<EndInitializationEntityCommandBufferSystem>();
             system = world.CreateSystem<MyDisconnectClientSystem>();
         }
 
@@ -31,6 +33,18 @@ namespace Sibz.NetCode.Tests.Server
             world.CreateSingleton<DisconnectClient>();
             system.Update();
             Assert.IsTrue(system.DidUpdate);
+        }
+
+        [Test]
+        public void ShouldAddDisconnectComponentToRelevantEntity()
+        {
+            world.CreateSingleton(new DisconnectClient { NetworkConnectionId = 42});
+            Entity relevantEntity = world.CreateSingleton(new NetworkIdComponent { Value = 42 });
+
+            system.Update();
+            world.GetExistingSystem<EndInitializationEntityCommandBufferSystem>().Update();
+
+            Assert.IsTrue(world.EntityManager.HasComponent<NetworkStreamRequestDisconnect>(relevantEntity));
         }
 
         public class MyDisconnectClientSystem : DisconnectClientSystem

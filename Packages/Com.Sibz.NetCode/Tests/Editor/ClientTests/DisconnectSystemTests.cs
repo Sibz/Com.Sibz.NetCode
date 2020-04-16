@@ -46,16 +46,6 @@ namespace Sibz.NetCode.Tests.Client
         }
 
         [Test]
-        public void WhenFirstRun_ShouldCreateEvent()
-        {
-            world.CreateSingleton<Disconnect>();
-            world.CreateSingleton<NetworkStreamInGame>();
-            UpdateWorld();
-            UpdateWorld();
-            Assert.AreEqual(1, world.EntityManager.CreateEntityQuery(typeof(DisconnectedEvent)).CalculateEntityCount());
-        }
-
-        [Test]
         public void WhenRunTwice_ShouldDestroySingleton()
         {
             Entity entity = world.CreateSingleton<Disconnect>();

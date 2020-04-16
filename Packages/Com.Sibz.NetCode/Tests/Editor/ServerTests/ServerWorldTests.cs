@@ -137,6 +137,13 @@ namespace Sibz.NetCode.Tests.Server
             Assert.AreEqual(listen.EndPoint, endPoint);
         }
 
+        [Test]
+        public void DisconnectClient_ShouldCreateEntity()
+        {
+            testWorld.DisconnectClient(42);
+            Assert.AreEqual(1, testWorld.World.EntityManager.CreateEntityQuery(typeof(DisconnectClient)).CalculateEntityCount());
+        }
+
         private class MyServerWorld : ServerWorld
         {
             public enum CallbackName

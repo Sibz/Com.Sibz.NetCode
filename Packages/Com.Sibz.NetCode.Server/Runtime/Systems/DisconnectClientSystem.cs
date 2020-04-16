@@ -37,7 +37,7 @@ namespace Sibz.NetCode.Server
                 .ForEach((Entity entity, int entityInQueryIndex, ref NetworkIdComponent idComponent) =>
             {
                 job.Execute(entity, entityInQueryIndex, ref idComponent, ref ids);
-            }).Schedule(handle);
+            }).Schedule(JobHandle.CombineDependencies(handle, Dependency));
 
             Dependency = new DisconnectClientErrorJob
             {

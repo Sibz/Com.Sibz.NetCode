@@ -5,7 +5,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.NetCode;
-using UnityEngine;
 
 namespace Sibz.NetCode.Server
 {
@@ -15,6 +14,7 @@ namespace Sibz.NetCode.Server
     {
         private EntityQuery disconnectClientQuery;
         private EndInitCommandBuffer endInitCommandBuffer;
+
         protected override void OnCreate()
         {
             disconnectClientQuery = GetEntityQuery(typeof(DisconnectClient));
@@ -24,10 +24,10 @@ namespace Sibz.NetCode.Server
 
         protected override void OnUpdate()
         {
-            var ids = disconnectClientQuery
+            NativeArray<DisconnectClient> ids = disconnectClientQuery
                 .ToComponentDataArrayAsync<DisconnectClient>(Allocator.TempJob, out JobHandle handle);
 
-            var job = new DisconnectClientJob
+            DisconnectClientJob job = new DisconnectClientJob
             {
                 CommandBuffer = endInitCommandBuffer.Concurrent
             };
@@ -35,9 +35,9 @@ namespace Sibz.NetCode.Server
                 .WithNone<NetworkStreamDisconnected, NetworkStreamRequestDisconnect>()
                 .WithAll<NetworkStreamInGame>()
                 .ForEach((Entity entity, int entityInQueryIndex, ref NetworkIdComponent idComponent) =>
-            {
-                job.Execute(entity, entityInQueryIndex, ref idComponent, ref ids);
-            }).Schedule(JobHandle.CombineDependencies(handle, Dependency));
+                {
+                    job.Execute(entity, entityInQueryIndex, ref idComponent, ref ids);
+                }).Schedule(JobHandle.CombineDependencies(handle, Dependency));
 
             Dependency = new DisconnectClientErrorJob
             {

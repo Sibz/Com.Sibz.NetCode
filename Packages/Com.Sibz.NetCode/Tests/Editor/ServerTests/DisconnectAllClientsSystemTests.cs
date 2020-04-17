@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using Packages.Components;
-using Packages.Systems;
+using Sibz.NetCode.Server;
 using Unity.Entities;
 using Unity.NetCode;
 
@@ -40,7 +40,8 @@ namespace Sibz.NetCode.Tests.Server
             world.EntityManager.CreateEntity(typeof(DisconnectAllClients));
             world.EntityManager.CreateEntity(typeof(DisconnectAllClients));
             system.Update();
-            Assert.AreEqual(0, world.EntityManager.CreateEntityQuery(typeof(DisconnectAllClients)).CalculateEntityCount());
+            Assert.AreEqual(0,
+                world.EntityManager.CreateEntityQuery(typeof(DisconnectAllClients)).CalculateEntityCount());
         }
 
         [Test]
@@ -70,10 +71,9 @@ namespace Sibz.NetCode.Tests.Server
                     typeof(NetworkStreamRequestDisconnect)).CalculateEntityCount());
         }
 
-
         private class MyDisconnectAllClientsSystem : DisconnectAllClientsSystem
         {
-            public bool DidUpdate = false;
+            public bool DidUpdate;
 
             protected override void OnUpdate()
             {

@@ -1,8 +1,5 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
-/*using Unity.Entities;
-using Unity.NetCode;*/
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -15,10 +12,10 @@ namespace Sibz.NetCode.PlayModeTests
         private ServerWorld serverWorld;
         private ClientWorld clientWorld;
         private GameObject prefab;
-        private bool serverListening = false;
-        private bool clientConnecting = false;
-        private bool clientConnectFailed = false;
-        private bool clientConnected = false;
+        private bool serverListening;
+        private bool clientConnecting;
+        private bool clientConnectFailed;
+        private bool clientConnected;
         private ushort testCount;
 
         [OneTimeSetUp]
@@ -42,7 +39,7 @@ namespace Sibz.NetCode.PlayModeTests
                 Address = "0.0.0.0",
                 Port = port,
                 WorldName = $"Test_Connection_Server{testCount}",
-                GhostCollectionPrefab = prefab,
+                GhostCollectionPrefab = prefab
             };
             clientOptions = new ClientOptions
             {
@@ -123,7 +120,7 @@ namespace Sibz.NetCode.PlayModeTests
         {
             NewClientServer();
             bool disconnected = false;
-            clientWorld.Connected += (x)=> serverWorld.DisconnectClient(1);
+            clientWorld.Connected += x => serverWorld.DisconnectClient(1);
             clientWorld.Disconnected += () => disconnected = true;
             serverWorld.Listen();
             yield return new WaitForSeconds(0.5f);
@@ -139,7 +136,6 @@ namespace Sibz.NetCode.PlayModeTests
             Assert.IsTrue(disconnected);
         }
 
-
         [UnityTest]
         public IEnumerator ShouldDisconnectAllClients()
         {
@@ -151,8 +147,8 @@ namespace Sibz.NetCode.PlayModeTests
                 WorldName = $"Test_Connection_Client_2_{testCount}"
             });
             NewClientServer();
-            clientWorld.Connected += e=> client1Connected = true;
-            client2.Connected += e=> client2Connected = true;
+            clientWorld.Connected += e => client1Connected = true;
+            client2.Connected += e => client2Connected = true;
             clientWorld.Disconnected += () => client1Connected = false;
             client2.Disconnected += () => client2Connected = false;
             serverWorld.Listen();
@@ -165,6 +161,7 @@ namespace Sibz.NetCode.PlayModeTests
                 yield return new WaitForSeconds(0.25f);
                 maxCount--;
             }
+
             Assert.IsTrue(client1Connected, "Client 1 did not connect to begin test");
             Assert.IsTrue(client2Connected, "Client 2 did not connect to begin test");
 

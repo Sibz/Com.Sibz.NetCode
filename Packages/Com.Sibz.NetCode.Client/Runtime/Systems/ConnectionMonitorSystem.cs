@@ -1,11 +1,9 @@
 ﻿using Sibz.EntityEvents;
-using Sibz.NetCode;
-using Sibz.NetCode.Client;
 using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
 using Unity.NetCode;
 
-namespace Packages.Com.Sibz.NetCode.Client.Runtime.Systems
+namespace Sibz.NetCode.Client
 {
     [ClientSystem]
     [UpdateInGroup(typeof(InitializationSystemGroup))]
@@ -19,7 +17,7 @@ namespace Packages.Com.Sibz.NetCode.Client.Runtime.Systems
             networkStream =
                 EntityManager.CreateEntityQuery(typeof(NetworkIdComponent), typeof(NetworkStreamConnection));
             Enabled = false;
-            World.GetHookSystem().RegisterHook<ConnectionCompleteEvent>((e)=>Enabled=true);
+            World.GetHookSystem().RegisterHook<ConnectionCompleteEvent>(e => Enabled = true);
         }
 
         protected override void OnUpdate()

@@ -1,5 +1,4 @@
-﻿using Sibz.NetCode;
-using Unity.NetCode;
+﻿using Unity.NetCode;
 
 namespace Sibz.NetCode
 {

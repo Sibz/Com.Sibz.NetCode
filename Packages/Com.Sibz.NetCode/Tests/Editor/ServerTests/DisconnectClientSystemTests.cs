@@ -42,11 +42,11 @@ namespace Sibz.NetCode.Tests.Server
         [Test]
         public void ShouldAddDisconnectComponentToRelevantEntity()
         {
-            world.CreateSingleton(new DisconnectClient { NetworkConnectionId = 42});
+            world.CreateSingleton(new DisconnectClient { NetworkConnectionId = 42 });
 
             Entity relevantEntity =
                 world.EntityManager.CreateEntity(typeof(NetworkIdComponent), typeof(NetworkStreamInGame));
-            world.EntityManager.SetComponentData(relevantEntity, new NetworkIdComponent { Value = 42});
+            world.EntityManager.SetComponentData(relevantEntity, new NetworkIdComponent { Value = 42 });
 
             system.Update();
             world.GetExistingSystem<EndInitializationEntityCommandBufferSystem>().Update();
@@ -57,26 +57,28 @@ namespace Sibz.NetCode.Tests.Server
         [Test]
         public void WhenConnectionDoesNotExist_ShouldRaiseError()
         {
-            world.CreateSingleton(new DisconnectClient { NetworkConnectionId = 42});
+            world.CreateSingleton(new DisconnectClient { NetworkConnectionId = 42 });
             system.Update();
             world.GetExistingSystem<EndInitializationEntityCommandBufferSystem>().Update();
             world.GetExistingSystem<BeginInitializationEntityCommandBufferSystem>().Update();
 
-            Assert.AreEqual(1, world.EntityManager.CreateEntityQuery(typeof(DisconnectClientFailedEvent)).CalculateEntityCount());
+            Assert.AreEqual(1,
+                world.EntityManager.CreateEntityQuery(typeof(DisconnectClientFailedEvent)).CalculateEntityCount());
         }
 
         [Test]
         public void WhenConnectionExist_ShouldNotRaiseError()
         {
-            world.CreateSingleton(new DisconnectClient { NetworkConnectionId = 42});
+            world.CreateSingleton(new DisconnectClient { NetworkConnectionId = 42 });
             Entity relevantEntity =
                 world.EntityManager.CreateEntity(typeof(NetworkIdComponent), typeof(NetworkStreamInGame));
-            world.EntityManager.SetComponentData(relevantEntity, new NetworkIdComponent { Value = 42});
+            world.EntityManager.SetComponentData(relevantEntity, new NetworkIdComponent { Value = 42 });
             system.Update();
             world.GetExistingSystem<EndInitializationEntityCommandBufferSystem>().Update();
             world.GetExistingSystem<BeginInitializationEntityCommandBufferSystem>().Update();
 
-            Assert.AreEqual(0, world.EntityManager.CreateEntityQuery(typeof(DisconnectClientFailedEvent)).CalculateEntityCount());
+            Assert.AreEqual(0,
+                world.EntityManager.CreateEntityQuery(typeof(DisconnectClientFailedEvent)).CalculateEntityCount());
         }
 
         public class MyDisconnectClientSystem : DisconnectClientSystem

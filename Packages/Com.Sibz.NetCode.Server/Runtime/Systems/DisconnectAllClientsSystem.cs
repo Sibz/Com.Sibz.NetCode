@@ -1,9 +1,8 @@
 ﻿using Packages.Components;
-using Sibz.NetCode;
 using Unity.Entities;
 using Unity.NetCode;
 
-namespace Packages.Systems
+namespace Sibz.NetCode.Server
 {
     [ServerSystem]
     public class DisconnectAllClientsSystem : SystemBase
@@ -11,21 +10,20 @@ namespace Packages.Systems
         private EntityQuery triggerQuery;
         private EntityQuery networkQuery;
 
-
         protected override void OnCreate()
         {
             triggerQuery = GetEntityQuery(typeof(DisconnectAllClients));
             networkQuery = GetEntityQuery(new EntityQueryDesc
             {
-                All = new []
+                All = new[]
                 {
                     ComponentType.ReadOnly<NetworkIdComponent>(),
-                    ComponentType.ReadOnly<NetworkStreamConnection>(),
+                    ComponentType.ReadOnly<NetworkStreamConnection>()
                 },
-                None = new []
+                None = new[]
                 {
                     ComponentType.ReadOnly<NetworkStreamDisconnected>(),
-                    ComponentType.ReadOnly<NetworkStreamRequestDisconnect>(),
+                    ComponentType.ReadOnly<NetworkStreamRequestDisconnect>()
                 }
             });
 
@@ -37,6 +35,5 @@ namespace Packages.Systems
             EntityManager.DestroyEntity(triggerQuery);
             EntityManager.AddComponent<NetworkStreamRequestDisconnect>(networkQuery);
         }
-
     }
 }

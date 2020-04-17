@@ -15,7 +15,7 @@ namespace Sibz.NetCode
 
         public List<Type> Systems { get; set; } = new List<Type>();
 
-        public List<Type> SystemAttributes { get; } = new List<Type> { typeof(ClientSystemAttribute)};
+        public List<Type> SystemAttributes { get; } = new List<Type> { typeof(ClientSystemAttribute) };
 
         public GameObject GhostCollectionPrefab { get; set; }
         public int TimeOut { get; set; } = 10;

@@ -13,7 +13,7 @@ namespace Sibz.NetCode
         private const string WorldAlreadyCreatedError = "Can not create world as world is already created.";
 
         private const string NoPrefabWarning = "Option {0} is null. World can only communicate " +
-                                                "if a ghost collection is present.";
+                                               "if a ghost collection is present.";
 
         private readonly List<Type> systemsCache = new List<Type>();
 
@@ -21,6 +21,11 @@ namespace Sibz.NetCode
         public bool WorldIsCreated => World?.IsCreated ?? false;
         public IWorldCreatorOptions Options { get; }
         public Action WorldCreated { get; set; }
+
+        public virtual Type DefaultSystemGroup => SimSystemGroup;
+        public virtual Type InitSystemGroup => typeof(ClientInitializationSystemGroup);
+        public virtual Type SimSystemGroup => typeof(ClientSimulationSystemGroup);
+        public virtual Type PresSystemGroup => typeof(ClientPresentationSystemGroup);
 
         public WorldCreatorBase(IWorldCreatorOptions options)
         {
@@ -41,6 +46,7 @@ namespace Sibz.NetCode
             {
                 systemsCache.AppendTypesWithAttribute(attributeType);
             }
+
             systemsCache.AddRange(Options.Systems);
         }
 
@@ -53,7 +59,7 @@ namespace Sibz.NetCode
 
         private void InjectSystems()
         {
-            World.ImportSystemsFromList(systemsCache, DefaultSystemGroup, new Dictionary<Type, Type>()
+            World.ImportSystemsFromList(systemsCache, DefaultSystemGroup, new Dictionary<Type, Type>
             {
                 { typeof(InitializationSystemGroup), InitSystemGroup },
                 { typeof(SimulationSystemGroup), SimSystemGroup },
@@ -76,11 +82,6 @@ namespace Sibz.NetCode
 
             WorldCreated?.Invoke();
         }
-
-        public virtual Type DefaultSystemGroup => SimSystemGroup;
-        public virtual Type InitSystemGroup => typeof(ClientInitializationSystemGroup);
-        public virtual Type SimSystemGroup => typeof(ClientSimulationSystemGroup);
-        public virtual Type PresSystemGroup => typeof(ClientPresentationSystemGroup);
 
         public virtual void ImportPrefabs()
         {

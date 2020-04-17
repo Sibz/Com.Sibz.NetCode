@@ -1,11 +1,9 @@
 ﻿using Sibz.EntityEvents;
-using Sibz.NetCode;
-using Sibz.NetCode.Client;
 using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
 using Unity.NetCode;
 
-namespace Packages.Com.Sibz.NetCode.Client.Runtime.Systems
+namespace Sibz.NetCode.Client
 {
     [ClientSystem]
     [UpdateInGroup(typeof(InitializationSystemGroup))]

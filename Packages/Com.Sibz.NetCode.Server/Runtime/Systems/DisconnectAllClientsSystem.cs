@@ -1,9 +1,8 @@
 ﻿using Packages.Components;
-using Sibz.NetCode;
 using Unity.Entities;
 using Unity.NetCode;
 
-namespace Packages.Systems
+namespace Sibz.NetCode.Server
 {
     [ServerSystem]
     public class DisconnectAllClientsSystem : SystemBase

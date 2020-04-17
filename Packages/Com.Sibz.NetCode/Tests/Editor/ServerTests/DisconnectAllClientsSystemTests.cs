@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Packages.Components;
 using Packages.Systems;
 using Unity.Entities;
@@ -53,7 +53,22 @@ namespace Sibz.NetCode.Tests.Server
             Assert.IsFalse(system.DidUpdate);
         }
 
-
+        [Test]
+        public void WhenRun_ShouldAddComponentToAllNetworkEntities()
+        {
+            world.EntityManager.CreateEntity(typeof(DisconnectAllClients));
+            EntityArchetype at =
+                world.EntityManager.CreateArchetype(typeof(NetworkIdComponent), typeof(NetworkStreamConnection));
+            world.EntityManager.CreateEntity(at);
+            world.EntityManager.CreateEntity(at);
+            world.EntityManager.CreateEntity(at);
+            system.Update();
+            Assert.AreEqual(3, world.EntityManager
+                .CreateEntityQuery(
+                    typeof(NetworkIdComponent),
+                    typeof(NetworkStreamConnection),
+                    typeof(NetworkStreamRequestDisconnect)).CalculateEntityCount());
+        }
 
 
         private class MyDisconnectAllClientsSystem : DisconnectAllClientsSystem

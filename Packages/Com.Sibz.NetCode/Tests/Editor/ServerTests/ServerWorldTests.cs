@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Packages.Components;
 using Sibz.NetCode.Server;
 using Sibz.NetCode.WorldExtensions;
 using Unity.Networking.Transport;
@@ -142,6 +143,13 @@ namespace Sibz.NetCode.Tests.Server
         {
             testWorld.DisconnectClient(42);
             Assert.AreEqual(1, testWorld.World.EntityManager.CreateEntityQuery(typeof(DisconnectClient)).CalculateEntityCount());
+        }
+
+        [Test]
+        public void DisconnectAllClients_ShouldCreateEntity()
+        {
+            testWorld.DisconnectAllClients();
+            Assert.AreEqual(1, testWorld.World.EntityManager.CreateEntityQuery(typeof(DisconnectAllClients)).CalculateEntityCount());
         }
 
         private class MyServerWorld : ServerWorld

@@ -1,4 +1,5 @@
 ﻿using System;
+using Packages.Components;
 using Sibz.NetCode.Server;
 using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
@@ -64,7 +65,7 @@ namespace Sibz.NetCode
 
         public void DisconnectAllClients()
         {
-            throw new NotImplementedException();
+            World.CreateSingleton<DisconnectAllClients>();
         }
 
         public void DisconnectClient(int networkConnectionId)

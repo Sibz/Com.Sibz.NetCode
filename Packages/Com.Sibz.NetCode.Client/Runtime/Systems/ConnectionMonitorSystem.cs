@@ -17,7 +17,7 @@ namespace Sibz.NetCode.Client
             networkStream =
                 EntityManager.CreateEntityQuery(typeof(NetworkIdComponent), typeof(NetworkStreamConnection));
             Enabled = false;
-            World.GetHookSystem().RegisterHook<ConnectionCompleteEvent>((e)=>Enabled=true);
+            World.GetHookSystem().RegisterHook<ConnectionCompleteEvent>(e => Enabled = true);
         }
 
         protected override void OnUpdate()

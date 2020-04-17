@@ -45,7 +45,5 @@ namespace Sibz.NetCode.Client
 
             return inputDeps;
         }
-
-
     }
 }

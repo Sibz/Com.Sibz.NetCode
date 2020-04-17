@@ -10,21 +10,20 @@ namespace Sibz.NetCode.Server
         private EntityQuery triggerQuery;
         private EntityQuery networkQuery;
 
-
         protected override void OnCreate()
         {
             triggerQuery = GetEntityQuery(typeof(DisconnectAllClients));
             networkQuery = GetEntityQuery(new EntityQueryDesc
             {
-                All = new []
+                All = new[]
                 {
                     ComponentType.ReadOnly<NetworkIdComponent>(),
-                    ComponentType.ReadOnly<NetworkStreamConnection>(),
+                    ComponentType.ReadOnly<NetworkStreamConnection>()
                 },
-                None = new []
+                None = new[]
                 {
                     ComponentType.ReadOnly<NetworkStreamDisconnected>(),
-                    ComponentType.ReadOnly<NetworkStreamRequestDisconnect>(),
+                    ComponentType.ReadOnly<NetworkStreamRequestDisconnect>()
                 }
             });
 
@@ -36,6 +35,5 @@ namespace Sibz.NetCode.Server
             EntityManager.DestroyEntity(triggerQuery);
             EntityManager.AddComponent<NetworkStreamRequestDisconnect>(networkQuery);
         }
-
     }
 }

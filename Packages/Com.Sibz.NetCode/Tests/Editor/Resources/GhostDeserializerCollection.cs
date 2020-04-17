@@ -9,7 +9,7 @@ public struct NetCodeGhostDeserializerCollection : IGhostDeserializerCollection
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     public string[] CreateSerializerNameList()
     {
-        string[] arr = new[]
+        string[] arr =
         {
             "NetCodeTestGhostObjectGhostSerializer"
         };

@@ -7,9 +7,7 @@ namespace Sibz.NetCode.Server
 {
     public struct DisconnectClientErrorJob : IJobParallelFor
     {
-        [DeallocateOnJobCompletion]
-        [ReadOnly]
-        [NativeDisableParallelForRestriction]
+        [DeallocateOnJobCompletion] [ReadOnly] [NativeDisableParallelForRestriction]
         public NativeArray<DisconnectClient> DisconnectClients;
 
         public EnqueueEventJobPart<DisconnectClientFailedEvent> EnqueueEventJobPart;

@@ -142,14 +142,16 @@ namespace Sibz.NetCode.Tests.Server
         public void DisconnectClient_ShouldCreateEntity()
         {
             testWorld.DisconnectClient(42);
-            Assert.AreEqual(1, testWorld.World.EntityManager.CreateEntityQuery(typeof(DisconnectClient)).CalculateEntityCount());
+            Assert.AreEqual(1,
+                testWorld.World.EntityManager.CreateEntityQuery(typeof(DisconnectClient)).CalculateEntityCount());
         }
 
         [Test]
         public void DisconnectAllClients_ShouldCreateEntity()
         {
             testWorld.DisconnectAllClients();
-            Assert.AreEqual(1, testWorld.World.EntityManager.CreateEntityQuery(typeof(DisconnectAllClients)).CalculateEntityCount());
+            Assert.AreEqual(1,
+                testWorld.World.EntityManager.CreateEntityQuery(typeof(DisconnectAllClients)).CalculateEntityCount());
         }
 
         private class MyServerWorld : ServerWorld

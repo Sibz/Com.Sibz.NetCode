@@ -8,7 +8,8 @@ namespace Sibz.NetCode.Server
     {
         public EntityCommandBuffer.Concurrent CommandBuffer;
 
-        public void Execute(Entity entity, int entityInQueryIndex, ref NetworkIdComponent idComponent, ref NativeArray<DisconnectClient> networkIds)
+        public void Execute(Entity entity, int entityInQueryIndex, ref NetworkIdComponent idComponent,
+            ref NativeArray<DisconnectClient> networkIds)
         {
             for (int i = 0; i < networkIds.Length; i++)
             {
@@ -17,6 +18,7 @@ namespace Sibz.NetCode.Server
                 {
                     continue;
                 }
+
                 CommandBuffer.AddComponent<NetworkStreamRequestDisconnect>(entityInQueryIndex, entity);
                 dc.NetworkConnectionId = -1;
                 networkIds[i] = dc;

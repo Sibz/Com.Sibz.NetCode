@@ -4,6 +4,5 @@ namespace Packages.Components
 {
     public struct DisconnectAllClients : IComponentData
     {
-
     }
 }

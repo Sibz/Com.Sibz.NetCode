@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Sibz.WorldSystemHelpers;
-using Unity.Entities;
+﻿using Unity.Entities;
 using Unity.NetCode;
 
 namespace Sibz.NetCode.Tests

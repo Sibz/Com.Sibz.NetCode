@@ -1,17 +1,23 @@
+using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
-using Unity.Collections;
 using Unity.NetCode;
 using Unity.Transforms;
 
-public struct NetCodePlayModeTestGhostObjectGhostSerializer : IGhostSerializer<NetCodePlayModeTestGhostObjectSnapshotData>
+public struct
+    NetCodePlayModeTestGhostObjectGhostSerializer : IGhostSerializer<NetCodePlayModeTestGhostObjectSnapshotData>
 {
     private ComponentType componentTypeLocalToWorld;
     private ComponentType componentTypeRotation;
+
     private ComponentType componentTypeTranslation;
+
     // FIXME: These disable safety since all serializers have an instance of the same type - causing aliasing. Should be fixed in a cleaner way
-    [NativeDisableContainerSafetyRestriction][ReadOnly] private ArchetypeChunkComponentType<Rotation> ghostRotationType;
-    [NativeDisableContainerSafetyRestriction][ReadOnly] private ArchetypeChunkComponentType<Translation> ghostTranslationType;
+    [NativeDisableContainerSafetyRestriction] [ReadOnly]
+    private ArchetypeChunkComponentType<Rotation> ghostRotationType;
+
+    [NativeDisableContainerSafetyRestriction] [ReadOnly]
+    private ArchetypeChunkComponentType<Translation> ghostTranslationType;
 
 
     public int CalculateImportance(ArchetypeChunk chunk)
@@ -20,6 +26,7 @@ public struct NetCodePlayModeTestGhostObjectGhostSerializer : IGhostSerializer<N
     }
 
     public int SnapshotSize => UnsafeUtility.SizeOf<NetCodePlayModeTestGhostObjectSnapshotData>();
+
     public void BeginSerialize(ComponentSystemBase system)
     {
         componentTypeLocalToWorld = ComponentType.ReadWrite<LocalToWorld>();
@@ -29,11 +36,12 @@ public struct NetCodePlayModeTestGhostObjectGhostSerializer : IGhostSerializer<N
         ghostTranslationType = system.GetArchetypeChunkComponentType<Translation>(true);
     }
 
-    public void CopyToSnapshot(ArchetypeChunk chunk, int ent, uint tick, ref NetCodePlayModeTestGhostObjectSnapshotData snapshot, GhostSerializerState serializerState)
+    public void CopyToSnapshot(ArchetypeChunk chunk, int ent, uint tick,
+        ref NetCodePlayModeTestGhostObjectSnapshotData snapshot, GhostSerializerState serializerState)
     {
         snapshot.tick = tick;
-        var chunkDataRotation = chunk.GetNativeArray(ghostRotationType);
-        var chunkDataTranslation = chunk.GetNativeArray(ghostTranslationType);
+        NativeArray<Rotation> chunkDataRotation = chunk.GetNativeArray(ghostRotationType);
+        NativeArray<Translation> chunkDataTranslation = chunk.GetNativeArray(ghostTranslationType);
         snapshot.SetRotationValue(chunkDataRotation[ent].Value, serializerState);
         snapshot.SetTranslationValue(chunkDataTranslation[ent].Value, serializerState);
     }

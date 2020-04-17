@@ -47,7 +47,8 @@ namespace Sibz.NetCode.Tests.Client
 
         private Entity CreateEntityAndRun()
         {
-            Entity entity = world.EntityManager.CreateEntity(typeof(NetworkIdComponent), typeof(NetworkStreamConnection));
+            Entity entity =
+                world.EntityManager.CreateEntity(typeof(NetworkIdComponent), typeof(NetworkStreamConnection));
             RaiseConnectionEvent();
             system.Update();
             return entity;
@@ -59,6 +60,7 @@ namespace Sibz.NetCode.Tests.Client
             system.Update();
             world.GetExistingSystem<BeginInitializationEntityCommandBufferSystem>().Update();
         }
+
         [Test]
         public void WhenConnectionComesAndThenGoes_ShouldRaiseDisconnectedEvent()
         {
@@ -77,7 +79,7 @@ namespace Sibz.NetCode.Tests.Client
 
         private class MyConnectionMonitorSystem : ConnectionMonitorSystem
         {
-            public bool DidUpdate = false;
+            public bool DidUpdate;
 
             protected override void OnUpdate()
             {

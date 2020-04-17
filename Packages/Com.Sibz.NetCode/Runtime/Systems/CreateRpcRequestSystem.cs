@@ -27,11 +27,10 @@ namespace Sibz.NetCode
                     jh.Complete();
                     result = entities[0];
                 }
+
                 return result;
             }
         }
-
-
 
         private static Entity GetTargetConnection(World world)
         {
@@ -57,8 +56,8 @@ namespace Sibz.NetCode
             world.EntityManager.AddComponentData(e,
                 new SendRpcCommandRequestComponent
                 {
-                    TargetConnection = targetConnection.Equals(Entity.Null) ?
-                        GetTargetConnection(world)
+                    TargetConnection = targetConnection.Equals(Entity.Null)
+                        ? GetTargetConnection(world)
                         : targetConnection
                 });
             return e;

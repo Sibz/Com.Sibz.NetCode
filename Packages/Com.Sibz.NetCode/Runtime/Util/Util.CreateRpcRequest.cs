@@ -9,7 +9,7 @@ namespace Sibz
         public static Entity CreateRpcRequest<T>(this World world, T data, Entity targetConnection = default)
             where T : struct, IRpcCommand
         {
-            return CreateRpcRequestSystem.CreateRpcRequest(world, data,targetConnection);
+            return CreateRpcRequestSystem.CreateRpcRequest(world, data, targetConnection);
         }
 
         public static Entity CreateRpcRequest<T>(this World world, Entity targetConnection = default)

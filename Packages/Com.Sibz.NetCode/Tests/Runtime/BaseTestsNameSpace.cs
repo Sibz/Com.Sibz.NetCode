@@ -14,7 +14,7 @@ namespace Sibz.NetCode.PlayModeTests
         private ClientOptions clientOptions;
         private ServerWorld serverWorld;
         private ClientWorld clientWorld;
-        private List<GameObject> prefabs;
+        private GameObject prefab;
         private bool serverListening = false;
         private bool clientConnecting = false;
         private bool clientConnectFailed = false;
@@ -24,10 +24,7 @@ namespace Sibz.NetCode.PlayModeTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            prefabs = new List<GameObject>
-            {
-                Resources.Load<GameObject>("NetCodePlayModeTestCollection")
-            };
+            prefab = Resources.Load<GameObject>("NetCodePlayModeTestCollection");
         }
 
         [TearDown]
@@ -45,7 +42,7 @@ namespace Sibz.NetCode.PlayModeTests
                 Address = "0.0.0.0",
                 Port = port,
                 WorldName = $"Test_Connection_Server{testCount}",
-                GhostCollectionPrefabs = prefabs,
+                GhostCollectionPrefab = prefab,
             };
             clientOptions = new ClientOptions
             {
@@ -53,7 +50,7 @@ namespace Sibz.NetCode.PlayModeTests
                 Port = port,
                 TimeOut = 5,
                 WorldName = $"Test_Connection_Client{testCount}",
-                GhostCollectionPrefabs = prefabs
+                GhostCollectionPrefab = prefab
             };
 
 

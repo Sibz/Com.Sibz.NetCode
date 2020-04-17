@@ -9,6 +9,6 @@ namespace Sibz.NetCode
         string WorldName { get; }
         List<Type> Systems { get; }
         List<Type> SystemAttributes { get; }
-        List<GameObject> GhostCollectionPrefabs { get; }
+        GameObject GhostCollectionPrefab { get; }
     }
 }

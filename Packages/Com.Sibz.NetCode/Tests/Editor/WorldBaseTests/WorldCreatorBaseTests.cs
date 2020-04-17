@@ -21,7 +21,7 @@ namespace Sibz.NetCode.Tests.Base
         [Test]
         public void WhenImportPrefabsIsNull_ShouldLogWarning()
         {
-            wm = new MyWorldCreator(new MyWorldOptions { GhostCollectionPrefabs = null });
+            wm = new MyWorldCreator(new MyWorldOptions { GhostCollectionPrefab = null });
             wm.ImportPrefabs();
             LogAssert.Expect(LogType.Warning, new Regex(".*"));
         }

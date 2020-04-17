@@ -32,28 +32,27 @@ namespace Sibz.NetCode.Tests.UtilTests
         {
             Assert.Catch<ArgumentNullException>(() =>
                 ImportGhostCollectionWorldExtension.ImportGhostCollection(null,
-                    new List<GameObject> { Resources.Load<GameObject>("NetCodeTestCollection") }));
+                    Resources.Load<GameObject>("NetCodeTestCollection")));
         }
 
         [Test]
-        public void WhenPrefabInListIsNull_ShouldThrow()
+        public void WhenPrefabIsNull_ShouldThrow()
         {
             Assert.Catch<ArgumentNullException>(() =>
-                testWorld.ImportGhostCollection(new List<GameObject> { null }));
+                testWorld.ImportGhostCollection(null));
         }
 
         [Test]
         public void WhenPrefabDoesNotHaveGhostAuthComponent_ShouldThrow()
         {
             Assert.Catch<ArgumentException>(() =>
-                testWorld.ImportGhostCollection(new List<GameObject> { new GameObject() }));
+                testWorld.ImportGhostCollection(new GameObject()));
         }
 
         [Test]
         public void ShouldImportPrefabIntoWorld()
         {
-            testWorld.ImportGhostCollection(new List<GameObject>
-                { Resources.Load<GameObject>("NetCodeTestCollection") });
+            testWorld.ImportGhostCollection(Resources.Load<GameObject>("NetCodeTestCollection"));
             NativeArray<Entity> entities = testWorld.EntityManager.GetAllEntities(Allocator.TempJob);
             for (int i = 0; i < entities.Length; i++)
             {
@@ -66,21 +65,5 @@ namespace Sibz.NetCode.Tests.UtilTests
 
             Assert.AreEqual(5, len);
         }
-
-        // ReSharper disable ExpressionIsAlwaysNull
-        [Test]
-        public void WhenPrefabsIsNull_ShouldThrow()
-        {
-            List<GameObject> prefabs = null;
-            Assert.Catch<ArgumentNullException>(() => testWorld.ImportGhostCollection(prefabs));
-        }
-
-        [Test]
-        public void WhenPrefabIsNull_ShouldThrow()
-        {
-            GameObject prefab = null;
-            Assert.Catch<ArgumentNullException>(() => testWorld.ImportGhostCollection(prefab));
-        }
-        // ReSharper restore ExpressionIsAlwaysNull
     }
 }

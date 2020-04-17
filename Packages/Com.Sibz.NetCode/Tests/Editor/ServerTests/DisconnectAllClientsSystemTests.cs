@@ -1,8 +1,8 @@
 using NUnit.Framework;
 using Packages.Components;
 using Packages.Systems;
-using Sibz.EntityEvents;
 using Unity.Entities;
+using Unity.NetCode;
 
 namespace Sibz.NetCode.Tests.Server
 {
@@ -16,8 +16,6 @@ namespace Sibz.NetCode.Tests.Server
         public void SetUp()
         {
             world = new World($"testDisconnectAllClientsSystem{testCount++}");
-            world.CreateSystem<BeginInitializationEntityCommandBufferSystem>();
-            world.CreateSystem<EventComponentSystem>();
             system = world.CreateSystem<MyDisconnectAllClientsSystem>();
         }
 

@@ -12,6 +12,6 @@ namespace Sibz.NetCode.Tests
         public bool CreateWorldOnInstantiate { get; set; }
         public List<Type> Systems { get; } = new List<Type>();
         public List<Type> SystemAttributes { get; set; } = new List<Type>();
-        public List<GameObject> GhostCollectionPrefabs { get; set; } = new List<GameObject>();
+        public GameObject GhostCollectionPrefab { get; set; }
     }
 }

@@ -12,8 +12,8 @@ namespace Sibz.NetCode
     {
         private const string WorldAlreadyCreatedError = "Can not create world as world is already created.";
 
-        private const string NoPrefabsWarning = "Option {0} is null, or list is empty. World can only communicate " +
-                                                "if ghost collections are present.";
+        private const string NoPrefabWarning = "Option {0} is null. World can only communicate " +
+                                                "if a ghost collection is present.";
 
         private readonly List<Type> systemsCache = new List<Type>();
 
@@ -84,13 +84,13 @@ namespace Sibz.NetCode
 
         public virtual void ImportPrefabs()
         {
-            if (Options.GhostCollectionPrefabs is null || Options.GhostCollectionPrefabs.Count == 0)
+            if (Options.GhostCollectionPrefab is null)
             {
-                Debug.LogWarning(string.Format(NoPrefabsWarning, nameof(Options.GhostCollectionPrefabs)));
+                Debug.LogWarning(string.Format(NoPrefabWarning, nameof(Options.GhostCollectionPrefab)));
                 return;
             }
 
-            World.ImportGhostCollection(Options.GhostCollectionPrefabs);
+            World.ImportGhostCollection(Options.GhostCollectionPrefab);
         }
 
         public void Dispose()

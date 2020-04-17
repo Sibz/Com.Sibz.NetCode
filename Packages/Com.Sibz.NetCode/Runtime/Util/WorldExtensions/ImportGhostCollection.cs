@@ -17,17 +17,6 @@ namespace Sibz.NetCode.WorldExtensions
             ImportGhostCollection(world, GetConversionSettings(world), prefab);
         }
 
-        public static void ImportGhostCollection(this World world, IEnumerable<GameObject> prefabs)
-        {
-            prefabs = prefabs ?? throw new ArgumentNullException(nameof(prefabs));
-            GameObjectConversionSettings settings = GetConversionSettings(world);
-
-            foreach (GameObject prefab in prefabs)
-            {
-                ImportGhostCollection(world, settings, prefab);
-            }
-        }
-
         private static void ImportGhostCollection(World world, GameObjectConversionSettings settings, GameObject prefab)
         {
             // ReSharper disable once Unity.NoNullCoalescing

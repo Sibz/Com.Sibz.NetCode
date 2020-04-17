@@ -138,5 +138,47 @@ namespace Sibz.NetCode.PlayModeTests
 
             Assert.IsTrue(disconnected);
         }
+
+
+        [UnityTest]
+        public IEnumerator ShouldDisconnectAllClients()
+        {
+            bool client1Connected = false, client2Connected = false;
+            ClientWorld client2 = new ClientWorld(new ClientOptions
+            {
+                Address = "127.0.0.1",
+                Port = (ushort) (21650 + testCount),
+                WorldName = $"Test_Connection_Client_2_{testCount}"
+            });
+            NewClientServer();
+            clientWorld.Connected += e=> client1Connected = true;
+            client2.Connected += e=> client2Connected = true;
+            clientWorld.Disconnected += () => client1Connected = false;
+            client2.Disconnected += () => client2Connected = false;
+            serverWorld.Listen();
+            yield return new WaitForSeconds(0.5f);
+            clientWorld.Connect();
+            client2.Connect();
+            int maxCount = 30;
+            while (maxCount >= 0 && !(client1Connected && client2Connected))
+            {
+                yield return new WaitForSeconds(0.25f);
+                maxCount--;
+            }
+            Assert.IsTrue(client1Connected, "Client 1 did not connect to begin test");
+            Assert.IsTrue(client2Connected, "Client 2 did not connect to begin test");
+
+            serverWorld.DisconnectAllClients();
+
+            maxCount = 30;
+            while (maxCount >= 0 && client1Connected && client2Connected)
+            {
+                yield return new WaitForSeconds(0.25f);
+                maxCount--;
+            }
+
+            Assert.IsFalse(client1Connected, "Client 1 did not disconnect");
+            Assert.IsFalse(client2Connected, "Client 2 did not disconnect");
+        }
     }
 }

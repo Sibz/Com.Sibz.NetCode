@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using Packages.Components;
 using Packages.Systems;
 using Sibz.EntityEvents;
@@ -35,6 +35,27 @@ namespace Sibz.NetCode.Tests.Server
             system.Update();
             Assert.IsTrue(system.DidUpdate);
         }
+
+        [Test]
+        public void WhenRun_ShouldRemoveAllTriggerEntities()
+        {
+            world.EntityManager.CreateEntity(typeof(DisconnectAllClients));
+            world.EntityManager.CreateEntity(typeof(DisconnectAllClients));
+            system.Update();
+            Assert.AreEqual(0, world.EntityManager.CreateEntityQuery(typeof(DisconnectAllClients)).CalculateEntityCount());
+        }
+
+        [Test]
+        public void ShouldOnlyRunOnce()
+        {
+            world.EntityManager.CreateEntity(typeof(DisconnectAllClients));
+            system.Update();
+            system.DidUpdate = false;
+            system.Update();
+            Assert.IsFalse(system.DidUpdate);
+        }
+
+
 
 
         private class MyDisconnectAllClientsSystem : DisconnectAllClientsSystem

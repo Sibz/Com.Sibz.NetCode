@@ -34,6 +34,7 @@ namespace Packages.Systems
 
         protected override void OnUpdate()
         {
+            EntityManager.DestroyEntity(triggerQuery);
         }
 
     }

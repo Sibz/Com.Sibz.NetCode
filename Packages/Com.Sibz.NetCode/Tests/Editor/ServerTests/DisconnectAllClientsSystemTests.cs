@@ -24,7 +24,7 @@ namespace Sibz.NetCode.Tests.Server
         public void WhenEntityDoesNotExist_ShouldNotRun()
         {
             system.Update();
-            //Assert.IsFalse(system.DidUpdate);
+            Assert.IsFalse(system.DidUpdate);
         }
 
 

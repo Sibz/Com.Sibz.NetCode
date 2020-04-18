@@ -1,7 +1,11 @@
 ﻿using System.Collections;
 using NUnit.Framework;
+using Unity.Entities;
+using Unity.NetCode;
 using UnityEngine;
 using UnityEngine.TestTools;
+
+[assembly: DisableAutoCreation]
 
 namespace Sibz.NetCode.PlayModeTests
 {
@@ -100,15 +104,27 @@ namespace Sibz.NetCode.PlayModeTests
         {
             bool disconnected = false;
 
-            yield return ShouldConnect();
-            clientWorld.Disconnected += () => disconnected = true;
-
-            clientWorld.Disconnect();
+            NewClientServer();
+            serverWorld.Listen();
+            yield return new WaitForSeconds(0.5f);
+            clientWorld.Connect();
 
             int maxCount = 60;
+            while (maxCount >= 0 && !clientConnected && !clientConnectFailed)
+            {
+                yield return new WaitForSeconds(0.1f);
+                maxCount--;
+            }
+
+            yield return ShouldConnect();
+            clientWorld.Disconnected += () => disconnected = true;
+            clientWorld.Connected += e=>clientWorld.Disconnect();
+
+
+            maxCount = 60;
             while (maxCount >= 0 && !disconnected)
             {
-                yield return new WaitForSeconds(0.05f);
+                yield return new WaitForSeconds(0.1f);
                 maxCount--;
             }
 
@@ -116,7 +132,30 @@ namespace Sibz.NetCode.PlayModeTests
         }
 
         [UnityTest]
-        public IEnumerator ShouldDisconnectClient()
+        public IEnumerator Client_ShouldDisconnect()
+        {
+            NewClientServer();
+
+            bool disconnected = false;
+
+            clientWorld.Connected += e => clientWorld.Disconnect();
+            clientWorld.Disconnected += () => disconnected = true;
+            serverWorld.Listen();
+            yield return new WaitForSeconds(0.5f);
+            clientWorld.Connect();
+
+            int maxCount = 60;
+            while (maxCount >= 0 && !disconnected)
+            {
+                yield return new WaitForSeconds(0.5f);
+                maxCount--;
+            }
+
+            Assert.IsTrue(disconnected);
+        }
+
+        [UnityTest]
+        public IEnumerator Server_ShouldDisconnectClient()
         {
             NewClientServer();
             bool disconnected = false;
@@ -134,6 +173,36 @@ namespace Sibz.NetCode.PlayModeTests
             }
 
             Assert.IsTrue(disconnected);
+        }
+
+        [UnityTest]
+        public IEnumerator ShouldConnectMultipleClients()
+        {
+            bool client1Connected = false, client2Connected = false;
+            ClientWorld client2 = new ClientWorld(new ClientOptions
+            {
+                Address = "127.0.0.1",
+                Port = (ushort) (21650 + testCount),
+                WorldName = $"Test_Connection_Client_2_{testCount}"
+            });
+            NewClientServer();
+            clientWorld.Connected += e => client1Connected = true;
+            client2.Connected += e => client2Connected = true;
+            clientWorld.Disconnected += () => client1Connected = false;
+            client2.Disconnected += () => client2Connected = false;
+            serverWorld.Listen();
+            yield return new WaitForSeconds(0.5f);
+            clientWorld.Connect();
+            client2.Connect();
+            int maxCount = 30;
+            while (maxCount >= 0 && !(client1Connected && client2Connected))
+            {
+                yield return new WaitForSeconds(0.25f);
+                maxCount--;
+            }
+
+            Assert.IsTrue(client1Connected);
+            Assert.IsTrue(client2Connected);
         }
 
         [UnityTest]
@@ -176,6 +245,142 @@ namespace Sibz.NetCode.PlayModeTests
 
             Assert.IsFalse(client1Connected, "Client 1 did not disconnect");
             Assert.IsFalse(client2Connected, "Client 2 did not disconnect");
+        }
+
+        [UnityTest]
+        public IEnumerator Client_ShouldSendRpc()
+        {
+            NewClientServer();
+            serverWorld.Listen();
+            yield return new WaitForSeconds(0.5f);
+            clientWorld.Connected+= e => clientWorld.World.CreateRpcRequest<PlayModeTestRequest>();
+            clientWorld.Connect();
+
+            int maxCount = 60;
+            while (maxCount >= 0 && !clientConnected && !clientConnectFailed)
+            {
+                yield return new WaitForSeconds(0.1f);
+                maxCount--;
+            }
+
+            /*Assert.IsNotNull(clientWorld, "cw");
+            Assert.IsNotNull(clientWorld.World, "cww");
+            Assert.IsNotNull(clientWorld.World.GetExistingSystem<CreateRpcRequestSystem>(), "cws");*/
+
+            PlayModeTestRequestReceiveSystem system = serverWorld.World.GetExistingSystem<PlayModeTestRequestReceiveSystem>();
+
+            maxCount = 60;
+            while (maxCount >= 0 && !system.ReceivedRpc)
+            {
+                yield return new WaitForSeconds(0.1f);
+                maxCount--;
+            }
+
+            Assert.IsTrue(system.ReceivedRpc);
+        }
+
+        [UnityTest]
+        public IEnumerator Server_ShouldSendRpc()
+        {
+            NewClientServer();
+            serverWorld.Listen();
+            yield return new WaitForSeconds(0.5f);
+            clientWorld.Connected+= e => serverWorld.World.CreateRpcRequest<PlayModeTestRequest>();
+            clientWorld.Connect();
+
+            int maxCount = 60;
+            while (maxCount >= 0 && !clientConnected && !clientConnectFailed)
+            {
+                yield return new WaitForSeconds(0.1f);
+                maxCount--;
+            }
+
+            /*Assert.IsNotNull(clientWorld, "cw");
+            Assert.IsNotNull(clientWorld.World, "cww");
+            Assert.IsNotNull(clientWorld.World.GetExistingSystem<CreateRpcRequestSystem>(), "cws");*/
+
+            PlayModeTestRequestReceiveSystem system = clientWorld.World.GetExistingSystem<PlayModeTestRequestReceiveSystem>();
+
+            maxCount = 60;
+            while (maxCount >= 0 && !system.ReceivedRpc)
+            {
+                yield return new WaitForSeconds(0.1f);
+                maxCount--;
+            }
+
+            Assert.IsTrue(system.ReceivedRpc);
+        }
+
+        /*[UnityTest]
+        public IEnumerator Server_ShouldSendRpcToMultipleClients()
+        {
+            ClientWorld client2 = new ClientWorld(new ClientOptions
+            {
+                Address = "127.0.0.1",
+                Port = (ushort) (21650 + testCount),
+                WorldName = $"Test_Connection_Client_2_{testCount}"
+            });
+            NewClientServer();
+            serverWorld.Listen();
+            yield return new WaitForSeconds(0.5f);
+            clientWorld.Connected+= e =>
+            {
+                serverWorld.World.CreateRpcRequest<PlayModeTestRequest>(
+
+                    );
+            };
+            clientWorld.Connect();
+
+            bool client2Connected = false;
+            bool client2Failed = false;
+            client2.Connected += e => client2Connected = true;
+            client2.ConnectionFailed += s => client2Failed = true;
+            clientWorld.Connect();
+
+            int maxCount = 60;
+            while (maxCount >= 0 && !clientConnected && !clientConnectFailed
+                   && !client2Connected && !client2Failed)
+            {
+                yield return new WaitForSeconds(0.1f);
+                maxCount--;
+            }
+
+            /*Assert.IsNotNull(clientWorld, "cw");
+            Assert.IsNotNull(clientWorld.World, "cww");
+            Assert.IsNotNull(clientWorld.World.GetExistingSystem<CreateRpcRequestSystem>(), "cws");#1#
+
+            PlayModeTestRequestReceiveSystem system = clientWorld.World.GetExistingSystem<PlayModeTestRequestReceiveSystem>();
+
+            maxCount = 60;
+            while (maxCount >= 0 && !system.ReceivedRpc)
+            {
+                yield return new WaitForSeconds(0.1f);
+                maxCount--;
+            }
+
+            Assert.IsTrue(system.ReceivedRpc);
+        }*/
+    }
+
+    [ClientAndServerSystem]
+    public class PlayModeTestRequestSystem : RpcCommandRequestSystem<PlayModeTestRequest>
+    {
+    }
+
+    [ClientAndServerSystem]
+    public class PlayModeTestRequestReceiveSystem : SystemBase
+    {
+        public bool ReceivedRpc;
+        private EntityQuery eq;
+        protected override void OnCreate()
+        {
+            eq = GetEntityQuery(typeof(PlayModeTestRequest), typeof(ReceiveRpcCommandRequestComponent));
+            RequireForUpdate(eq);
+        }
+
+        protected override void OnUpdate()
+        {
+            ReceivedRpc = true;
         }
     }
 }

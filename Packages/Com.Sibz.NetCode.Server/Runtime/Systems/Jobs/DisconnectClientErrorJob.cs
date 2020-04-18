@@ -1,10 +1,12 @@
 ﻿using Sibz.EntityEvents;
 using Sibz.NetCode.Client;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 
 namespace Sibz.NetCode.Server
 {
+    [BurstCompile]
     public struct DisconnectClientErrorJob : IJobParallelFor
     {
         [DeallocateOnJobCompletion] [ReadOnly] [NativeDisableParallelForRestriction]

@@ -311,31 +311,25 @@ namespace Sibz.NetCode.PlayModeTests
             Assert.IsTrue(system.ReceivedRpc);
         }
 
-        /*[UnityTest]
+        [UnityTest]
         public IEnumerator Server_ShouldSendRpcToMultipleClients()
         {
             ClientWorld client2 = new ClientWorld(new ClientOptions
             {
                 Address = "127.0.0.1",
                 Port = (ushort) (21650 + testCount),
-                WorldName = $"Test_Connection_Client_2_{testCount}"
+                WorldName = $"TestServer_ShouldSendRpcToMultipleClients{testCount}"
             });
             NewClientServer();
             serverWorld.Listen();
             yield return new WaitForSeconds(0.5f);
-            clientWorld.Connected+= e =>
-            {
-                serverWorld.World.CreateRpcRequest<PlayModeTestRequest>(
-
-                    );
-            };
             clientWorld.Connect();
 
             bool client2Connected = false;
             bool client2Failed = false;
             client2.Connected += e => client2Connected = true;
             client2.ConnectionFailed += s => client2Failed = true;
-            clientWorld.Connect();
+            client2.Connect();
 
             int maxCount = 60;
             while (maxCount >= 0 && !clientConnected && !clientConnectFailed
@@ -345,21 +339,30 @@ namespace Sibz.NetCode.PlayModeTests
                 maxCount--;
             }
 
+            Assert.IsTrue(clientConnected, "Client 1 did not connect to begin test");
+            Assert.IsTrue(client2Connected, "Client 2 did not connect to begin test");
+
+            serverWorld.World.CreateRpcRequest<PlayModeTestRequest>(
+                serverWorld.GetNetworkConnectionEntityById(clientWorld.NetworkId));
+            serverWorld.World.CreateRpcRequest<PlayModeTestRequest>(
+                serverWorld.GetNetworkConnectionEntityById(client2.NetworkId));
+
             /*Assert.IsNotNull(clientWorld, "cw");
             Assert.IsNotNull(clientWorld.World, "cww");
-            Assert.IsNotNull(clientWorld.World.GetExistingSystem<CreateRpcRequestSystem>(), "cws");#1#
+            Assert.IsNotNull(clientWorld.World.GetExistingSystem<CreateRpcRequestSystem>(), "cws");*/
 
-            PlayModeTestRequestReceiveSystem system = clientWorld.World.GetExistingSystem<PlayModeTestRequestReceiveSystem>();
+            PlayModeTestRequestReceiveSystem system1 = clientWorld.World.GetExistingSystem<PlayModeTestRequestReceiveSystem>();
+            PlayModeTestRequestReceiveSystem system2 = client2.World.GetExistingSystem<PlayModeTestRequestReceiveSystem>();
 
             maxCount = 60;
-            while (maxCount >= 0 && !system.ReceivedRpc)
+            while (maxCount >= 0 && !system1.ReceivedRpc && !system2.ReceivedRpc)
             {
                 yield return new WaitForSeconds(0.1f);
                 maxCount--;
             }
 
-            Assert.IsTrue(system.ReceivedRpc);
-        }*/
+            Assert.IsTrue(system1.ReceivedRpc && system2.ReceivedRpc);
+        }
     }
 
     [ClientAndServerSystem]

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Sibz.EntityEvents;
 using Sibz.NetCode.Client;
 using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
@@ -106,6 +107,27 @@ namespace Sibz.NetCode.Tests.Client
             {
                 Assert.IsNotNull(world.GetExistingSystem(system), $"System: {system.Name}");
             }
+        }
+
+
+        [Test]
+        public void WhenConnected_ShouldSetNetworkId()
+        {
+            world.CreateSingleton(new NetworkIdComponent { Value = 42 });
+            world.EnqueueEvent(new ConnectionCompleteEvent());
+            world.GetExistingSystem<BeginInitializationEntityCommandBufferSystem>().Update();
+            world.GetHookSystem().Update();
+            Assert.AreEqual(42, clientWorld.NetworkId);
+        }
+
+        [Test]
+        public void WhenDisconnected_ShouldResetNetworkIdToZero()
+        {
+            WhenConnected_ShouldSetNetworkId();
+            world.EnqueueEvent(new DisconnectedEvent());
+            world.GetExistingSystem<BeginInitializationEntityCommandBufferSystem>().Update();
+            world.GetHookSystem().Update();
+            Assert.AreEqual(0, clientWorld.NetworkId);
         }
 
         private void UpdateWorld()

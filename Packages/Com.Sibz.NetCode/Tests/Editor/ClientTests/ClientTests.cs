@@ -78,6 +78,7 @@ namespace Sibz.NetCode.Tests.Client
         [Test]
         public void WhenConnectedEvent_ShouldCallback()
         {
+            world.CreateSingleton(new NetworkIdComponent { Value = 42 });
             world.CreateSingleton<ConnectionCompleteEvent>();
             world.GetHookSystem().Update();
             Assert.AreEqual(CallbackName.Connected, clientWorld.CallbackName);

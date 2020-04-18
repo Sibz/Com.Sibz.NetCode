@@ -43,18 +43,18 @@ namespace Sibz.NetCode.Tests.Base
         }
 
         [Test]
-        public void CreateRpcRequest_WhenWorldIsNull_ShouldThrow()
-        {
-            Assert.Catch<ArgumentNullException>(() =>
-                CreateRpcRequestSystem.CreateRpcRequest(null, new GoInGameRequest()));
-        }
-
-        [Test]
         public void GetCommandTargetComponentEntity_WhenNetworkConnection_GetEntity()
         {
             world.CreateSingleton<NetworkIdComponent>();
             Entity x = system.CommandTargetComponentEntity;
             Assert.IsFalse(x.Equals(Entity.Null));
+        }
+
+        [Test]
+        public void CreateRpcRequest_WhenWorldIsNull_ShouldThrow()
+        {
+            Assert.Catch<ArgumentNullException>(() =>
+                CreateRpcRequestSystem.CreateRpcRequest(null, new GoInGameRequest()));
         }
 
 

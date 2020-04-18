@@ -339,7 +339,7 @@ namespace Sibz.NetCode.PlayModeTests
             yield return new WaitForSeconds(0.1f);
 
             int maxCount = 90;
-            while (maxCount >= 0 && !(clientConnected || clientConnectFailed|| client2Connected || client2Failed))
+            while (maxCount >= 0 && !(clientConnected || clientConnectFailed) && !(client2Connected || client2Failed))
             {
                 yield return new WaitForSeconds(0.1f);
                 maxCount--;

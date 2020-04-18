@@ -38,6 +38,7 @@ namespace Sibz.NetCode.PlayModeTests
         private void NewClientServer()
         {
             ushort port = (ushort) (21650 + testCount);
+            Debug.Log(port);
             serverOptions = new ServerOptions
             {
                 Address = "0.0.0.0",
@@ -86,15 +87,17 @@ namespace Sibz.NetCode.PlayModeTests
         {
             NewClientServer();
             serverWorld.Listen();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
             clientWorld.Connect();
 
-            int maxCount = 120;
-            while (maxCount >= 0 && !clientConnected && !clientConnectFailed)
+            Debug.Log("Waiting for client to be connected");
+            int maxCount = 60;
+            while (maxCount >= 0 && !(clientConnected || clientConnectFailed))
             {
-                yield return new WaitForSeconds(0.05f);
+                yield return new WaitForSeconds(0.1f);
                 maxCount--;
             }
+            Debug.Log($"...Finished waiting ({(60f-maxCount)/10f}seconds)");
 
             Assert.IsTrue(clientConnected);
         }
@@ -106,11 +109,11 @@ namespace Sibz.NetCode.PlayModeTests
 
             NewClientServer();
             serverWorld.Listen();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
             clientWorld.Connect();
 
             int maxCount = 60;
-            while (maxCount >= 0 && !clientConnected && !clientConnectFailed)
+            while (maxCount >= 0 && !(clientConnected || clientConnectFailed))
             {
                 yield return new WaitForSeconds(0.1f);
                 maxCount--;
@@ -141,7 +144,7 @@ namespace Sibz.NetCode.PlayModeTests
             clientWorld.Connected += e => clientWorld.Disconnect();
             clientWorld.Disconnected += () => disconnected = true;
             serverWorld.Listen();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
             clientWorld.Connect();
 
             int maxCount = 60;
@@ -162,13 +165,13 @@ namespace Sibz.NetCode.PlayModeTests
             clientWorld.Connected += x => serverWorld.DisconnectClient(1);
             clientWorld.Disconnected += () => disconnected = true;
             serverWorld.Listen();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
             clientWorld.Connect();
 
             int maxCount = 60;
             while (maxCount >= 0 && !disconnected)
             {
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.1f);
                 maxCount--;
             }
 
@@ -191,7 +194,7 @@ namespace Sibz.NetCode.PlayModeTests
             clientWorld.Disconnected += () => client1Connected = false;
             client2.Disconnected += () => client2Connected = false;
             serverWorld.Listen();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
             clientWorld.Connect();
             client2.Connect();
             int maxCount = 30;
@@ -221,11 +224,11 @@ namespace Sibz.NetCode.PlayModeTests
             clientWorld.Disconnected += () => client1Connected = false;
             client2.Disconnected += () => client2Connected = false;
             serverWorld.Listen();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
             clientWorld.Connect();
             client2.Connect();
             int maxCount = 30;
-            while (maxCount >= 0 && !(client1Connected && client2Connected))
+            while (maxCount >= 0 && !(clientConnected && client2Connected))
             {
                 yield return new WaitForSeconds(0.25f);
                 maxCount--;
@@ -252,7 +255,7 @@ namespace Sibz.NetCode.PlayModeTests
         {
             NewClientServer();
             serverWorld.Listen();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
             clientWorld.Connected+= e => clientWorld.World.CreateRpcRequest<PlayModeTestRequest>();
             clientWorld.Connect();
 
@@ -284,7 +287,7 @@ namespace Sibz.NetCode.PlayModeTests
         {
             NewClientServer();
             serverWorld.Listen();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
             clientWorld.Connected+= e => serverWorld.World.CreateRpcRequest<PlayModeTestRequest>();
             clientWorld.Connect();
 
@@ -320,20 +323,23 @@ namespace Sibz.NetCode.PlayModeTests
                 Port = (ushort) (21650 + testCount),
                 WorldName = $"TestServer_ShouldSendRpcToMultipleClients{testCount}"
             });
+            Debug.Log((ushort) (21650 + testCount));
             NewClientServer();
-            serverWorld.Listen();
-            yield return new WaitForSeconds(0.5f);
-            clientWorld.Connect();
 
+
+            serverWorld.Listen();
+            yield return new WaitForSeconds(0.1f);
+            clientWorld.Connect();
+            yield return new WaitForSeconds(0.1f);
             bool client2Connected = false;
             bool client2Failed = false;
             client2.Connected += e => client2Connected = true;
             client2.ConnectionFailed += s => client2Failed = true;
             client2.Connect();
+            yield return new WaitForSeconds(0.1f);
 
-            int maxCount = 60;
-            while (maxCount >= 0 && !clientConnected && !clientConnectFailed
-                   && !client2Connected && !client2Failed)
+            int maxCount = 90;
+            while (maxCount >= 0 && !(clientConnected || clientConnectFailed|| client2Connected || client2Failed))
             {
                 yield return new WaitForSeconds(0.1f);
                 maxCount--;

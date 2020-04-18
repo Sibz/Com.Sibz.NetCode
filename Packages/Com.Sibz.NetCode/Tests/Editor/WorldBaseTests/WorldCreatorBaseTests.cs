@@ -45,6 +45,8 @@ namespace Sibz.NetCode.Tests.Base
         [Test]
         public void ShouldCall_ImportPrefabs()
         {
+            wm.CreateWorld();
+            Assert.IsTrue(wm.CalledImportPrefabs);
         }
 
         [OneTimeSetUp]

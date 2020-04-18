@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using Packages.Components;
 using Sibz.NetCode.Server;
 using Sibz.NetCode.WorldExtensions;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
+using Unity.NetCode;
 using Unity.Networking.Transport;
 
 [assembly: DisableAutoCreation]
@@ -76,6 +80,25 @@ namespace Sibz.NetCode
         public void Close()
         {
             World.CreateSingleton<Disconnect>();
+        }
+
+        public Entity GetNetworkConnectionEntityById(int id)
+        {
+            EntityQuery eq = World.EntityManager.CreateEntityQuery(typeof(NetworkIdComponent));
+            using (NativeArray<NetworkIdComponent> comps = eq.ToComponentDataArrayAsync<NetworkIdComponent>(Allocator.TempJob, out JobHandle jh1))
+            using (NativeArray<Entity> entities = eq.ToEntityArrayAsync(Allocator.TempJob, out JobHandle jh2)) {
+                jh1.Complete();
+                jh2.Complete();
+                for (int i = 0; i < comps.Length; i++)
+                {
+
+                        if (comps[i].Value == id)
+                        {
+                            return entities[i];
+                        }
+                }
+            }
+            throw new KeyNotFoundException($"Unable to locate network entity with id {id}");
         }
     }
 }

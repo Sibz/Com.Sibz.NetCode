@@ -4,6 +4,8 @@ using NUnit.Framework;
 using Packages.Components;
 using Sibz.NetCode.Server;
 using Sibz.NetCode.WorldExtensions;
+using Unity.Entities;
+using Unity.NetCode;
 using Unity.Networking.Transport;
 
 namespace Sibz.NetCode.Tests.Server
@@ -152,6 +154,19 @@ namespace Sibz.NetCode.Tests.Server
             testWorld.DisconnectAllClients();
             Assert.AreEqual(1,
                 testWorld.World.EntityManager.CreateEntityQuery(typeof(DisconnectAllClients)).CalculateEntityCount());
+        }
+
+        [Test]
+        public void GetNetworkConnectionEntityById_ShouldGetNetworkEntity()
+        {
+            Entity entity = testWorld.World.CreateSingleton(new NetworkIdComponent { Value = 42 });
+            Assert.AreEqual(entity, testWorld.GetNetworkConnectionEntityById(42));
+        }
+
+        [Test]
+        public void GetNetworkConnectionEntityById_WhenIdDoesNotExit_ShouldThrow ()
+        {
+            Assert.Catch<KeyNotFoundException>(()=>testWorld.GetNetworkConnectionEntityById(42));
         }
 
         private class MyServerWorld : ServerWorld

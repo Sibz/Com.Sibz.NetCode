@@ -2,7 +2,6 @@
 using Sibz.NetCode.Client;
 using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.NetCode;
 
 namespace Sibz.NetCode.Tests.Client
@@ -76,10 +75,10 @@ namespace Sibz.NetCode.Tests.Client
         {
             public bool DidUpdate;
 
-            protected override JobHandle OnUpdate(JobHandle inputDeps)
+            protected override void OnUpdate()
             {
                 DidUpdate = true;
-                return base.OnUpdate(inputDeps);
+                base.OnUpdate();
             }
         }
     }

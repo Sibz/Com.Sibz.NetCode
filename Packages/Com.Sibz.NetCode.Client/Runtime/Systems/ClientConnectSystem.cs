@@ -6,7 +6,7 @@ namespace Sibz.NetCode.Client
 {
     [ClientSystem]
     [UpdateInGroup(typeof(InitializationSystemGroup))]
-    public class ClientConnectSystem : ComponentSystem
+    public class ClientConnectSystem : SystemBase
     {
         private EntityQuery incomingConfirmRequestQuery;
         public IClientNetworkStreamSystemProxy NetworkStreamSystemProxy { get; set; }

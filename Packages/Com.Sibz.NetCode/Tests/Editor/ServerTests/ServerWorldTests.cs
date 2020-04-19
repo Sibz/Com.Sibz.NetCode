@@ -164,9 +164,9 @@ namespace Sibz.NetCode.Tests.Server
         }
 
         [Test]
-        public void GetNetworkConnectionEntityById_WhenIdDoesNotExit_ShouldThrow ()
+        public void GetNetworkConnectionEntityById_WhenIdDoesNotExit_ShouldThrow()
         {
-            Assert.Catch<KeyNotFoundException>(()=>testWorld.GetNetworkConnectionEntityById(42));
+            Assert.Catch<KeyNotFoundException>(() => testWorld.GetNetworkConnectionEntityById(42));
         }
 
         private class MyServerWorld : ServerWorld

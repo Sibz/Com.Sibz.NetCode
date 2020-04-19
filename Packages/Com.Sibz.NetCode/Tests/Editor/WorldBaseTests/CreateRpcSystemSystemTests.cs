@@ -6,6 +6,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.NetCode;
 using Unity.Networking.Transport;
+
 // ReSharper disable HeapView.BoxingAllocation
 
 namespace Sibz.NetCode.Tests.Base
@@ -76,7 +77,7 @@ namespace Sibz.NetCode.Tests.Base
             world.CreateSingleton<NetworkIdComponent>();
             EntityQuery eq =
                 world.EntityManager.CreateEntityQuery(typeof(TestRpc2), typeof(SendRpcCommandRequestComponent));
-            world.CreateRpcRequest(new TestRpc2{ Data = 42});
+            world.CreateRpcRequest(new TestRpc2 { Data = 42 });
             Assert.AreEqual(1, eq.CalculateEntityCount(), "Test should create entity first");
             Assert.AreEqual(42, eq.GetSingleton<TestRpc2>().Data);
         }
@@ -89,7 +90,7 @@ namespace Sibz.NetCode.Tests.Base
             world.CreateSingleton<NetworkIdComponent>();
             EntityQuery eq =
                 world.EntityManager.CreateEntityQuery(typeof(TestRpc2), typeof(SendRpcCommandRequestComponent));
-            CreateRpcRequestSystem.CreateRpcRequest(world, new TestRpc2{ Data = 42}, target);
+            CreateRpcRequestSystem.CreateRpcRequest(world, new TestRpc2 { Data = 42 }, target);
             Assert.AreEqual(1, eq.CalculateEntityCount(), "Test should create entity first");
             Assert.IsFalse(target.Equals(system.CommandTargetComponentEntity),
                 "Target should not be return values of CommandTargetComponentEntity for this test");
@@ -116,10 +117,10 @@ namespace Sibz.NetCode.Tests.Base
         {
             using (EntityCommandBuffer buffer = new EntityCommandBuffer(Allocator.TempJob))
             {
-                new MyTestJob()
+                new MyTestJob
                 {
                     Buffer = buffer.ToConcurrent(),
-                    TargetConnection =  world.CreateSingleton<NetworkIdComponent>()
+                    TargetConnection = world.CreateSingleton<NetworkIdComponent>()
                 }.Run();
                 buffer.Playback(world.EntityManager);
             }
@@ -133,6 +134,7 @@ namespace Sibz.NetCode.Tests.Base
         {
             public EntityCommandBuffer.Concurrent Buffer;
             public Entity TargetConnection;
+
             public void Execute()
             {
                 Buffer.CreateRpcRequest(0, new TestRpc1(), TargetConnection);
@@ -157,9 +159,11 @@ namespace Sibz.NetCode.Tests.Base
                 throw new InvalidOperationException();
             }
         }
+
         private struct TestRpc2 : IRpcCommand
         {
             public int Data;
+
             public void Serialize(ref DataStreamWriter writer)
             {
                 throw new InvalidOperationException();
@@ -182,13 +186,13 @@ namespace Sibz.NetCode.Tests.Base
 
             public void DoUpdate()
             {
-                OnUpdate(default);
+                OnUpdate();
             }
 
-            protected override JobHandle OnUpdate(JobHandle inputDeps)
+            protected override void OnUpdate()
             {
                 DidUpdate = true;
-                return base.OnUpdate(inputDeps);
+                base.OnUpdate();
             }
         }
     }

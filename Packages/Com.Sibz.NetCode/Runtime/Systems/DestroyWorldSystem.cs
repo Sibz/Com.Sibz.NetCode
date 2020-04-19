@@ -7,7 +7,7 @@ namespace Sibz.NetCode
 {
     [ClientAndServerSystem]
     [UpdateInGroup(typeof(InitializationSystemGroup))]
-    public class DestroyWorldSystem : ComponentSystem
+    public class DestroyWorldSystem : SystemBase
     {
         public Action OnDestroyed;
 

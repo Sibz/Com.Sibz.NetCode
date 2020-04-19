@@ -7,7 +7,7 @@ using Unity.NetCode;
 namespace Sibz.NetCode
 {
     [ClientAndServerSystem]
-    public class CreateRpcRequestSystem : JobComponentSystem
+    public class CreateRpcRequestSystem : SystemBase
     {
         private EntityQuery networkIdEntityQuery;
 
@@ -91,7 +91,7 @@ namespace Sibz.NetCode
             Enabled = false;
         }
 
-        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        protected override  void OnUpdate()
         {
             throw new InvalidOperationException($"{nameof(CreateRpcRequestSystem)} should not update");
         }

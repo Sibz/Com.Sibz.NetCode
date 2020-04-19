@@ -1,7 +1,6 @@
 ﻿using Sibz.CommandBufferHelpers;
 using Sibz.EntityEvents;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.NetCode;
 
 namespace Sibz.NetCode.Client

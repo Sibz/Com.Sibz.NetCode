@@ -85,19 +85,21 @@ namespace Sibz.NetCode
         public Entity GetNetworkConnectionEntityById(int id)
         {
             EntityQuery eq = World.EntityManager.CreateEntityQuery(typeof(NetworkIdComponent));
-            using (NativeArray<NetworkIdComponent> comps = eq.ToComponentDataArrayAsync<NetworkIdComponent>(Allocator.TempJob, out JobHandle jh1))
-            using (NativeArray<Entity> entities = eq.ToEntityArrayAsync(Allocator.TempJob, out JobHandle jh2)) {
+            using (NativeArray<NetworkIdComponent> comps =
+                eq.ToComponentDataArrayAsync<NetworkIdComponent>(Allocator.TempJob, out JobHandle jh1))
+            using (NativeArray<Entity> entities = eq.ToEntityArrayAsync(Allocator.TempJob, out JobHandle jh2))
+            {
                 jh1.Complete();
                 jh2.Complete();
                 for (int i = 0; i < comps.Length; i++)
                 {
-
-                        if (comps[i].Value == id)
-                        {
-                            return entities[i];
-                        }
+                    if (comps[i].Value == id)
+                    {
+                        return entities[i];
+                    }
                 }
             }
+
             throw new KeyNotFoundException($"Unable to locate network entity with id {id}");
         }
     }

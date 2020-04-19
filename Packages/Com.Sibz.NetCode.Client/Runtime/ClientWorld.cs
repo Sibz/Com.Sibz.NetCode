@@ -37,9 +37,9 @@ namespace Sibz.NetCode
                 hookSystem.RegisterHook<ConnectionCompleteEvent>(e =>
                 {
                     Connected?.Invoke(World.EntityManager
-                            .GetComponentData<NetworkIdComponent>(
-                                World.GetExistingSystem<CreateRpcRequestSystem>().CommandTargetComponentEntity)
-                            .Value);
+                        .GetComponentData<NetworkIdComponent>(
+                            World.GetExistingSystem<CreateRpcRequestSystem>().CommandTargetComponentEntity)
+                        .Value);
                 });
                 hookSystem.RegisterHook<ConnectionFailedEvent>(e =>
                     ConnectionFailed?.Invoke(((ConnectionFailedEvent) e).Message.ToString()));

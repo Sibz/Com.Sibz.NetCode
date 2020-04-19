@@ -2,7 +2,6 @@
 using Sibz.NetCode.Client;
 using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.NetCode;
 
 namespace Sibz.NetCode.Tests.Client

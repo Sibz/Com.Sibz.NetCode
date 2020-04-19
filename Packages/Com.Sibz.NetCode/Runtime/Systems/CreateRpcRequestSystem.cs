@@ -91,7 +91,7 @@ namespace Sibz.NetCode
             Enabled = false;
         }
 
-        protected override  void OnUpdate()
+        protected override void OnUpdate()
         {
             throw new InvalidOperationException($"{nameof(CreateRpcRequestSystem)} should not update");
         }

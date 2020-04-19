@@ -97,7 +97,8 @@ namespace Sibz.NetCode.PlayModeTests
                 yield return new WaitForSeconds(0.1f);
                 maxCount--;
             }
-            Debug.Log($"...Finished waiting ({(60f-maxCount)/10f}seconds)");
+
+            Debug.Log($"...Finished waiting ({(60f - maxCount) / 10f}seconds)");
 
             Assert.IsTrue(clientConnected);
         }
@@ -121,7 +122,7 @@ namespace Sibz.NetCode.PlayModeTests
 
             yield return ShouldConnect();
             clientWorld.Disconnected += () => disconnected = true;
-            clientWorld.Connected += e=>clientWorld.Disconnect();
+            clientWorld.Connected += e => clientWorld.Disconnect();
 
 
             maxCount = 60;
@@ -256,7 +257,7 @@ namespace Sibz.NetCode.PlayModeTests
             NewClientServer();
             serverWorld.Listen();
             yield return new WaitForSeconds(0.1f);
-            clientWorld.Connected+= e => clientWorld.World.CreateRpcRequest<PlayModeTestRequest>();
+            clientWorld.Connected += e => clientWorld.World.CreateRpcRequest<PlayModeTestRequest>();
             clientWorld.Connect();
 
             int maxCount = 60;
@@ -270,7 +271,8 @@ namespace Sibz.NetCode.PlayModeTests
             Assert.IsNotNull(clientWorld.World, "cww");
             Assert.IsNotNull(clientWorld.World.GetExistingSystem<CreateRpcRequestSystem>(), "cws");*/
 
-            PlayModeTestRequestReceiveSystem system = serverWorld.World.GetExistingSystem<PlayModeTestRequestReceiveSystem>();
+            PlayModeTestRequestReceiveSystem system =
+                serverWorld.World.GetExistingSystem<PlayModeTestRequestReceiveSystem>();
 
             maxCount = 60;
             while (maxCount >= 0 && !system.ReceivedRpc)
@@ -288,7 +290,7 @@ namespace Sibz.NetCode.PlayModeTests
             NewClientServer();
             serverWorld.Listen();
             yield return new WaitForSeconds(0.1f);
-            clientWorld.Connected+= e => serverWorld.World.CreateRpcRequest<PlayModeTestRequest>();
+            clientWorld.Connected += e => serverWorld.World.CreateRpcRequest<PlayModeTestRequest>();
             clientWorld.Connect();
 
             int maxCount = 60;
@@ -302,7 +304,8 @@ namespace Sibz.NetCode.PlayModeTests
             Assert.IsNotNull(clientWorld.World, "cww");
             Assert.IsNotNull(clientWorld.World.GetExistingSystem<CreateRpcRequestSystem>(), "cws");*/
 
-            PlayModeTestRequestReceiveSystem system = clientWorld.World.GetExistingSystem<PlayModeTestRequestReceiveSystem>();
+            PlayModeTestRequestReceiveSystem system =
+                clientWorld.World.GetExistingSystem<PlayModeTestRequestReceiveSystem>();
 
             maxCount = 60;
             while (maxCount >= 0 && !system.ReceivedRpc)
@@ -357,8 +360,10 @@ namespace Sibz.NetCode.PlayModeTests
             Assert.IsNotNull(clientWorld.World, "cww");
             Assert.IsNotNull(clientWorld.World.GetExistingSystem<CreateRpcRequestSystem>(), "cws");*/
 
-            PlayModeTestRequestReceiveSystem system1 = clientWorld.World.GetExistingSystem<PlayModeTestRequestReceiveSystem>();
-            PlayModeTestRequestReceiveSystem system2 = client2.World.GetExistingSystem<PlayModeTestRequestReceiveSystem>();
+            PlayModeTestRequestReceiveSystem system1 =
+                clientWorld.World.GetExistingSystem<PlayModeTestRequestReceiveSystem>();
+            PlayModeTestRequestReceiveSystem system2 =
+                client2.World.GetExistingSystem<PlayModeTestRequestReceiveSystem>();
 
             maxCount = 60;
             while (maxCount >= 0 && !system1.ReceivedRpc && !system2.ReceivedRpc)
@@ -381,6 +386,7 @@ namespace Sibz.NetCode.PlayModeTests
     {
         public bool ReceivedRpc;
         private EntityQuery eq;
+
         protected override void OnCreate()
         {
             eq = GetEntityQuery(typeof(PlayModeTestRequest), typeof(ReceiveRpcCommandRequestComponent));

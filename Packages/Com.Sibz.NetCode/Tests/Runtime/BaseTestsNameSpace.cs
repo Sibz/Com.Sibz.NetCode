@@ -331,15 +331,15 @@ namespace Sibz.NetCode.PlayModeTests
 
 
             serverWorld.Listen();
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.3f);
             clientWorld.Connect();
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.2f);
             bool client2Connected = false;
             bool client2Failed = false;
             client2.Connected += e => client2Connected = true;
             client2.ConnectionFailed += s => client2Failed = true;
             client2.Connect();
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.2f);
 
             int maxCount = 90;
             while (maxCount >= 0 && !(clientConnected || clientConnectFailed) && !(client2Connected || client2Failed))

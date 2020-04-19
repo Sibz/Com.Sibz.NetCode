@@ -76,10 +76,10 @@ namespace Sibz.NetCode.Tests.Client
         {
             public bool DidUpdate;
 
-            protected override JobHandle OnUpdate(JobHandle inputDeps)
+            protected override void OnUpdate()
             {
                 DidUpdate = true;
-                return base.OnUpdate(inputDeps);
+                base.OnUpdate();
             }
         }
     }

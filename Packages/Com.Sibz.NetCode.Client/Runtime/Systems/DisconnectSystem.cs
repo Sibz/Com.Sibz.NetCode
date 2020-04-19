@@ -8,7 +8,7 @@ namespace Sibz.NetCode.Client
 {
     [ClientSystem]
     [UpdateInGroup(typeof(InitializationSystemGroup))]
-    public class DisconnectSystem : JobComponentSystem
+    public class DisconnectSystem : SystemBase
     {
         private EndSimCommandBuffer commandBuffer;
         private EntityQuery networkStreamInGameQuery;
@@ -20,12 +20,12 @@ namespace Sibz.NetCode.Client
             networkStreamInGameQuery = GetEntityQuery(typeof(NetworkStreamInGame));
         }
 
-        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        protected override void OnUpdate()
         {
             if (networkStreamInGameQuery.CalculateEntityCount() == 0)
             {
                 EntityManager.DestroyEntity(GetSingletonEntity<Disconnect>());
-                return inputDeps;
+                return;
             }
 
             DisconnectJob job = new DisconnectJob
@@ -34,16 +34,14 @@ namespace Sibz.NetCode.Client
                 Disconnect = GetSingletonEntity<Disconnect>()
             };
 
-            inputDeps = Entities.WithAll<NetworkStreamInGame>().ForEach(
+            Dependency = Entities.WithAll<NetworkStreamInGame>().ForEach(
                 (Entity networkStreamEntity, int entityInQueryIndex) =>
                 {
                     job.Execute(entityInQueryIndex, networkStreamEntity);
-                }).Schedule(inputDeps);
+                }).Schedule(Dependency);
 
-            commandBuffer.AddJobDependency(inputDeps);
-            World.EventSystemAddJobDependency(inputDeps);
-
-            return inputDeps;
+            commandBuffer.AddJobDependency(Dependency);
+            World.EventSystemAddJobDependency(Dependency);
         }
     }
 }

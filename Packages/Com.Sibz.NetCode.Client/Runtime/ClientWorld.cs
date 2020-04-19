@@ -63,7 +63,7 @@ namespace Sibz.NetCode
             World.CreateSingleton(new Connecting
             {
                 EndPoint = NetworkEndPoint.Parse(Options.Address, Options.Port, Options.NetworkFamily),
-                TimeoutTime = (float) World.Time.ElapsedTime + Options.TimeOut,
+                Timeout = Options.TimeOut,
                 State = NetworkState.InitialRequest
             });
         }

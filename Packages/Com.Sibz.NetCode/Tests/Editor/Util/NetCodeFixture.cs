@@ -56,11 +56,12 @@ namespace Sibz.NetCode.Tests
         {
             for (int i = World.All.Count - 1; i >= 0; i--)
             {
-                if (World.All[i].Name.StartsWith("Test") || World.All[i].Name == "DefaultNetnonoWorld"
-                                                         || World.All[i].Name.StartsWith("Client")
-                                                         || World.All[i].Name.StartsWith("Server"))
+                if ((World.All[i].Name.StartsWith("Test") || World.All[i].Name == "DefaultNetnonoWorld"
+                                                          || World.All[i].Name.StartsWith("Client")
+                                                          || World.All[i].Name.StartsWith("Server"))
+                    && (World.All[i] is World world && world.IsCreated))
                 {
-                    World.All[i].Dispose();
+                    world.Dispose();
                 }
             }
         }

@@ -25,7 +25,7 @@ namespace Sibz.NetCode.Tests.Base
         [TearDown]
         public void TearDown()
         {
-            if (world.IsCreated)
+            if (world is World && world.IsCreated)
             {
                 world.Dispose();
             }
@@ -36,6 +36,9 @@ namespace Sibz.NetCode.Tests.Base
         {
             destroyWorldSystem.Update();
             Assert.IsFalse(destroyWorldSystem.DidUpdate);
+
+            destroyWorldSystem.Update();
+            destroyWorldSystem.Update();
         }
 
         [Test]
@@ -44,6 +47,11 @@ namespace Sibz.NetCode.Tests.Base
             world.CreateSingleton<DestroyWorld>();
             destroyWorldSystem.Update();
             Assert.IsTrue(destroyWorldSystem.DidUpdate);
+
+            bufferSystem.Update();
+            destroyWorldSystem.Update();
+            destroyWorldSystem.Update();
+
         }
 
         [Test]
@@ -53,6 +61,9 @@ namespace Sibz.NetCode.Tests.Base
             destroyWorldSystem.Update();
             bufferSystem.Update();
             Assert.AreEqual(1, world.EntityManager.CreateEntityQuery(typeof(DestroyWorldEvent)).CalculateEntityCount());
+
+            destroyWorldSystem.Update();
+            destroyWorldSystem.Update();
         }
 
         [Test]
@@ -61,6 +72,10 @@ namespace Sibz.NetCode.Tests.Base
             world.CreateSingleton<DestroyWorld>();
             destroyWorldSystem.Update();
             Assert.IsTrue(world.IsCreated);
+
+            bufferSystem.Update();
+            destroyWorldSystem.Update();
+            destroyWorldSystem.Update();
         }
 
 
@@ -71,7 +86,7 @@ namespace Sibz.NetCode.Tests.Base
             destroyWorldSystem.Update();
             bufferSystem.Update();
             destroyWorldSystem.Update();
-            Task.Delay(10).Wait();
+            destroyWorldSystem.Update();
             Assert.IsFalse(world.IsCreated);
         }
 
@@ -83,6 +98,8 @@ namespace Sibz.NetCode.Tests.Base
             bufferSystem.Update();
             destroyWorldSystem.Update();
             Assert.IsFalse(world.EntityManager.Exists(entity));
+
+            destroyWorldSystem.Update();
         }
     }
 

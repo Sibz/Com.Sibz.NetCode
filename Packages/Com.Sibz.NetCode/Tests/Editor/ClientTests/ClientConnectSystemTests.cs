@@ -80,7 +80,7 @@ namespace Sibz.NetCode.Tests.Client
         public void WhenTimeoutHasPassed_ShouldCreateFailureEvent()
         {
             connectSystem.World.EntityManager.SetComponentData(ConnectingSingletonQuery.GetSingletonEntity(),
-                new Connecting { TimeoutTime = -1 });
+                new Connecting { Timeout = -1 });
             UpdateClient();
             UpdateClient();
             Assert.AreEqual(1, ConnectFailedEventQuery.CalculateEntityCount());
@@ -89,7 +89,7 @@ namespace Sibz.NetCode.Tests.Client
         [Test]
         public void WhenTimeoutHasPassed_ShouldDestroyConnectingSingleton()
         {
-            State = new Connecting { TimeoutTime = -1 };
+            State = new Connecting { Timeout = -1 };
             UpdateClient();
             Assert.AreEqual(0, ConnectingSingletonQuery.CalculateEntityCount());
         }
@@ -108,7 +108,7 @@ namespace Sibz.NetCode.Tests.Client
         [Test]
         public void WhenConnectionProgressesFromInitialRequest_ShouldUpdateStateToConnectingToServer()
         {
-            State = new Connecting { State = NetworkState.InitialRequest };
+            State = new Connecting { State = NetworkState.InitialRequest, Timeout = 10};
             world.EnqueueEvent<ConnectionInitiatedEvent>();
             connectSystem.NetworkStreamSystemProxy = new MyClientNetworkStreamSystemProxy();
             UpdateClient();

@@ -1,6 +1,7 @@
 ﻿using Sibz.EntityEvents;
 using Unity.Entities;
 using Unity.NetCode;
+using UnityEngine;
 
 namespace Sibz.NetCode.Client
 {
@@ -44,12 +45,16 @@ namespace Sibz.NetCode.Client
 
         private bool ProcessTimeout(ref Connecting connecting)
         {
-            if (connecting.TimeoutTime < Time.ElapsedTime)
+
+            if (connecting.Timeout < 0)
             {
+                Debug.Log(connecting.Timeout);
                 EntityManager.DestroyEntity(GetSingletonEntity<Connecting>());
                 World.EnqueueEvent(new ConnectionFailedEvent { Message = "Connection timed out" });
                 return true;
             }
+
+            connecting.Timeout -= World.Time.DeltaTime;
 
             return false;
         }

@@ -7,6 +7,6 @@ namespace Sibz.NetCode.Client
     {
         public NetworkEndPoint EndPoint;
         public NetworkState State;
-        public float TimeoutTime;
+        public float Timeout;
     }
 }

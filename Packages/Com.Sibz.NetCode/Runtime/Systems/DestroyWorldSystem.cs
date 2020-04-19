@@ -26,19 +26,15 @@ namespace Sibz.NetCode
 
             EntityManager.DestroyEntity(GetSingletonEntity<DestroyWorld>());
 
-            // After OnUpdate runs, last system version is updated
-            // so need to wait for that otherwise it will throw
-            // a null ref error.
-            uint oldSystemVersion = LastSystemVersion;
-            new Task(() =>
+            foreach (ComponentSystemBase system in World.Systems)
             {
-                while (oldSystemVersion == LastSystemVersion)
-                {
-                    Task.Delay(1);
-                }
+                system.Enabled = false;
+            }
+        }
 
-                World.Dispose();
-            }).Start();
+        protected override void OnStopRunning()
+        {
+            World.Dispose();
         }
 
         protected override void OnDestroy()

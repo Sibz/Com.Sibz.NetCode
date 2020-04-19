@@ -98,6 +98,28 @@ namespace Sibz.NetCode
         {
             if (WorldIsCreated)
             {
+                TickClientInitializationSystem tickCis =
+                    World.DefaultGameObjectInjectionWorld.GetExistingSystem<TickClientInitializationSystem>();
+                TickClientSimulationSystem tickCss =
+                    World.DefaultGameObjectInjectionWorld.GetExistingSystem<TickClientSimulationSystem>();
+                TickClientPresentationSystem tickCps =
+                    World.DefaultGameObjectInjectionWorld.GetExistingSystem<TickClientPresentationSystem>();
+                TickServerInitializationSystem tickSis =
+                    World.DefaultGameObjectInjectionWorld.GetExistingSystem<TickServerInitializationSystem>();
+                TickServerSimulationSystem tickSss =
+                    World.DefaultGameObjectInjectionWorld.GetExistingSystem<TickServerSimulationSystem>();
+                if (tickCis != null)
+                {
+                    tickCis.RemoveSystemFromUpdateList(World.GetExistingSystem<ClientInitializationSystemGroup>());
+                    tickCss.RemoveSystemFromUpdateList(World.GetExistingSystem<ClientSimulationSystemGroup>());
+                    tickCps.RemoveSystemFromUpdateList(World.GetExistingSystem<ClientPresentationSystemGroup>());
+                }
+                else if (tickSis != null)
+                {
+                    tickSis.RemoveSystemFromUpdateList(World.GetExistingSystem<ServerInitializationSystemGroup>());
+                    tickSss.RemoveSystemFromUpdateList(World.GetExistingSystem<ServerSimulationSystemGroup>());
+                }
+
                 World.Dispose();
             }
         }

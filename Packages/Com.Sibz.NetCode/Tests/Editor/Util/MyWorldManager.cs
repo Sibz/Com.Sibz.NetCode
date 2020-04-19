@@ -1,4 +1,5 @@
-﻿using Unity.Entities;
+﻿using Sibz.EntityEvents;
+using Unity.Entities;
 using Unity.NetCode;
 
 namespace Sibz.NetCode.Tests
@@ -23,11 +24,6 @@ namespace Sibz.NetCode.Tests
         {
             CalledImportPrefabs = true;
             base.ImportPrefabs();
-        }
-
-        public void InvokeAllCallbacks()
-        {
-            WorldCreated?.Invoke();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Sibz.EntityEvents;
 using Sibz.NetCode.WorldExtensions;
 using Unity.Entities;
@@ -14,6 +14,7 @@ namespace Sibz.NetCode
         public Action WorldCreated { get; set; }
         public Action WorldDestroyed { get; set; }
         public Action PreWorldDestroy { get; set; }
+        public bool WorldIsCreated => WorldCreator.WorldIsCreated;
 
         protected IWorldOptions Options { get; }
 

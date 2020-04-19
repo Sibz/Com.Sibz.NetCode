@@ -18,20 +18,6 @@ namespace Sibz.NetCode.Tests.Base
         }
 
         [Test]
-        public void ShouldBindCallbacksToWorldManager()
-        {
-            int calledCount = 0;
-            MyWorldCreator wm = new MyWorldCreator(worldOptions);
-            current = new MyWorldBaseImpl(worldOptions, wm);
-            wm.CreateWorld();
-            current.WorldCreated += () => calledCount++;
-            current.WorldDestroyed += () => calledCount++;
-            current.PreWorldDestroy += () => calledCount++;
-            wm.InvokeAllCallbacks();
-            Assert.AreEqual(1, calledCount);
-        }
-
-        [Test]
         public void ShouldHaveCorrectSystems()
         {
             MyWorldCreator wm = new MyWorldCreator(worldOptions);

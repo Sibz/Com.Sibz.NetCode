@@ -14,6 +14,7 @@ namespace Sibz.NetCode
         public bool CreateWorldOnInstantiate { get; set; }
         public List<Type> SystemAttributes { get; } = new List<Type> { typeof(ServerSystemAttribute) };
         public GameObject GhostCollectionPrefab { get; set; }
+        public string GhostSystemsPrefixFilter { get; set; }
         public List<Type> Systems { get; set; } = new List<Type>();
     }
 }

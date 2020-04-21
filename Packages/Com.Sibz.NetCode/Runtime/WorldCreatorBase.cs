@@ -93,7 +93,7 @@ namespace Sibz.NetCode
 
             World.ImportGhostCollection(Options.GhostCollectionPrefab);
 
-            World.ImportGhostSystems();
+            World.ImportGhostSystems(Options.GhostSystemsPrefixFilter);
         }
 
         public void Dispose()

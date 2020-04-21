@@ -92,6 +92,8 @@ namespace Sibz.NetCode
             }
 
             World.ImportGhostCollection(Options.GhostCollectionPrefab);
+
+            World.ImportGhostSystems();
         }
 
         public void Dispose()

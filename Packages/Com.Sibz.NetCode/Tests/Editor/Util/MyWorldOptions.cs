@@ -13,5 +13,6 @@ namespace Sibz.NetCode.Tests
         public List<Type> Systems { get; } = new List<Type>();
         public List<Type> SystemAttributes { get; set; } = new List<Type>();
         public GameObject GhostCollectionPrefab { get; set; }
+        public string GhostSystemsPrefixFilter { get; }
     }
 }

@@ -10,5 +10,6 @@ namespace Sibz.NetCode
         List<Type> Systems { get; }
         List<Type> SystemAttributes { get; }
         GameObject GhostCollectionPrefab { get; }
+        string GhostSystemsPrefixFilter { get; }
     }
 }

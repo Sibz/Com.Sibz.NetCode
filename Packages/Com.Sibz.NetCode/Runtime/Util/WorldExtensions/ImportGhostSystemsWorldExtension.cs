@@ -34,26 +34,27 @@ namespace Sibz.NetCode.WorldExtensions
 
         private static void ImportServerSystems(World world, string filter)
         {
-            ImportSystems(world, new List<Type>()
+            ImportSystems<ServerSimulationSystemGroup>(world, new List<Type>()
                 .AppendTypesThatAreSubclassOf(GhostSendSystemName), filter);
         }
 
         private static void ImportClientSystems(World world, string filter)
         {
-            ImportSystems(world, new List<Type>()
+            ImportSystems<ClientSimulationSystemGroup>(world, new List<Type>()
                 .AppendTypesThatAreSubclassOf(GhostReceiveSystemName), filter);
-            ImportSystems(world, new List<Type>()
+            ImportSystems<ClientSimulationSystemGroup>(world, new List<Type>()
                 .AppendTypesThatAreSubclassOf(DefaultGhostSpawnSystemName), filter);
-            ImportSystems(world, new List<Type>()
+            ImportSystems<ClientSimulationSystemGroup>(world, new List<Type>()
                 .AppendTypesWithUpdateInGroupAttribute(typeof(GhostUpdateSystemGroup)), filter);
         }
 
-        private static void ImportSystems(World world, ICollection<Type> systems, string filter)
+        private static void ImportSystems<T>(World world, ICollection<Type> systems, string filter)
+            where T: ComponentSystemGroup
         {
             systems = systems.Where(x => x.Name.StartsWith(filter)).ToList();
             RemoveSystemsThatAreAlreadyInWorld(world, systems, out ICollection<ComponentSystemBase> removedSystems);
             EnsureRemovedSystemsGetUpdatedInThereGroup(world, removedSystems);
-            world.ImportSystemsFromList<ClientSimulationSystemGroup>(systems);
+            world.ImportSystemsFromList<T>(systems);
         }
 
         private static void EnsureRemovedSystemsGetUpdatedInThereGroup(World world, IEnumerable<ComponentSystemBase> removedSystems)

@@ -9,6 +9,7 @@ namespace Sibz
     public static partial class Util
     {
         private static readonly AssCache AssemblyCache = new AssCache();
+
         private class AssCache
         {
             private Assembly[] assemblies;
@@ -16,8 +17,66 @@ namespace Sibz
             private Type[] classesWithAttributeTypes;
             private Type[] classesWithBaseTypes;
             private readonly Dictionary<Type, Type[]> classesWithAttribute = new Dictionary<Type, Type[]>();
+            private readonly Dictionary<Type, Type[]> classesWithSpecificUpdateGroup = new Dictionary<Type, Type[]>();
+            private readonly Dictionary<string, Type[]> classesThatBaseClassStartsWith = new Dictionary<string, Type[]>();
 
-            public Assembly[] Assemblies => assemblies ?? (assemblies = AppDomain.CurrentDomain.GetAssemblies());
+            private static readonly string[] ExcludedAssemblies =
+            {
+                "mscorlib,",
+                "Accessibility,",
+                "Unity.",
+                "UnityEngine,",
+                "UnityEngine.",
+                "UnityEditor,",
+                "UnityEditor.",
+                "System,",
+                "System.",
+                "nunit.framework,",
+                "ReportGeneratorMerged,",
+                "netstandard",
+                "ExCSS.Unity,",
+                "JetBrains.",
+                "Mono.",
+                "Novell.",
+                "Microsoft."
+            };
+
+            public Assembly[] Assemblies
+            {
+                get
+                {
+                    if (!(assemblies is null))
+                        return assemblies;
+
+                    List<Assembly> asses = new List<Assembly>();
+                    var localAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+                    for (int i = 0; i < localAssemblies.Length; i++)
+                    {
+                        bool exclude = false;
+                        for (int j = 0; j < ExcludedAssemblies.Length; j++)
+                        {
+                            if (!localAssemblies[i].FullName.StartsWith(ExcludedAssemblies[j]))
+                            {
+                                continue;
+                            }
+
+                            exclude = true;
+                            break;
+                        }
+
+                        if (!exclude)
+                        {
+                            asses.Add(localAssemblies[i]);
+                        }
+
+                    }
+
+                    assemblies = asses.ToArray();
+                    return assemblies;
+                }
+            }
+
+
 
             public Type[] ClassTypes
             {
@@ -31,7 +90,7 @@ namespace Sibz
                     List<Type> types = new List<Type>();
                     foreach (Assembly a in Assemblies)
                     {
-                        types.AddRange(a.GetTypes().Where(x=>x.IsClass && x.IsPublic));
+                        types.AddRange(a.GetTypes().Where(x => x.IsClass && x.IsPublic));
                     }
 
                     classTypes = types.ToArray();
@@ -60,15 +119,60 @@ namespace Sibz
                     List<Type> types = new List<Type>();
                     for (int i = 0; i < ClassesWithAttributeTypes.Length; i++)
                     {
-                        if (!(ClassesWithAttributeTypes[i].GetCustomAttribute(index) is null))
+                        foreach (CustomAttributeData customAttributeData in ClassesWithAttributeTypes[i].CustomAttributes)
                         {
+                            if (customAttributeData.AttributeType != index)
+                            {
+                                continue;
+                            }
+
                             types.Add(ClassesWithAttributeTypes[i]);
+                            break;
                         }
                     }
+
                     classesWithAttribute.Add(index, types.ToArray());
 
                     return classesWithAttribute[index];
                 }
+            }
+
+            public Type[] GetClassesWithSpecificUpdateGroup(Type updateGroup)
+            {
+                if (classesWithSpecificUpdateGroup.ContainsKey(updateGroup))
+                {
+                    return classesWithSpecificUpdateGroup[updateGroup];
+                }
+
+                List<Type> types = new List<Type>();
+                Type[] updateInGroupClassTypes = AssemblyCache[typeof(UpdateInGroupAttribute)];
+                for (int i = 0; i < updateInGroupClassTypes.Length; i++)
+                {
+                    if (updateInGroupClassTypes[i].GetCustomAttribute<UpdateInGroupAttribute>().GroupType == updateGroup)
+                    {
+                        types.Add(updateInGroupClassTypes[i]);
+                    }
+                }
+                classesWithSpecificUpdateGroup.Add(updateGroup, types.ToArray());
+                return classesWithSpecificUpdateGroup[updateGroup];
+            }
+
+            public Type[] GetClassesTheBaseTypesNameStartsWith(string name)
+            {
+                if (classesThatBaseClassStartsWith.ContainsKey(name))
+                {
+                    return classesThatBaseClassStartsWith[name];
+                }
+                List<Type> types = new List<Type>();
+                for (int i = 0; i < ClassesWithBaseTypes.Length; i++)
+                {
+                    if (ClassesWithBaseTypes[i].Name.StartsWith(name))
+                    {
+                        types.Add(ClassesWithBaseTypes[i]);
+                    }
+                }
+                classesThatBaseClassStartsWith.Add(name, types.ToArray());
+                return classesThatBaseClassStartsWith[name];
             }
         }
 
@@ -85,14 +189,8 @@ namespace Sibz
         {
             types = types ?? new List<Type>();
 
-            Type[] updateInGroupClassTypes = AssemblyCache[typeof(UpdateInGroupAttribute)];
-            for (int i = 0; i < updateInGroupClassTypes.Length; i++)
-            {
-                if (updateInGroupClassTypes[i].GetCustomAttribute<UpdateInGroupAttribute>().GroupType == groupType)
-                {
-                    types.Add(groupType);
-                }
-            }
+            types.AddRange(AssemblyCache.GetClassesWithSpecificUpdateGroup(groupType));
+
             return types;
         }
 
@@ -100,14 +198,8 @@ namespace Sibz
         {
             types = types ?? new List<Type>();
 
-            for (int i = 0; i < AssemblyCache.ClassesWithBaseTypes.Length; i++)
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                if (AssemblyCache.ClassesWithBaseTypes[i].BaseType.Name.StartsWith(baseTypeName))
-                {
-                    types.Add(AssemblyCache.ClassesWithBaseTypes[i]);
-                }
-            }
+            types.AddRange(AssemblyCache.GetClassesTheBaseTypesNameStartsWith(baseTypeName));
+
             return types;
         }
 

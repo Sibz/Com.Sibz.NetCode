@@ -166,7 +166,8 @@ namespace Sibz
                 List<Type> types = new List<Type>();
                 for (int i = 0; i < ClassesWithBaseTypes.Length; i++)
                 {
-                    if (ClassesWithBaseTypes[i].Name.StartsWith(name))
+                    // ReSharper disable once PossibleNullReferenceException
+                    if (ClassesWithBaseTypes[i].BaseType.Name.StartsWith(name))
                     {
                         types.Add(ClassesWithBaseTypes[i]);
                     }

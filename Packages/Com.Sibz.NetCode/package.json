@@ -3,7 +3,7 @@
   "dependencies": {
     "com.sibz.command-buffer-helpers": "0.2.6",
     "com.sibz.world-system-helpers": "1.0.5",
-    "com.sibz.entity-events": "0.0.9",
+    "com.sibz.entity-events": "0.0.10",
     "com.unity.netcode": "0.1.0-preview.6",
     "com.unity.entities": "0.9.0-preview.6"
   },

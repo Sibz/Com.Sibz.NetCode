@@ -9,4 +9,4 @@ jobs:
       uses: muinmomin/webhook-action@v1.0.0
       with:
         url: ${{ secrets.WEBHOOK_URL }}
-        data: '{"mode": "build", "owner": "${{ github.repository_owner }}", "repository":"Com.Sibz.NetCode", "args":{}, "clean": "false", "context":"remote test", "sha": "${{ github.sha }}"}'
+        data: '{"key":"SECRETAPPKEY", "mode": "build", "owner": "${{ github.repository_owner }}", "repository":"Com.Sibz.NetCode", "args":{}, "clean": "false", "context":"remote test", "sha": "${{ github.sha }}"}'

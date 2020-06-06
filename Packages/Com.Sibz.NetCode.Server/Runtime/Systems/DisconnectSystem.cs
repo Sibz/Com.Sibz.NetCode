@@ -5,8 +5,7 @@ using Unity.Entities;
 namespace Sibz.NetCode.Server
 {
     [ServerSystem]
-    [UpdateInGroup(typeof(InitializationSystemGroup))]
-    [UpdateBefore(typeof(DestroyWorldSystem))]
+    [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
     public class DisconnectSystem : ComponentSystem
     {
         protected override void OnCreate()

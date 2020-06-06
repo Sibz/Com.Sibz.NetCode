@@ -41,16 +41,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c79d771cedb4794bf100ce60df5f764, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prefabId: c63185fb612f3364f81d9d907f1a378b
+  m_Name:
+  m_EditorClassIdentifier:
   DefaultClientInstantiationType: 0
-  RootPath: 
+  RootPath:
   SnapshotDataPath: NetCodePlayModeTestGhostObjectSnapshotData.cs
   UpdateSystemPath: NetCodePlayModeTestGhostObjectGhostUpdateSystem.cs
   SerializerPath: NetCodePlayModeTestGhostObjectGhostSerializer.cs
   Importance: 1
-  PredictingPlayerNetworkId: 
+  PredictingPlayerNetworkId:
   Components:
   - name: Unity.Transforms.LocalToWorld
     interpolatedClient: 1
@@ -82,4 +81,6 @@ MonoBehaviour:
       interpolate: 1
     manualFieldList: 0
     entityIndex: 0
-  doNotStrip: 0
+  prefabId: c63185fb612f3364f81d9d907f1a378b
+  Name: NetCodePlayModeTestGhostObject
+  doNotStrip: 1

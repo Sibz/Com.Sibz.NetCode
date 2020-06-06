@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1230766143909214697}
   - component: {fileID: 4562971831305356095}
   m_Layer: 0
-  m_Name: GhostObject
+  m_Name: NetCodeTestGhostObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41,15 +41,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c79d771cedb4794bf100ce60df5f764, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prefabId: 
+  m_Name:
+  m_EditorClassIdentifier:
   DefaultClientInstantiationType: 0
-  RootPath: 
+  RootPath:
   SnapshotDataPath: GhostObjectSnapshotData.cs
   UpdateSystemPath: GhostObjectGhostUpdateSystem.cs
   SerializerPath: GhostObjectGhostSerializer.cs
   Importance: 1
-  PredictingPlayerNetworkId: 
+  PredictingPlayerNetworkId:
   Components: []
+  prefabId: a1a4bdca02a929c449186287bc90a4a0
+  Name: NetCodeTestGhostObject
   doNotStrip: 0

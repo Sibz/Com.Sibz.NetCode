@@ -1,16 +1,17 @@
 using System;
+using Unity.Collections;
 using Unity.Entities;
-using Unity.NetCode;
 using Unity.Networking.Transport;
+using Unity.NetCode;
 
 public struct NetCodeGhostSerializerCollection : IGhostSerializerCollection
 {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     public string[] CreateSerializerNameList()
     {
-        string[] arr =
+        var arr = new string[]
         {
-            "NetCodePlayModeTestGhostObjectGhostSerializer"
+            "NetCodePlayModeTestGhostObjectGhostSerializer",
         };
         return arr;
     }
@@ -21,10 +22,7 @@ public struct NetCodeGhostSerializerCollection : IGhostSerializerCollection
         where T : struct, ISnapshotData<T>
     {
         if (typeof(T) == typeof(NetCodePlayModeTestGhostObjectSnapshotData))
-        {
             return 0;
-        }
-
         return -1;
     }
 
@@ -61,28 +59,27 @@ public struct NetCodeGhostSerializerCollection : IGhostSerializerCollection
         {
             case 0:
             {
-                return GhostSendSystem<NetCodeGhostSerializerCollection>
-                    .InvokeSerialize<NetCodePlayModeTestGhostObjectGhostSerializer,
-                        NetCodePlayModeTestGhostObjectSnapshotData>(m_NetCodePlayModeTestGhostObjectGhostSerializer,
-                        ref dataStream, data);
+                return GhostSendSystem<NetCodeGhostSerializerCollection>.InvokeSerialize<NetCodePlayModeTestGhostObjectGhostSerializer, NetCodePlayModeTestGhostObjectSnapshotData>(m_NetCodePlayModeTestGhostObjectGhostSerializer, ref dataStream, data);
             }
             default:
                 throw new ArgumentException("Invalid serializer type");
         }
     }
-
     private NetCodePlayModeTestGhostObjectGhostSerializer m_NetCodePlayModeTestGhostObjectGhostSerializer;
 }
 
 public struct EnableNetCodeGhostSendSystemComponent : IComponentData
-{
-}
-
+{}
 public class NetCodeGhostSendSystem : GhostSendSystem<NetCodeGhostSerializerCollection>
 {
     protected override void OnCreate()
     {
         base.OnCreate();
         RequireSingletonForUpdate<EnableNetCodeGhostSendSystemComponent>();
+    }
+
+    public override bool IsEnabled()
+    {
+        return HasSingleton<EnableNetCodeGhostSendSystemComponent>();
     }
 }
